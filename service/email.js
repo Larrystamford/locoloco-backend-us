@@ -1,5 +1,5 @@
 // let winston = require("winston"),
-//   WinstonCloudWatch = require("winston-cloudwatch");
+// WinstonCloudWatch = require("winston-cloudwatch");
 
 const nodemailer = require("nodemailer");
 if (process.env.NODE_ENV !== "production") {

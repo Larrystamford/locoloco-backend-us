@@ -42,6 +42,7 @@ const userSchema = new Schema(
     postalCode: String,
     address: String,
     profileBio: String,
+    latestFeedIdPerSession: Number,
 
     followers: [
       {

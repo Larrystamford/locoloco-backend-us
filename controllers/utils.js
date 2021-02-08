@@ -1,4 +1,5 @@
 const Video = require("../models/video");
+const Item = require("../models/item");
 const User = require("../models/user");
 const Notification = require("../models/notification");
 const Admin = require("../models/admin");
@@ -41,6 +42,53 @@ let UtilsController = {
       const listOfVideosItems = await Video.find();
       for (eachVideo of listOfVideosItems) {
         await addVideoToFeed(eachVideo._id, eachVideo.categories);
+      }
+
+      res.status(200).send("success");
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
+  // temporary use
+  changeSeaToUsLinks: async (req, res, next) => {
+    try {
+      const listOfVideosItems = await Video.find();
+      for (eachVideo of listOfVideosItems) {
+        let videoUrl = eachVideo.url;
+        let videoCoverImageUrl = eachVideo.coverImageUrl;
+
+        let newVideoUrl = videoUrl.split(".com");
+        newVideoUrl =
+          "https://media2locoloco-us.s3.amazonaws.com" + newVideoUrl[1];
+
+        let newVideoCoverImageUrl = videoCoverImageUrl.split(".com");
+        newVideoCoverImageUrl =
+          "https://media2locoloco-us.s3.amazonaws.com" +
+          newVideoCoverImageUrl[1];
+
+        console.log(newVideoUrl);
+
+        console.log(newVideoCoverImageUrl);
+        eachVideo.url = newVideoUrl;
+        eachVideo.coverImageUrl = newVideoCoverImageUrl;
+
+        await eachVideo.save();
+      }
+
+      const listOfItems = await Item.find();
+      for (eachItem of listOfItems) {
+        let imageUrl = eachItem.image;
+
+        let newImageUrl = imageUrl.split(".com");
+        newImageUrl =
+          "https://media2locoloco-us.s3.amazonaws.com" + newImageUrl[1];
+
+        console.log(newImageUrl);
+
+        eachItem.image = newImageUrl;
+
+        await eachItem.save();
       }
 
       res.status(200).send("success");

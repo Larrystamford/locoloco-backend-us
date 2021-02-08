@@ -13,8 +13,8 @@ router
   .route("/addExistingVideosToFeed")
   .get(UtilsController.addExistingVideosToFeed);
 
-router
-  .route("/createAdmin")
-  .get(UtilsController.createAdmin);
+router.route("/changeSeaToUsLinks").get(UtilsController.changeSeaToUsLinks);
+
+router.route("/createAdmin").get(UtilsController.createAdmin);
 
 module.exports = router;

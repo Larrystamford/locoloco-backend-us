@@ -58,50 +58,144 @@ let VideoAndItemController = {
         query: { userId, watchedFeedId },
       } = req;
 
-      let potentialFeed;
+      let potentialFeed, toWatchFeedId;
 
-      // if watch session just started and haven't watch any feed yet, get latest feed
+      // first load
       if (!watchedFeedId) {
+        console.log("first load", watchedFeedId);
+        // latest feed
         potentialFeed = await Feed.findOne()
           .sort({ field: "asc", id: -1 })
           .populate({
             path: "videos",
             populate: { path: "items" },
+          })
+          .populate({
+            path: "videos",
             populate: { path: "comments", populate: { path: "replies" } },
           });
+
+        toWatchFeedId = potentialFeed.id;
+        console.log(userId);
+        if (userId) {
+          // update latestFeedIdPerSession of user
+          const latestFeedId = toWatchFeedId;
+          await User.updateOne(
+            { _id: userId },
+            {
+              latestFeedIdPerSession: latestFeedId,
+            },
+            { upsert: false }
+          );
+
+          let feedWatched = await SeenVideos.findOne({
+            userId: userId,
+            feedId: toWatchFeedId,
+          });
+
+          console.log(feedWatched, "feed?");
+
+          if (feedWatched) {
+            console.log("feed watched, choose next");
+            toWatchFeedId = feedWatched.nextUnseenFeedId;
+            potentialFeed = await Feed.findOne({ id: toWatchFeedId })
+              .populate({
+                path: "videos",
+                populate: { path: "items" },
+              })
+              .populate({
+                path: "videos",
+                populate: { path: "comments", populate: { path: "replies" } },
+              });
+          }
+
+          if (toWatchFeedId != 0) {
+            // updating the latestFeedId next unseen feed id
+            await SeenVideos.updateOne(
+              { feedId: latestFeedId, userId: userId },
+              {
+                nextUnseenFeedId: toWatchFeedId - 1,
+                $setOnInsert: {
+                  feedId: latestFeedId,
+                  userId: userId,
+                },
+              },
+              { upsert: true }
+            );
+
+            // inserting each new watch feed it
+            await SeenVideos.updateOne(
+              { feedId: toWatchFeedId, userId: userId },
+              {
+                $setOnInsert: {
+                  feedId: toWatchFeedId,
+                  userId: userId,
+                  nextUnseenFeedId: toWatchFeedId - 1,
+                },
+              },
+              { upsert: true }
+            );
+          }
+        }
       } else {
-        potentialFeed = await Feed.findOne({ id: watchedFeedId - 1 })
+        toWatchFeedId = watchedFeedId - 1;
+        potentialFeed = await Feed.findOne({ id: toWatchFeedId })
           .populate({
             path: "videos",
             populate: { path: "items" },
+          })
+          .populate({
+            path: "videos",
             populate: { path: "comments", populate: { path: "replies" } },
           });
+
+        if (userId) {
+          let feedWatched = await SeenVideos.findOne({
+            userId: userId,
+            feedId: toWatchFeedId,
+          });
+
+          if (feedWatched) {
+            console.log("feed watched, choose next");
+            toWatchFeedId = feedWatched.nextUnseenFeedId;
+            potentialFeed = await Feed.findOne({ id: toWatchFeedId })
+              .populate({
+                path: "videos",
+                populate: { path: "items" },
+              })
+              .populate({
+                path: "videos",
+                populate: { path: "comments", populate: { path: "replies" } },
+              });
+          }
+
+          if (toWatchFeedId != 0) {
+            const user = await User.findOne({ _id: userId });
+            const latestFeedIdPerSession = user.latestFeedIdPerSession;
+
+            await SeenVideos.updateOne(
+              { feedId: latestFeedIdPerSession, userId: userId },
+              {
+                nextUnseenFeedId: toWatchFeedId - 1,
+              },
+              { upsert: false }
+            );
+
+            // inserting each new watch feed
+            await SeenVideos.updateOne(
+              { feedId: toWatchFeedId, userId: userId },
+              {
+                $setOnInsert: {
+                  feedId: toWatchFeedId,
+                  userId: userId,
+                  nextUnseenFeedId: toWatchFeedId - 1,
+                },
+              },
+              { upsert: true }
+            );
+          }
+        }
       }
-
-      console.log(userId, "userId for feed if present");
-
-      // TAKE CARE OF USER SEENED VIDEOS
-      if (userId) {
-        let isFeedWatched = await SeenVideos.findOne({
-          userId: userId,
-          feedId: potentialFeed.id,
-        });
-        console.log("isFeedWatched ", isFeedWatched);
-
-        // USER NOT LOGGED IN
-      } else {
-        console.log("no user");
-      }
-
-      // const listOfVideosItems = await Feed.find()
-      //   .limit(parseInt(pageSize))
-      //   .skip(parseInt(skip))
-      //   .sort({ likesCount: -1 })
-      //   .populate({
-      //     path: "comments",
-      //     populate: { path: "replies" },
-      //   })
-      //   .populate("items");
 
       res.status(200).send(potentialFeed);
     } catch (err) {
@@ -253,8 +347,8 @@ let VideoAndItemController = {
 
     newVideo.user = user;
     newVideo.userName = user.userName;
-    newVideo.shipsFrom = [user.country];
-    newVideo.shipsTo = ["Singapore"]; // temporarily ships to Singapore only
+    newVideo.shipsFrom = ["United States"];
+    newVideo.shipsTo = ["United States"];
 
     // SAVING VIDEO
     try {

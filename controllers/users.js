@@ -445,10 +445,10 @@ module.exports = {
     const { videoId, feedId } = req.body;
     try {
       // will deprecate soon. Just to easily see what the users doing for now
-      await User.findOneAndUpdate(
-        { _id: userId },
-        { $push: { seenVideos: videoId } }
-      );
+      // await User.findOneAndUpdate(
+      //   { _id: userId },
+      //   { $push: { seenVideos: videoId } }
+      // );
 
       await SeenVideos.updateOne(
         { userId: userId, feedId: feedId }, // current max count is 6

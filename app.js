@@ -63,7 +63,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.get("/", async (req, res) => {
-  res.send({ v1: "recovered" });
+  res.send({ v1: "usa version" });
 });
 app.use("/v1/users", require("./routes/users"));
 app.use("/v1/video", require("./routes/video_and_item"));

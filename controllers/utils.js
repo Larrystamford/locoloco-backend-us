@@ -3,6 +3,7 @@ const Item = require("../models/item");
 const User = require("../models/user");
 const Notification = require("../models/notification");
 const Admin = require("../models/admin");
+const { addVideoToFeed } = require("../service/feed");
 
 var mongoose = require("mongoose");
 

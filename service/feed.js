@@ -9,6 +9,7 @@ async function addVideoToFeed(videoId, categories) {
       latestFeedId = latestFeedId.id;
     }
 
+    // first feed starts with id: 1
     await Feed.updateOne(
       { id: latestFeedId, count: { $lt: 6 } },
       {
@@ -23,7 +24,7 @@ async function addVideoToFeed(videoId, categories) {
     );
     return "success";
   } catch (err) {
-    console.log(err.toString());
+    console.log(err.toString(), "error");
     return "adding video to feed collection failed" + err.toString();
   }
 }

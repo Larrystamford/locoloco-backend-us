@@ -450,23 +450,58 @@ module.exports = {
       //   { $push: { seenVideos: videoId } }
       // );
 
-      await SeenVideos.updateOne(
-        { userId: userId, feedId: feedId }, // current max count is 6
-        {
-          $push: {
-            videos: videoId,
-          },
-          $inc: { count: 1 },
-          $setOnInsert: { userId: userId, feedId: feedId },
-        },
-        { upsert: true }
-      );
+      const currentFeed = await SeenVideos.findOne({
+        userId: userId,
+        feedId: feedId,
+      });
 
-      const seensdsd = await SeenVideos.find();
-      console.log(seensdsd);
+      let currentFeedVideos = [];
+      if (currentFeed) {
+        currentFeedVideos = currentFeed.videos;
+      }
+
+      if (!currentFeedVideos.includes(videoId)) {
+        console.log(videoId, "GELLO");
+        console.log(userId, feedId, "GELLo2");
+
+        await SeenVideos.updateOne(
+          // current max count is 6
+          { userId: userId, feedId: feedId },
+          {
+            $push: {
+              videos: videoId,
+            },
+            $inc: { count: 1 },
+            $setOnInsert: {
+              userId: userId,
+              feedId: feedId,
+              nextUnseenFeedId: feedId - 1,
+            },
+          },
+          { upsert: true }
+        );
+
+        feedWatching = await SeenVideos.findOne({
+          userId: userId,
+          feedId: feedId,
+        });
+
+        if (feedWatching.count >= 6) {
+          const user = await User.findOne({ _id: userId });
+          const latestFeedIdPerSession = user.latestFeedIdPerSession;
+          await SeenVideos.updateOne(
+            { userId: userId, feedId: latestFeedIdPerSession },
+            {
+              nextUnseenFeedId: feedId - 1,
+            },
+            { upsert: false }
+          );
+        }
+      }
 
       res.status(201).send("pushed");
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },

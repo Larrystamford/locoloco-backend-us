@@ -75,8 +75,9 @@ let VideoAndItemController = {
             populate: { path: "comments", populate: { path: "replies" } },
           });
 
+        const potentialFeedCount = potentialFeed.count;
         toWatchFeedId = potentialFeed.id;
-        console.log(userId);
+        console.log(userId, toWatchFeedId, "to watch id");
         if (userId) {
           // update latestFeedIdPerSession of user
           const latestFeedId = toWatchFeedId;
@@ -92,12 +93,22 @@ let VideoAndItemController = {
             userId: userId,
             feedId: toWatchFeedId,
           });
-
-          console.log(feedWatched, "feed?");
+          console.log(feedWatched);
 
           if (feedWatched) {
-            console.log("feed watched, choose next");
+            console.log(feedWatched.count, potentialFeedCount, "sWAKA");
+          }
+
+          // all videos in the latest feed has been watched
+          console.log(feedWatched, "confusin2");
+
+          if (feedWatched && feedWatched.count == potentialFeedCount) {
+            console.log(feedWatched, "confusin");
             toWatchFeedId = feedWatched.nextUnseenFeedId;
+
+            console.log("to watch id", toWatchFeedId);
+            console.log("feed watched, choose next");
+
             potentialFeed = await Feed.findOne({ id: toWatchFeedId })
               .populate({
                 path: "videos",
@@ -107,37 +118,35 @@ let VideoAndItemController = {
                 path: "videos",
                 populate: { path: "comments", populate: { path: "replies" } },
               });
-          }
 
-          if (toWatchFeedId != 0) {
-            // updating the latestFeedId next unseen feed id
-            await SeenVideos.updateOne(
-              { feedId: latestFeedId, userId: userId },
-              {
-                nextUnseenFeedId: toWatchFeedId - 1,
-                $setOnInsert: {
-                  feedId: latestFeedId,
-                  userId: userId,
-                },
-              },
-              { upsert: true }
+            // skip the watched videos in the not completely seen feed id
+            feedWatched = await SeenVideos.findOne({
+              userId: userId,
+              feedId: toWatchFeedId,
+            });
+
+            if (feedWatched) {
+              const unwatchedVideos = potentialFeed.videos.filter(
+                (potentialVideo) => {
+                  return !feedWatched.videos.includes(potentialVideo._id);
+                }
+              );
+
+              potentialFeed.videos = unwatchedVideos;
+            }
+          } else if (feedWatched) {
+            // still have remaining videos in the latest feed
+            const unwatchedVideos = potentialFeed.videos.filter(
+              (potentialVideo) => {
+                return !feedWatched.videos.includes(potentialVideo._id);
+              }
             );
 
-            // inserting each new watch feed it
-            await SeenVideos.updateOne(
-              { feedId: toWatchFeedId, userId: userId },
-              {
-                $setOnInsert: {
-                  feedId: toWatchFeedId,
-                  userId: userId,
-                  nextUnseenFeedId: toWatchFeedId - 1,
-                },
-              },
-              { upsert: true }
-            );
+            potentialFeed.videos = unwatchedVideos;
           }
         }
       } else {
+        // subsequent feed after first feed loaded
         toWatchFeedId = watchedFeedId - 1;
         potentialFeed = await Feed.findOne({ id: toWatchFeedId })
           .populate({
@@ -149,13 +158,18 @@ let VideoAndItemController = {
             populate: { path: "comments", populate: { path: "replies" } },
           });
 
+        console.log(toWatchFeedId);
+        console.log(potentialFeed);
+
+        const potentialFeedCount = potentialFeed.count;
+
         if (userId) {
           let feedWatched = await SeenVideos.findOne({
             userId: userId,
             feedId: toWatchFeedId,
           });
 
-          if (feedWatched) {
+          if (feedWatched && feedWatched.count == potentialFeedCount) {
             console.log("feed watched, choose next");
             toWatchFeedId = feedWatched.nextUnseenFeedId;
             potentialFeed = await Feed.findOne({ id: toWatchFeedId })
@@ -167,32 +181,30 @@ let VideoAndItemController = {
                 path: "videos",
                 populate: { path: "comments", populate: { path: "replies" } },
               });
-          }
 
-          if (toWatchFeedId != 0) {
-            const user = await User.findOne({ _id: userId });
-            const latestFeedIdPerSession = user.latestFeedIdPerSession;
+            // skip the watched videos in the not completely seen feed id
+            feedWatched = await SeenVideos.findOne({
+              userId: userId,
+              feedId: toWatchFeedId,
+            });
 
-            await SeenVideos.updateOne(
-              { feedId: latestFeedIdPerSession, userId: userId },
-              {
-                nextUnseenFeedId: toWatchFeedId - 1,
-              },
-              { upsert: false }
+            if (feedWatched) {
+              const unwatchedVideos = potentialFeed.videos.filter(
+                (potentialVideo) => {
+                  return !feedWatched.videos.includes(potentialVideo._id);
+                }
+              );
+
+              potentialFeed.videos = unwatchedVideos;
+            }
+          } else if (feedWatched) {
+            const unwatchedVideos = potentialFeed.videos.filter(
+              (potentialVideo) => {
+                return !feedWatched.videos.includes(potentialVideo._id);
+              }
             );
 
-            // inserting each new watch feed
-            await SeenVideos.updateOne(
-              { feedId: toWatchFeedId, userId: userId },
-              {
-                $setOnInsert: {
-                  feedId: toWatchFeedId,
-                  userId: userId,
-                  nextUnseenFeedId: toWatchFeedId - 1,
-                },
-              },
-              { upsert: true }
-            );
+            potentialFeed.videos = unwatchedVideos;
           }
         }
       }

@@ -26,14 +26,17 @@ let FeedController = {
       }
       potentialFeeds.push(potentialFeed);
 
+      console.log(potentialFeed, watchingFeedId, totalVideoCount, "sdsdfdsf");
+
       while (watchingFeedId > 1 && totalVideoCount < 3) {
-        let potentialFeed = await getPotentialFeed(userId, watchingFeedId);
+        potentialFeed = await getPotentialFeed(userId, watchingFeedId);
         potentialFeeds.push(potentialFeed);
         if (potentialFeed.id == 0) {
           break;
+        } else {
+          totalVideoCount += potentialFeed.videos.length;
+          watchingFeedId -= 1;
         }
-        totalVideoCount += potentialFeed.videos.length;
-        watchingFeedId -= 1;
       }
 
       res.status(200).send(potentialFeeds);
@@ -59,20 +62,23 @@ let FeedController = {
 
       if (watchingFeedId != 0) {
         potentialFeed = filterVideosByCategory(potentialFeed, category);
+        console.log("category", category);
+        console.log(potentialFeed);
         totalVideoCount += potentialFeed.videos.length;
       }
       potentialFeeds.push(potentialFeed);
 
       while (watchingFeedId > 1 && totalVideoCount < 3) {
-        let potentialFeed = await getPotentialFeed(userId, watchingFeedId);
+        potentialFeed = await getPotentialFeed(userId, watchingFeedId);
+        potentialFeed = filterVideosByCategory(potentialFeed, category);
         potentialFeeds.push(potentialFeed);
         if (potentialFeed.id == 0) {
           break;
+        } else {
+          totalVideoCount += potentialFeed.videos.length;
+          watchingFeedId -= 1;
         }
-        totalVideoCount += potentialFeed.videos.length;
-        watchingFeedId -= 1;
       }
-
 
       res.status(200).send(potentialFeeds);
     } catch (err) {

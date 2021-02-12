@@ -40,7 +40,11 @@ let UtilsController = {
   // temporary use
   addExistingVideosToFeed: async (req, res, next) => {
     try {
-      const listOfVideosItems = await Video.find();
+      const listOfVideosItems = await Video.find().sort({
+        createdAt: 1,
+        timeCreated: 1,
+      });
+
       for (eachVideo of listOfVideosItems) {
         await addVideoToFeed(eachVideo._id, eachVideo.categories);
       }

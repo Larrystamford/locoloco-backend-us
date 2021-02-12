@@ -1,4 +1,6 @@
 const Feed = require("../models/feed");
+const SeenVideos = require("../models/seenVideos");
+const User = require("../models/user");
 
 async function addVideoToFeed(videoId, categories) {
   try {
@@ -29,6 +31,192 @@ async function addVideoToFeed(videoId, categories) {
   }
 }
 
+async function getPotentialFeed(userId, watchedFeedId) {
+  if (watchedFeedId == 1) {
+    return {
+      id: 0,
+    };
+  }
+
+  let toWatchFeedId;
+
+  if (!watchedFeedId) {
+    // latest feed
+    potentialFeed = await Feed.findOne()
+      .sort({ field: "asc", id: -1 })
+      .populate({
+        path: "videos",
+        populate: { path: "items" },
+      })
+      .populate({
+        path: "videos",
+        populate: { path: "comments", populate: { path: "replies" } },
+      });
+
+    const potentialFeedCount = potentialFeed.count;
+    toWatchFeedId = potentialFeed.id;
+    if (userId) {
+      // update latestFeedIdPerSession of user
+      const latestFeedId = toWatchFeedId;
+      await User.updateOne(
+        { _id: userId },
+        {
+          latestFeedIdPerSession: latestFeedId,
+        },
+        { upsert: false }
+      );
+
+      let feedWatched = await SeenVideos.findOne({
+        userId: userId,
+        feedId: toWatchFeedId,
+      });
+
+      if (feedWatched) {
+        console.log(
+          feedWatched.count,
+          feedWatched.videos.length,
+          potentialFeedCount,
+          "sWAKA"
+        );
+      }
+
+      // all videos in the latest feed has been watched
+      if (feedWatched && feedWatched.videos.length == potentialFeedCount) {
+        // get next unseen feed
+        toWatchFeedId = feedWatched.nextUnseenFeedId;
+        console.log("next unseen", toWatchFeedId);
+        if (toWatchFeedId == 0) {
+          return {
+            id: 0,
+          };
+        }
+
+        potentialFeed = await Feed.findOne({ id: toWatchFeedId })
+          .populate({
+            path: "videos",
+            populate: { path: "items" },
+          })
+          .populate({
+            path: "videos",
+            populate: { path: "comments", populate: { path: "replies" } },
+          });
+
+        // check and skip videos in "nextUnseenFeed"
+        feedWatched = await SeenVideos.findOne({
+          userId: userId,
+          feedId: toWatchFeedId,
+        });
+
+        if (feedWatched) {
+          const unwatchedVideos = potentialFeed.videos.filter(
+            (potentialVideo) => {
+              return !feedWatched.videos.includes(potentialVideo._id);
+            }
+          );
+
+          potentialFeed.videos = unwatchedVideos;
+        }
+      } else if (feedWatched) {
+        // still have remaining videos in the latest feed
+        const unwatchedVideos = potentialFeed.videos.filter(
+          (potentialVideo) => {
+            return !feedWatched.videos.includes(potentialVideo._id);
+          }
+        );
+
+        potentialFeed.videos = unwatchedVideos;
+      }
+    }
+  } else {
+    // subsequent feed after first feed loaded
+    toWatchFeedId = watchedFeedId - 1;
+    if (toWatchFeedId == 0) {
+      return {
+        id: 0,
+      };
+    }
+
+    potentialFeed = await Feed.findOne({ id: toWatchFeedId })
+      .populate({
+        path: "videos",
+        populate: { path: "items" },
+      })
+      .populate({
+        path: "videos",
+        populate: { path: "comments", populate: { path: "replies" } },
+      });
+
+    const potentialFeedCount = potentialFeed.count;
+
+    if (userId) {
+      let feedWatched = await SeenVideos.findOne({
+        userId: userId,
+        feedId: toWatchFeedId,
+      });
+
+      if (feedWatched && feedWatched.videos.length == potentialFeedCount) {
+        toWatchFeedId = feedWatched.nextUnseenFeedId;
+        if (toWatchFeedId == 0) {
+          return {
+            id: 0,
+          };
+        }
+
+        potentialFeed = await Feed.findOne({ id: toWatchFeedId })
+          .populate({
+            path: "videos",
+            populate: { path: "items" },
+          })
+          .populate({
+            path: "videos",
+            populate: { path: "comments", populate: { path: "replies" } },
+          });
+
+        // check and skip videos in "nextUnseenFeed"
+        feedWatched = await SeenVideos.findOne({
+          userId: userId,
+          feedId: toWatchFeedId,
+        });
+
+        if (feedWatched) {
+          const unwatchedVideos = potentialFeed.videos.filter(
+            (potentialVideo) => {
+              return !feedWatched.videos.includes(potentialVideo._id);
+            }
+          );
+
+          potentialFeed.videos = unwatchedVideos;
+        }
+      } else if (feedWatched) {
+        const unwatchedVideos = potentialFeed.videos.filter(
+          (potentialVideo) => {
+            return !feedWatched.videos.includes(potentialVideo._id);
+          }
+        );
+
+        potentialFeed.videos = unwatchedVideos;
+      }
+    }
+  }
+
+  return potentialFeed;
+}
+
+function filterVideosByCategory(potentialFeed, category) {
+  const videosWithCategory = [];
+
+  for (let i = 0; i < potentialFeed.videos.length; i++) {
+    if (potentialFeed.videos[i].categories.includes(category.toLowerCase())) {
+      videosWithCategory.push(potentialFeed.videos[i]);
+    }
+  }
+  
+  potentialFeed.videos = videosWithCategory;
+  return potentialFeed;
+}
+
 module.exports = {
   addVideoToFeed,
+  getPotentialFeed,
+  filterVideosByCategory,
 };

@@ -1,16 +1,6 @@
 const router = require("express-promise-router")();
 const videoAndItemController = require("../controllers/video_and_item");
 
-// router.route("/list_videos").get(videoAndItemController.listVideos);
-// router.route("/list_items").get(videoAndItemController.listItems);
-// router.route("/list_videos_items").get(videoAndItemController.listVideosItems);
-
-router.route("/list_videos_items").get(videoAndItemController.listVideosItems);
-
-router
-  .route("/list_videos_items_by_categories/:category")
-  .get(videoAndItemController.listVideosItemsByCategory);
-
 router
   .route("/getByVideoId/:videoId")
   .get(videoAndItemController.getVideosItemsByVideoId);

@@ -67,6 +67,7 @@ app.get("/", async (req, res) => {
 });
 app.use("/v1/users", require("./routes/users"));
 app.use("/v1/video", require("./routes/video_and_item"));
+app.use("/v1/feed", require("./routes/feed"));
 app.use("/v1/upload", require("./routes/upload"));
 app.use("/v1/email", require("./routes/email"));
 app.use("/v1/payment", require("./routes/payment"));

@@ -442,62 +442,48 @@ module.exports = {
 
   pushVideoSeen: async (req, res, next) => {
     const { userId } = req.params;
-    const { videoId, feedId } = req.body;
+    const { videoId, feedId, category } = req.body;
     try {
-      // will deprecate soon. Just to easily see what the users doing for now
-      // await User.findOneAndUpdate(
-      //   { _id: userId },
-      //   { $push: { seenVideos: videoId } }
-      // );
+      // if on fyp and feed does not exist, update the latest session nextUnseenFeedId
 
-      const currentFeed = await SeenVideos.findOne({
-        userId: userId,
-        feedId: feedId,
-      });
-
-      let currentFeedVideos = [];
-      if (currentFeed) {
-        currentFeedVideos = currentFeed.videos;
-      }
-
-      if (!currentFeedVideos.includes(videoId)) {
-        console.log(videoId, "GELLO");
-        console.log(userId, feedId, "GELLo2");
-
-        await SeenVideos.updateOne(
-          // current max count is 6
-          { userId: userId, feedId: feedId },
-          {
-            $push: {
-              videos: videoId,
-            },
-            $inc: { count: 1 },
-            $setOnInsert: {
-              userId: userId,
-              feedId: feedId,
-              nextUnseenFeedId: feedId - 1,
-            },
-          },
-          { upsert: true }
-        );
-
+      // why we only update for feed is because for other categories
+      // they may not finish the feed. So we cant tell if we should skip
+      // so just have to while loop to get all
+      if (category == "Feed") {
         feedWatching = await SeenVideos.findOne({
           userId: userId,
           feedId: feedId,
         });
 
-        if (feedWatching.count >= 6) {
+        if (!feedWatching) {
           const user = await User.findOne({ _id: userId });
           const latestFeedIdPerSession = user.latestFeedIdPerSession;
           await SeenVideos.updateOne(
             { userId: userId, feedId: latestFeedIdPerSession },
             {
-              nextUnseenFeedId: feedId - 1,
+              nextUnseenFeedId: feedId,
             },
             { upsert: false }
           );
         }
       }
+
+      await SeenVideos.updateOne(
+        // count is not the best, use videos.length for accurate count
+        { userId: userId, feedId: feedId },
+        {
+          $addToSet: {
+            videos: videoId,
+          },
+          $inc: { count: 1 },
+          $setOnInsert: {
+            userId: userId,
+            feedId: feedId,
+            nextUnseenFeedId: feedId - 1,
+          },
+        },
+        { upsert: true }
+      );
 
       res.status(201).send("pushed");
     } catch (err) {

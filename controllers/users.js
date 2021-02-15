@@ -7,6 +7,7 @@ const { Comment, SubComment } = require("../models/comment");
 const Notification = require("../models/notification");
 const usersHelper = require("../helpers/usersHelper");
 const sendEmailService = require("../service/email");
+const moment = require("moment");
 const { registerOrLogin } = require("../service/oauth");
 
 const _ = require("lodash/core");
@@ -516,17 +517,58 @@ module.exports = {
 
     // update seller item status
     try {
-      await BuySellItem.updateOne(
-        { _id: buySellItemId },
-        {
-          buyerDeliveryStatus: buyerDeliveryStatus,
-          sellerDeliveryStatus: sellerDeliveryStatus,
-        }
-      );
+      if (sellerDeliveryStatus == "ordered") {
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            buyerDeliveryStatus: buyerDeliveryStatus,
+            sellerDeliveryStatus: sellerDeliveryStatus,
+          }
+        );
+      }
+
+      if (sellerDeliveryStatus == "shipped") {
+        const statusChangeDate = moment().format("yyyy-MM-DDTHH:mm:ss.SSS");
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            buyerDeliveryStatus: buyerDeliveryStatus,
+            sellerDeliveryStatus: sellerDeliveryStatus,
+            shippedAt: statusChangeDate,
+          }
+        );
+      }
+
+      if (sellerDeliveryStatus == "delivered") {
+        const statusChangeDate = moment().format("yyyy-MM-DDTHH:mm:ss.SSS");
+
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            buyerDeliveryStatus: buyerDeliveryStatus,
+            sellerDeliveryStatus: sellerDeliveryStatus,
+            deliveredAt: statusChangeDate,
+          }
+        );
+      }
+
+      if (sellerDeliveryStatus == "refunded") {
+        const statusChangeDate = moment().format("yyyy-MM-DDTHH:mm:ss.SSS");
+
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            buyerDeliveryStatus: buyerDeliveryStatus,
+            sellerDeliveryStatus: sellerDeliveryStatus,
+            refundedAt: statusChangeDate,
+          }
+        );
+      }
 
       let updatedBuySellItem = await BuySellItem.find({ _id: buySellItemId });
       res.status(200).send(updatedBuySellItem);
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },

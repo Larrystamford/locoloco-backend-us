@@ -78,7 +78,65 @@ async function sendEmailPurchase(receiverEmail, subject, message) {
   return "sent";
 }
 
+async function sendEmailCustomerSupport(receiverEmail, subject, message) {
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "shoplocoloco.sg@gmail.com",
+      pass: process.env.LOCO_EMAIL_PASSWORD,
+    },
+  });
+
+  var mailOptions = {
+    from: "shoplocoloco.sg@gmail.com",
+    to: receiverEmail,
+    subject: subject,
+    text:
+      "Dear customer,\n\nThank you for contacting customer support. Please tell us the issue that you are facing by replying to this email and our supporting staff will get back to you as soon as possible. \n\nWe thank you for your patience and understanding.\n\nWith Love, \nShoplocoloco",
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      winston.error(error);
+    } else {
+      winston.error("success");
+    }
+  });
+
+  return "sent";
+}
+
+async function sendEmailFeedback(receiverEmail, subject, message) {
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "shoplocoloco.sg@gmail.com",
+      pass: process.env.LOCO_EMAIL_PASSWORD,
+    },
+  });
+
+  var mailOptions = {
+    from: "shoplocoloco.sg@gmail.com",
+    to: receiverEmail,
+    subject: subject,
+    text:
+      "Dear customer,\n\nThank you for reaching out to us. Please reply your feedback to this email and we will get back to you as soon as possible. \n\nThank you for shopping with us!\n\nWith Love, \nShoplocoloco",
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      winston.error(error);
+    } else {
+      winston.error("success");
+    }
+  });
+
+  return "sent";
+}
+
 module.exports = {
   sendEmailSignUp,
   sendEmailPurchase,
+  sendEmailCustomerSupport,
+  sendEmailFeedback,
 };

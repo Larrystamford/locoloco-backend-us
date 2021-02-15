@@ -28,4 +28,39 @@ module.exports = {
 
     res.send(response);
   },
+
+  // POST
+  customerSupport: async (req, res, next) => {
+    const { userId, buySellItemId } = req.body;
+
+    // get buyer email
+    const buyer = await User.find({ _id: userId });
+    const buyerEmail = buyer[0].email;
+
+    const response = sendEmailService.sendEmailCustomerSupport(
+      buyerEmail,
+      `Support Number: ${buySellItemId}`,
+      "Message sent from www.shoplocoloco.com"
+    );
+
+    res.send(response);
+  },
+
+  // POST
+  customerFeedback: async (req, res, next) => {
+    const { userId } = req.body;
+
+    // get buyer email
+    const buyer = await User.find({ _id: userId });
+    const buyerEmail = buyer[0].email;
+    const buyerUsername = buyer[0].userName;
+
+    const response = sendEmailService.sendEmailFeedback(
+      buyerEmail,
+      `Customer Feedback from  ${buyerUsername}`,
+      "Message sent from www.shoplocoloco.com"
+    );
+
+    res.send(response);
+  },
 };

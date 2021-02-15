@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 // Create a Schema
 const buySellItemSchema = new Schema(
   {
-    buyerDeliveryStatus: String,
-    sellerDeliveryStatus: String,
+    buyerDeliveryStatus: String, // ordered, shipped, delivered
+    sellerDeliveryStatus: String, // ordered, shipped, delivered
     name: String,
     size: String,
     color: String,
@@ -13,12 +13,15 @@ const buySellItemSchema = new Schema(
     quantity: Number,
     image: String,
     videoId: String,
+    itemId: String,
+    deliveryCost: Number,
     totalPrice: Number,
     buyerAddress: String,
     buyerPostalCode: String,
     buyerName: String,
-    createdTime: String,
-    updatedTime: String,
+    shippedAt: String, // moment().format("yyyy-MM-DDTHH:mm:ss.SSS");
+    deliveredAt: String,
+    refundedAt: String,
   },
   { timestamps: true }
 );

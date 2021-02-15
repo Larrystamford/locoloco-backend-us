@@ -4,6 +4,7 @@ const BuySellItem = require("../models/buySellItem");
 
 async function handleItemStock(userId, sellerId, quantity, itemId) {
   // update item stock
+  console.log(userId, sellerId);
   let purchasedItem;
   try {
     // update item stock
@@ -21,14 +22,17 @@ async function handleItemStock(userId, sellerId, quantity, itemId) {
   }
 
   // get buyer info
-  let buyerPostalCode, buyerAddress, buyerName, buyerEmail;
+  let buyerPostalCode, buyerAddress, buyerName, buyerEmail, deliveryCost;
   const buyer = await User.find({ _id: userId });
   buyerAddress = buyer[0].address;
   buyerEmail = buyer[0].email;
   buyerPostalCode = buyer[0].postalCode;
   buyerName = buyer[0].firstName + " " + buyer[0].lastName;
+  deliveryCost = quantity * 500;
 
-  let totalPrice = Math.round(purchasedItem[0].price * quantity * 100);
+  let totalPrice = Math.round(
+    purchasedItem[0].price * quantity * 100 + deliveryCost
+  );
   const newBuySellItem = new BuySellItem({
     name: purchasedItem[0].name,
     size: purchasedItem[0].size,
@@ -37,9 +41,11 @@ async function handleItemStock(userId, sellerId, quantity, itemId) {
     quantity: quantity,
     image: purchasedItem[0].image,
     videoId: purchasedItem[0].video,
+    itemId: itemId,
+    deliveryCost: deliveryCost,
     totalPrice: totalPrice,
-    buyerDeliveryStatus: "Order Confirmed",
-    sellerDeliveryStatus: "Not Shipped",
+    buyerDeliveryStatus: "ordered",
+    sellerDeliveryStatus: "ordered",
     buyerName: buyerName,
     buyerAddress: buyerAddress,
     buyerPostalCode: buyerPostalCode,

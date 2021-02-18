@@ -67,8 +67,8 @@ router.route("/pushVideoSeen/:userId").put(UsersController.pushVideoSeen);
 
 // CHECK USER ADDRESS
 router
-  .route("/getUserShippingAddress/:userId")
-  .get(UsersController.getUserShippingAddress);
+  .route("/getUserInfo/:userId")
+  .get(UsersController.getUserInfo);
 
 // UPDATE SHIPPING ADDRESS FOR BOTH USERS
 router.route("/updateShippingStatus").put(UsersController.updateShippingStatus);

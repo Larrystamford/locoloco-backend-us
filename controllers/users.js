@@ -494,14 +494,27 @@ module.exports = {
   },
 
   // check if address stored already
-  getUserShippingAddress: async (req, res, next) => {
+  getUserInfo: async (req, res, next) => {
     const { userId } = req.params;
     try {
-      const userAddress = await User.find(
+      const userInfo = await User.find(
         { _id: userId },
-        { address: 1, postalCode: 1, number: 1, country: 1, city: 1 }
+        {
+          address: 1,
+          postalCode: 1,
+          number: 1,
+          country: 1,
+          city: 1,
+          userName: 1,
+          email: 1,
+          firstName: 1,
+          lastName: 1,
+          likedVideos: 1,
+          likedComments: 1,
+          notifications: 1,
+        }
       );
-      res.status(200).send(userAddress);
+      res.status(200).send(userInfo);
     } catch (err) {
       res.status(500).send(err);
     }

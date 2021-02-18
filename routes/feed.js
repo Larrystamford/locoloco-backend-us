@@ -6,4 +6,6 @@ router
   .route("/list_videos_items_by_categories/:category")
   .get(feedController.listVideosItemsByCategory);
 
+router.route("/getHistoryFeed").get(feedController.getHistoryFeed);
+
 module.exports = router;

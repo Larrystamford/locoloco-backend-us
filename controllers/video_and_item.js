@@ -263,9 +263,13 @@ let VideoAndItemController = {
 
   // post review using amazon link, not in use currently merged into the post video item
   postReview: async (req, res, next) => {
-    let { videoId, amazonLink } = req.body;
+    let page = req.query.page;
+    let limit = req.query.limit;
+
+    console.log(page, limit);
+    // let { videoId, amazonLink } = req.body;
     try {
-      await videoItemService.saveAmazonReviews(videoId, amazonLink);
+      // await videoItemService.saveAmazonReviews(videoId, amazonLink);
 
       res.status(201).send("done");
     } catch (err) {

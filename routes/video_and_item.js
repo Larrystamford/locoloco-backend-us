@@ -12,7 +12,7 @@ router
 router.route("/createVideo/:userId").post(videoAndItemController.createVideo);
 router.route("/createItem/:videoId").post(videoAndItemController.createItem);
 router
-  .route("/uploadVideoAndItem/:userId")
+  .route("/uploadVideoAndItem")
   .post(videoAndItemController.uploadVideoAndItem);
 
 // actions to take after item has been purchased

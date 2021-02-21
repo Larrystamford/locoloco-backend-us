@@ -154,12 +154,6 @@ async function handleStocksRevert(
 }
 
 async function saveAmazonReviews(videoId, amazonLink) {
-  let fakeUserName = fakerator.names.name().split(" ")[0];
-  while (fakeUserName.includes(".")) {
-    fakeUserName = fakerator.names.name().split(" ")[0];
-  }
-  console.log(amazonLink);
-
   const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
   let asin = amazonLink.match(ASINreg);
   if (asin) {
@@ -171,13 +165,18 @@ async function saveAmazonReviews(videoId, amazonLink) {
     let newReview;
     for (const review of reviews.reviews) {
       if (review.rating > 2) {
+        let fakeUserName = fakerator.names.name().split(" ")[0];
+        while (fakeUserName.includes(".")) {
+          fakeUserName = fakerator.names.name().split(" ")[0];
+        }
+
         newReview = new Review({
           userName: fakeUserName,
           videoId: videoId,
           rating: review.rating,
           text: review.text.trim(),
         });
-        
+
         await Video.findByIdAndUpdate(
           { _id: videoId },
           {

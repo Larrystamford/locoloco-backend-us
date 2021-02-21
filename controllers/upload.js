@@ -39,6 +39,8 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
       //   output: "./helpers/firstFrame/firstFrame.jpg",
       //   offsets: [1],
       // });
+
+      // taking screen shot of video
       await ffmpegSync(uploadRes);
       const data = await readFile("./helpers/firstFrame/firstFrame.png");
       const uploadFirstFrameRes = await fileUploadService.uploadFirstFrame(
@@ -71,7 +73,7 @@ function ffmpegSync(uploadRes) {
       .screenshots({
         // Will take screens at 20%, 40%, 60% and 80% of the video
         filename: "firstFrame.png",
-        timestamps: [0.1],
+        timestamps: [0.01],
         folder: "./helpers/firstFrame/",
       })
       .on("end", async () => {

@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "amazon-reviews-crawler": "^1.0.4",
     "aws-sdk": "^2.799.0",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
@@ -20,6 +21,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.0",
     "express-promise-router": "^4.0.1",
+    "fakerator": "^0.3.2",
     "ffmpeg": "^0.0.4",
     "ffmpeg-extract-frames": "^2.0.2",
     "fs": "0.0.1-security",

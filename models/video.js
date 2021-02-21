@@ -37,6 +37,15 @@ const videoSchema = new Schema(
       },
     ],
     userName: String,
+    // review related metrics to get average
+    totalReviewRating: Number,
+    reviewCounts: Number,
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
   },
   { timestamps: true }
 );

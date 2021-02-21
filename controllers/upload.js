@@ -73,7 +73,7 @@ function ffmpegSync(uploadRes) {
       .screenshots({
         // Will take screens at 20%, 40%, 60% and 80% of the video
         filename: "firstFrame.png",
-        timestamps: [0.01],
+        timestamps: [0.001],
         folder: "./helpers/firstFrame/",
       })
       .on("end", async () => {

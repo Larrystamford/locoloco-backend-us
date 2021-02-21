@@ -1,6 +1,12 @@
 const Item = require("../models/item");
 const User = require("../models/user");
 const BuySellItem = require("../models/buySellItem");
+const Review = require("../models/review");
+const Video = require("../models/video");
+
+const reviewsCrawler = require("amazon-reviews-crawler");
+const Fakerator = require("fakerator");
+var fakerator = Fakerator("de-DE");
 
 async function handleItemStock(userId, sellerId, quantity, itemId) {
   // update item stock
@@ -147,7 +153,46 @@ async function handleStocksRevert(
   }
 }
 
+async function saveAmazonReviews(videoId, amazonLink) {
+  let fakeUserName = fakerator.names.name().split(" ")[0];
+  while (fakeUserName.includes(".")) {
+    fakeUserName = fakerator.names.name().split(" ")[0];
+  }
+  console.log(amazonLink);
+
+  const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
+  let asin = amazonLink.match(ASINreg);
+  if (asin) {
+    asin = asin[1];
+  }
+
+  if (asin) {
+    const reviews = await reviewsCrawler(asin);
+    let newReview;
+    for (const review of reviews.reviews) {
+      if (review.rating > 2) {
+        newReview = new Review({
+          userName: fakeUserName,
+          videoId: videoId,
+          rating: review.rating,
+          text: review.text.trim(),
+        });
+        
+        await Video.findByIdAndUpdate(
+          { _id: videoId },
+          {
+            $push: { reviews: newReview },
+            $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+          }
+        );
+        await newReview.save();
+      }
+    }
+  }
+}
+
 module.exports = {
   handleItemStock,
   handleStocksRevert,
+  saveAmazonReviews,
 };

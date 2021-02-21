@@ -2,8 +2,10 @@ const Video = require("../models/video");
 const Item = require("../models/item");
 const User = require("../models/user");
 const BuySellItem = require("../models/buySellItem");
+
 const sendEmailService = require("../service/email");
 const videoItemService = require("../service/video_and_item");
+
 const { addVideoToFeed, getPotentialFeed } = require("../service/feed");
 
 let winston = require("winston"),
@@ -120,7 +122,9 @@ let VideoAndItemController = {
 
   uploadVideoAndItem: async (req, res, next) => {
     let user;
-    const { userId } = req.params;
+
+    const userId = req.query.userId;
+    const amazonLink = req.query.amazonLink;
 
     req.body.video.categories = req.body.video.categories.map((v) =>
       v.toLowerCase()
@@ -188,6 +192,9 @@ let VideoAndItemController = {
     // save video again with updated fields
     newVideo.averagePrice = totalPrice / newItems.length;
     newVideo.totalStocks = totalStocks;
+
+    await videoItemService.saveAmazonReviews(newVideo._id, amazonLink);
+
     try {
       await newVideo.save();
       res.status(201).send(newVideo);
@@ -251,6 +258,19 @@ let VideoAndItemController = {
       winston.error("revert failed" + err.toString());
       console.log("revert failed" + err.toString());
       res.status(400).send(err.toString());
+    }
+  },
+
+  // post review using amazon link, not in use currently merged into the post video item
+  postReview: async (req, res, next) => {
+    let { videoId, amazonLink } = req.body;
+    try {
+      await videoItemService.saveAmazonReviews(videoId, amazonLink);
+
+      res.status(201).send("done");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
     }
   },
 };

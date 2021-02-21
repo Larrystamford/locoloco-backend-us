@@ -24,4 +24,6 @@ router
   .route("/revertItemPurchase")
   .put(videoAndItemController.revertItemPurchase);
 
+router.route("/postReview").post(videoAndItemController.postReview);
+
 module.exports = router;

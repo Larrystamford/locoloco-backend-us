@@ -75,6 +75,7 @@ app.use("/v1/admin", require("./routes/admin"));
 app.use("/v1/comment", require("./routes/comment"));
 app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
+app.use("/v1/error", require("./routes/error"));
 
 // app.use("/v1/messages", require("./routes/messages"));
 // app.use("/usersBuying", require("./routes/users_buying"));

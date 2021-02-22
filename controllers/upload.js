@@ -29,6 +29,14 @@ async function uploadFileToAws(req, res, next) {
 
 async function uploadVideoAndFirstFrameToAws(req, res, next) {
   try {
+    //     print("Input the TikTok URL")
+    // url = input()
+    // from TikTokApi import TikTokApi
+    // api = TikTokApi()
+    // video_bytes = api.get_Video_No_Watermark(url)
+    // with open("tiktok.mp4", 'wb') as output:
+    //     output.write(video_bytes)
+
     if (req.files && req.files.media) {
       const file = req.files.media;
       const uploadRes = await fileUploadService.uploadFileToAws(file);

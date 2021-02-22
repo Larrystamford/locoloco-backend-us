@@ -26,9 +26,13 @@ module.exports = {
 
     const itemObject = await Item.find({ _id: itemId });
 
-    let totalPrice = Math.round(
-      itemObject[0].price * quantity * 100 + 500 * quantity
-    );
+    // shipping
+    // let totalPrice = Math.round(
+    //   itemObject[0].price * quantity * 100 + 500 * quantity
+    // );
+
+    let totalPrice = Math.round(itemObject[0].price * quantity * 100);
+
     if (totalPrice == 0) {
       res.status(400).send(err);
     }
@@ -89,9 +93,13 @@ module.exports = {
     const googleTokenObj = JSON.parse(googleToken);
     const itemObject = await Item.find({ _id: itemId });
 
-    let totalPrice = Math.round(
-      itemObject[0].price * quantity * 100 + 500 * quantity
-    );
+    // shipping
+    // let totalPrice = Math.round(
+    //   itemObject[0].price * quantity * 100 + 500 * quantity
+    // );
+
+    let totalPrice = Math.round(itemObject[0].price * quantity * 100);
+
     if (totalPrice == 0) {
       res.status(400).send(err);
     }

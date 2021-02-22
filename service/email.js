@@ -1,5 +1,5 @@
-// let winston = require("winston"),
-// WinstonCloudWatch = require("winston-cloudwatch");
+let winston = require("winston"),
+  WinstonCloudWatch = require("winston-cloudwatch");
 
 const nodemailer = require("nodemailer");
 if (process.env.NODE_ENV !== "production") {
@@ -10,15 +10,15 @@ var fs = require("fs");
 const util = require("util");
 const readFile = util.promisify(fs.readFile);
 
-// winston.add(
-//   new WinstonCloudWatch({
-//     logGroupName: "testing",
-//     logStreamName: "first",
-//     awsAccessKeyId: process.env.AWS_ACCESS_ID,
-//     awsSecretKey: process.env.AWS_SECRET_KEY,
-//     awsRegion: process.env.AWS_REGION,
-//   })
-// );
+winston.add(
+  new WinstonCloudWatch({
+    logGroupName: "testing",
+    logStreamName: "first",
+    awsAccessKeyId: process.env.AWS_ACCESS_ID,
+    awsSecretKey: process.env.AWS_SECRET_KEY,
+    awsRegion: process.env.AWS_REGION,
+  })
+);
 
 async function sendEmailSignUp(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({

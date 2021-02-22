@@ -34,7 +34,8 @@ async function handleItemStock(userId, sellerId, quantity, itemId) {
   buyerEmail = buyer[0].email;
   buyerPostalCode = buyer[0].postalCode;
   buyerName = buyer[0].firstName + " " + buyer[0].lastName;
-  deliveryCost = quantity * 500;
+  // deliveryCost = quantity * 500;
+  deliveryCost = 0
 
   let totalPrice = Math.round(
     purchasedItem[0].price * quantity * 100 + deliveryCost

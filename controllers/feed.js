@@ -27,8 +27,6 @@ let FeedController = {
       }
       potentialFeeds.push(potentialFeed);
 
-      console.log(potentialFeed, watchingFeedId, totalVideoCount, "sdsdfdsf");
-
       while (watchingFeedId > 1 && totalVideoCount < 3) {
         potentialFeed = await getPotentialFeed(userId, watchingFeedId);
         potentialFeeds.push(potentialFeed);
@@ -114,6 +112,10 @@ let FeedController = {
           .populate({
             path: "videos",
             populate: { path: "comments", populate: { path: "replies" } },
+          })
+          .populate({
+            path: "videos",
+            populate: { path: "reviews" },
           });
 
         feedWatched = feedWatched[0];
@@ -145,6 +147,10 @@ let FeedController = {
             .populate({
               path: "videos",
               populate: { path: "comments", populate: { path: "replies" } },
+            })
+            .populate({
+              path: "videos",
+              populate: { path: "reviews" },
             });
 
           nextFeedWatched = nextFeedWatched[0];
@@ -175,6 +181,10 @@ let FeedController = {
           .populate({
             path: "videos",
             populate: { path: "comments", populate: { path: "replies" } },
+          })
+          .populate({
+            path: "videos",
+            populate: { path: "reviews" },
           });
 
         feedWatched = feedWatched[0];
@@ -205,6 +215,10 @@ let FeedController = {
             .populate({
               path: "videos",
               populate: { path: "comments", populate: { path: "replies" } },
+            })
+            .populate({
+              path: "videos",
+              populate: { path: "reviews" },
             });
 
           nextFeedWatched = nextFeedWatched[0];

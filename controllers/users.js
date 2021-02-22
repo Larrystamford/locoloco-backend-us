@@ -169,6 +169,10 @@ module.exports = {
             path: "items",
           },
         })
+        .populate({
+          path: "videos",
+          populate: { path: "reviews" },
+        })
         .populate("purchases")
         .populate("sales");
 
@@ -200,7 +204,12 @@ module.exports = {
           populate: {
             path: "items",
           },
+        })
+        .populate({
+          path: "videos",
+          populate: { path: "reviews" },
         });
+        
       console.log(userVideos);
       res.status(200).send(userVideos);
     } catch (err) {

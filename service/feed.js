@@ -51,6 +51,10 @@ async function getPotentialFeed(userId, watchedFeedId) {
       .populate({
         path: "videos",
         populate: { path: "comments", populate: { path: "replies" } },
+      })
+      .populate({
+        path: "videos",
+        populate: { path: "reviews" },
       });
 
     const potentialFeedCount = potentialFeed.count;
@@ -99,6 +103,10 @@ async function getPotentialFeed(userId, watchedFeedId) {
           .populate({
             path: "videos",
             populate: { path: "comments", populate: { path: "replies" } },
+          })
+          .populate({
+            path: "videos",
+            populate: { path: "reviews" },
           });
 
         // check and skip videos in "nextUnseenFeed"
@@ -144,6 +152,10 @@ async function getPotentialFeed(userId, watchedFeedId) {
       .populate({
         path: "videos",
         populate: { path: "comments", populate: { path: "replies" } },
+      })
+      .populate({
+        path: "videos",
+        populate: { path: "reviews" },
       });
 
     const potentialFeedCount = potentialFeed.count;
@@ -170,7 +182,11 @@ async function getPotentialFeed(userId, watchedFeedId) {
           .populate({
             path: "videos",
             populate: { path: "comments", populate: { path: "replies" } },
-          });
+          })
+          .populate({
+            path: "videos",
+            populate: { path: "reviews" },
+          })
 
         // check and skip videos in "nextUnseenFeed"
         feedWatched = await SeenVideos.findOne({
@@ -210,7 +226,7 @@ function filterVideosByCategory(potentialFeed, category) {
       videosWithCategory.push(potentialFeed.videos[i]);
     }
   }
-  
+
   potentialFeed.videos = videosWithCategory;
   return potentialFeed;
 }

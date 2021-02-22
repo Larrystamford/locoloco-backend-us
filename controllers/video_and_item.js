@@ -36,7 +36,8 @@ let VideoAndItemController = {
           populate: { path: "replies" },
         })
         .populate("user")
-        .populate("items");
+        .populate("items")
+        .populate("reviews")
 
       res.status(200).send(videoItems);
     } catch (err) {

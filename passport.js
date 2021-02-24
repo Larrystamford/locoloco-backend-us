@@ -93,6 +93,18 @@ passport.use(
             "User doesn't exist - We are creating a new one with Google Account"
           );
 
+          const randomSelectProfilePic = Math.floor(Math.random() * 8);
+          const locoProfilePic = [
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+          ];
+
           const welcomeNotification = new Notification({
             userPicture:
               "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
@@ -112,7 +124,7 @@ passport.use(
 
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
-            picture: profile._json.picture,
+            picture: locoProfilePic[randomSelectProfilePic],
             email: profile.emails[0].value,
             authStatus: "AUTH_SIGN_UP",
             seenVideos: [],

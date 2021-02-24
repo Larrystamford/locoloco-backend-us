@@ -102,11 +102,22 @@ module.exports = {
       email: email.toLowerCase(),
     });
 
+    const randomSelectProfilePic = Math.floor(Math.random() * 8);
+    const locoProfilePic = [
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+      "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+    ];
+
     newUser.userName = await usersHelper.generateUsername(newUser.email);
     newUser.firstName = newUser.userName;
     newUser.lastName = "";
-    newUser.picture =
-      "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/default_profile_pic.jpg";
+    newUser.picture = locoProfilePic[randomSelectProfilePic];
     newUser.address == "";
     newUser.notifications = [welcomeNotification];
 
@@ -209,7 +220,7 @@ module.exports = {
           path: "videos",
           populate: { path: "reviews" },
         });
-        
+
       console.log(userVideos);
       res.status(200).send(userVideos);
     } catch (err) {

@@ -35,7 +35,7 @@ async function handleItemStock(userId, sellerId, quantity, itemId) {
   buyerPostalCode = buyer[0].postalCode;
   buyerName = buyer[0].firstName + " " + buyer[0].lastName;
   // deliveryCost = quantity * 500;
-  deliveryCost = 0
+  deliveryCost = 0;
 
   let totalPrice = Math.round(
     purchasedItem[0].price * quantity * 100 + deliveryCost
@@ -171,8 +171,21 @@ async function saveAmazonReviews(videoId, amazonLink) {
           fakeUserName = fakerator.names.name().split(" ")[0];
         }
 
+        const randomSelectProfilePic = Math.floor(Math.random() * 8);
+        const locoProfilePic = [
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+        ];
+
         newReview = new Review({
           userName: fakeUserName,
+          userPicture: locoProfilePic[randomSelectProfilePic],
           videoId: videoId,
           rating: review.rating,
           text: review.text.trim(),

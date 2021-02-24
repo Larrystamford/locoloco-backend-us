@@ -49,7 +49,6 @@ let CommentController = {
       );
 
       // notify the video owner that someone commented
-      console.log(commentUserId, commenterId, "hello");
       if (commentUserId && commentUserId != commenterId) {
         let newNotification = {
           userPicture: newComment.picture,

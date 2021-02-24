@@ -34,6 +34,18 @@ async function registerOrLogin(id_token) {
 
       const newUserName = await usersHelper.generateUsername(email);
 
+      const randomSelectProfilePic = Math.floor(Math.random() * 8);
+      const locoProfilePic = [
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+      ];
+
       const welcomeNotification = new Notification({
         userPicture:
           "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
@@ -53,8 +65,7 @@ async function registerOrLogin(id_token) {
 
         firstName: newUserName,
         lastName: "",
-        picture:
-          "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/default_profile_pic.jpg",
+        picture: locoProfilePic[randomSelectProfilePic],
         email: email,
         seenVideos: [],
         likedVideos: [],

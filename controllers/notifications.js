@@ -28,7 +28,7 @@ module.exports = {
       subscriptionRequest
     );
     await newSubscriptionRequest.save();
-
+    console.log("push success subscribed");
     res.status(201).json("success");
   },
 

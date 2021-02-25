@@ -23,13 +23,21 @@ module.exports = {
   // push notifications
 
   handlePushNotificationSubscription: async (req, res, next) => {
-    const subscriptionRequest = req.body;
-    const newSubscriptionRequest = new PushNotificationSubscription(
-      subscriptionRequest
-    );
-    await newSubscriptionRequest.save();
-    console.log("push success subscribed");
-    res.status(201).json("success");
+    try {
+      const subscriptionRequest = req.body;
+
+      if (!subscriptionRequest || !subscriptionRequest.endpoint) {
+        throw "bad subscription request";
+      }
+
+      const newSubscriptionRequest = new PushNotificationSubscription(
+        subscriptionRequest
+      );
+      await newSubscriptionRequest.save();
+      res.status(201).json("success");
+    } catch (err) {
+      res.status(500).send(err);
+    }
   },
 
   sendPushNotification: async (req, res, next) => {
@@ -58,41 +66,41 @@ module.exports = {
 
   massSendPushNotification: async (req, res, next) => {
     const { title, text, image, tag, url } = req.body;
-    const listOfPushNotificationSubscriptions = await PushNotificationSubscription.find();
 
-    const notificationPromises = [];
-    for (const eachSubscriptionObject of listOfPushNotificationSubscriptions) {
-      let pushSubscription = {};
-      pushSubscription.keys = eachSubscriptionObject.keys;
-      pushSubscription.endpoint = eachSubscriptionObject.endpoint;
-      pushSubscription.expirationTime = eachSubscriptionObject.expirationTime;
+    try {
+      const listOfPushNotificationSubscriptions = await PushNotificationSubscription.find();
 
-      notificationPromises.push(
-        webpush.sendNotification(
-          pushSubscription,
-          JSON.stringify({
-            title: title,
-            text: text,
-            image: image,
-            tag: tag,
-            url: url,
-          })
-        )
-      );
-    }
+      console.log(listOfPushNotificationSubscriptions, text);
 
-    Promise.all(notificationPromises)
-      .then((values) => {
-        // console.log(values);
-        console.log("done");
-      })
-      .catch((err) => {
-        console.log(err);
+      for (const eachSubscriptionObject of listOfPushNotificationSubscriptions) {
+        let pushSubscription = {};
+        pushSubscription.keys = eachSubscriptionObject.keys;
+        pushSubscription.endpoint = eachSubscriptionObject.endpoint;
+        pushSubscription.expirationTime = eachSubscriptionObject.expirationTime;
+
+        try {
+          await webpush.sendNotification(
+            pushSubscription,
+            JSON.stringify({
+              title: title,
+              text: text,
+              image: image,
+              tag: tag,
+              url: url,
+            })
+          );
+          console.log("success notif");
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      res.status(200).json({
+        message: "success",
       });
-
-    res.status(200).json({
-      message: "success",
-    });
+    } catch (err) {
+      res.status(500).send(err);
+    }
   },
 
   // in app notification

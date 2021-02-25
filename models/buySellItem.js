@@ -22,6 +22,7 @@ const buySellItemSchema = new Schema(
     shippedAt: String, // moment().format("yyyy-MM-DDTHH:mm:ss.SSS");
     deliveredAt: String,
     refundedAt: String,
+    shippingDelayed: Boolean,
   },
   { timestamps: true }
 );

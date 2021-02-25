@@ -544,6 +544,7 @@ module.exports = {
   updateShippingStatus: async (req, res, next) => {
     const {
       buySellItemId,
+      shippingDelayed,
       sellerDeliveryStatus,
       buyerDeliveryStatus,
     } = req.body;
@@ -581,6 +582,22 @@ module.exports = {
             buyerDeliveryStatus: buyerDeliveryStatus,
             sellerDeliveryStatus: sellerDeliveryStatus,
             deliveredAt: statusChangeDate,
+          }
+        );
+      }
+
+      if (typeof shippingDelayed !== "undefined" && shippingDelayed) {
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            shippingDelayed: true,
+          }
+        );
+      } else if (typeof shippingDelayed !== "undefined" && !shippingDelayed) {
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            shippingDelayed: false,
           }
         );
       }

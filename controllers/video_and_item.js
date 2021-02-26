@@ -125,7 +125,6 @@ let VideoAndItemController = {
     let user;
 
     const userId = req.query.userId;
-    const amazonLink = req.query.amazonLink;
 
     req.body.video.categories = req.body.video.categories.map((v) =>
       v.toLowerCase()
@@ -194,7 +193,7 @@ let VideoAndItemController = {
     newVideo.averagePrice = totalPrice / newItems.length;
     newVideo.totalStocks = totalStocks;
 
-    await videoItemService.saveAmazonReviews(newVideo._id, amazonLink);
+    await videoItemService.saveAmazonReviews(newVideo._id, newVideo.amazonLink);
 
     try {
       await newVideo.save();
@@ -268,9 +267,9 @@ let VideoAndItemController = {
     let limit = req.query.limit;
 
     console.log(page, limit);
-    // let { videoId, amazonLink } = req.body;
+    let { videoId, amazonLink } = req.body;
     try {
-      // await videoItemService.saveAmazonReviews(videoId, amazonLink);
+      await videoItemService.saveAmazonReviews(videoId, amazonLink);
 
       res.status(201).send("done");
     } catch (err) {

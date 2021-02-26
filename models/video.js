@@ -46,6 +46,8 @@ const videoSchema = new Schema(
         ref: "Review",
       },
     ],
+    amazonLink: String,
+    amazonOrInternal: String,
   },
   { timestamps: true }
 );

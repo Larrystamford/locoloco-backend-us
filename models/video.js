@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const videoSchema = new Schema(
   {
     //   id: Schema.Types.ObjectId,
+    feedId: Number,
     url: { type: String, required: true },
     coverImageUrl: String,
     mediaType: String, // video or image

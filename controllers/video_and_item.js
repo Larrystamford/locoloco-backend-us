@@ -37,7 +37,7 @@ let VideoAndItemController = {
         })
         .populate("user")
         .populate("items")
-        .populate("reviews")
+        .populate("reviews");
 
       res.status(200).send(videoItems);
     } catch (err) {
@@ -164,8 +164,9 @@ let VideoAndItemController = {
     }
 
     // SAVING VIDEO TO FEED
+    let videoFeedId;
     try {
-      await addVideoToFeed(newVideo._id, newVideo.categories);
+      videoFeedId = await addVideoToFeed(newVideo._id, newVideo.categories);
     } catch (err) {
       res.status(500).send(err);
     }
@@ -190,6 +191,7 @@ let VideoAndItemController = {
     }
 
     // save video again with updated fields
+    newVideo.feedId = videoFeedId;
     newVideo.averagePrice = totalPrice / newItems.length;
     newVideo.totalStocks = totalStocks;
 

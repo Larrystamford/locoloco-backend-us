@@ -24,7 +24,11 @@ async function addVideoToFeed(videoId, categories) {
       },
       { upsert: true }
     );
-    return "success";
+
+    latestFeedId = await Feed.findOne().sort({ field: "asc", id: -1 });
+    latestFeedId = latestFeedId.id;
+
+    return latestFeedId;
   } catch (err) {
     console.log(err.toString(), "error");
     return "adding video to feed collection failed" + err.toString();
@@ -186,7 +190,7 @@ async function getPotentialFeed(userId, watchedFeedId) {
           .populate({
             path: "videos",
             populate: { path: "reviews" },
-          })
+          });
 
         // check and skip videos in "nextUnseenFeed"
         feedWatched = await SeenVideos.findOne({

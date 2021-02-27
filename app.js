@@ -9,7 +9,6 @@ const cors = require("cors");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
 // Init mongoose
 const connection_url = process.env.DB;
 
@@ -20,21 +19,6 @@ mongoose
     useUnifiedTopology: true,
   })
   .then((db) => {
-    // const messagesCollection = db.model("messages");
-    // const changeStream = messagesCollection.watch();
-
-    // changeStream.on("change", (change) => {
-    //   if (change.operationType === "insert") {
-    //     const messageDetails = change.fullDocument;
-    //     pusher.trigger("messages-channel", "inserted-event", {
-    //       name: messageDetails.name,
-    //       message: messageDetails.message,
-    //     });
-    //   } else {
-    //     console.log("Error triggering pusher");
-    //   }
-    // });
-
     console.log("Database Connected Successfully");
   })
   .catch((err) => console.log(err));

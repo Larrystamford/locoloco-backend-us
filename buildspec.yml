@@ -4,9 +4,8 @@ phases:
   install:
     commands:
       # Install dependencies needed for running tests
-            - npm i amazon-reviews-crawler
-
       - npm install
+      - npm install amazon-reviews-crawler
 
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli

@@ -155,14 +155,19 @@ async function handleStocksRevert(
 }
 
 async function saveAmazonReviews(videoId, amazonLink) {
+  console.log("debug 1", amazonLink)
   const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
   let asin = amazonLink.match(ASINreg);
   if (asin) {
     asin = asin[1];
   }
 
+  console.log("debug 2", asin)
+
   if (asin) {
     const reviews = await reviewsCrawler(asin);
+    console.log("debug 3", reviews)
+
     let newReview;
     for (const review of reviews.reviews) {
       if (review.rating > 2) {
@@ -199,6 +204,8 @@ async function saveAmazonReviews(videoId, amazonLink) {
           }
         );
         await newReview.save();
+
+        console.log("debug 4", newReview)
       }
     }
   }

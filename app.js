@@ -61,17 +61,6 @@ app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/error", require("./routes/error"));
 
-// app.use("/v1/messages", require("./routes/messages"));
-// app.use("/usersBuying", require("./routes/users_buying"));
-// app.use("/usersInfo", require("./routes/users_info"));
-// app.use("/usersSocial", require("./routes/users_social"));
-// app.use("/usersUtils", require("./routes/users_utils"));
-// app.use("/shops", require("./routes/shops"));
-// app.use("/shopsCommerce", require("./routes/shops_commerce"));
-// app.use("/shopsInfo", require("./routes/shops_info"));
-// app.use("/shopsDiscovery", require("./routes/shops_discovery"));
-// app.use("/shopsUtils", require("./routes/shops_utils"));
-
 // Start the Server
 const port = process.env.PORT || 5000;
 app.listen(port);

@@ -6,6 +6,8 @@ phases:
       # Install dependencies needed for running tests
       - npm install
       - npm install amazon-reviews-crawler
-      
+      - npm install cheerio
+      - npm install proxycrawl
+
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli

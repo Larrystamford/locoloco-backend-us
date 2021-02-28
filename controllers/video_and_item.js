@@ -170,6 +170,7 @@ let VideoAndItemController = {
     }
 
     const newItems = req.body.items;
+    console.log(newItems, "cool");
     let totalPrice = 0;
     let totalStocks = 0;
     for (let eachItem of newItems) {
@@ -187,6 +188,8 @@ let VideoAndItemController = {
 
       newVideo.items = [...newVideo.items, eachItem._id];
     }
+
+    console.log(newVideo, "save this vid");
 
     // save video again with updated fields
     newVideo.feedId = videoFeedId;
@@ -263,12 +266,17 @@ let VideoAndItemController = {
   },
 
   // post review using amazon link, not in use currently merged into the post video item
-  postReview: async (req, res, next) => {
-    let { amazonLink } = req.body;
+  addReviews: async (req, res, next) => {
     try {
-      // await videoItemService.saveAmazonReviews(videoId, amazonLink);
-
-
+      const listOfVideosItems = await Video.find();
+      for (eachVideo of listOfVideosItems) {
+        if (!eachVideo.reviews || eachVideo.reviews.length == 0) {
+          await videoItemService.saveAmazonReviews(
+            eachVideo._id,
+            eachVideo.amazonLink
+          );
+        }
+      }
       res.status(201).send("done");
     } catch (err) {
       console.log(err);

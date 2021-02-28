@@ -89,7 +89,6 @@ let VideoAndItemController = {
   // requires videoId param (to do: add multiple items at once)
   createItem: async (req, res, next) => {
     let video;
-
     const { videoId } = req.params;
     const newItem = new Item(req.body);
 
@@ -105,7 +104,6 @@ let VideoAndItemController = {
     try {
       await newItem.save();
     } catch (err) {
-      console.log("2", err);
       res.status(500).send(err);
     }
 

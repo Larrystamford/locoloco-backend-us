@@ -155,59 +155,63 @@ async function handleStocksRevert(
 }
 
 async function saveAmazonReviews(videoId, amazonLink) {
-  console.log("debug 1", amazonLink)
-  const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
-  let asin = amazonLink.match(ASINreg);
-  if (asin) {
-    asin = asin[1];
-  }
+  try {
+    console.log("debugs 1", amazonLink);
+    const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
+    let asin = amazonLink.match(ASINreg);
+    if (asin) {
+      asin = asin[1];
+    }
 
-  console.log("debug 2", asin)
+    console.log("debugs 2", asin);
 
-  if (asin) {
-    const reviews = await reviewsCrawler(asin);
-    console.log("debug 3", reviews)
+    if (asin) {
+      const reviews = await reviewsCrawler(asin);
+      console.log("debug 3", reviews);
 
-    let newReview;
-    for (const review of reviews.reviews) {
-      if (review.rating > 2) {
-        let fakeUserName = fakerator.names.name().split(" ")[0];
-        while (fakeUserName.includes(".")) {
-          fakeUserName = fakerator.names.name().split(" ")[0];
-        }
-
-        const randomSelectProfilePic = Math.floor(Math.random() * 8);
-        const locoProfilePic = [
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
-          "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
-        ];
-
-        newReview = new Review({
-          userName: fakeUserName,
-          userPicture: locoProfilePic[randomSelectProfilePic],
-          videoId: videoId,
-          rating: review.rating,
-          text: review.text.trim(),
-        });
-
-        await Video.findByIdAndUpdate(
-          { _id: videoId },
-          {
-            $push: { reviews: newReview },
-            $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+      let newReview;
+      for (const review of reviews.reviews) {
+        if (review.rating > 2) {
+          let fakeUserName = fakerator.names.name().split(" ")[0];
+          while (fakeUserName.includes(".")) {
+            fakeUserName = fakerator.names.name().split(" ")[0];
           }
-        );
-        await newReview.save();
 
-        console.log("debug 4", newReview)
+          const randomSelectProfilePic = Math.floor(Math.random() * 8);
+          const locoProfilePic = [
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+          ];
+
+          newReview = new Review({
+            userName: fakeUserName,
+            userPicture: locoProfilePic[randomSelectProfilePic],
+            videoId: videoId,
+            rating: review.rating,
+            text: review.text.trim(),
+          });
+
+          await Video.findByIdAndUpdate(
+            { _id: videoId },
+            {
+              $push: { reviews: newReview },
+              $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+            }
+          );
+          await newReview.save();
+
+          console.log("debug 4", newReview);
+        }
       }
     }
+  } catch (error) {
+    console.log("amazon error", error);
   }
 }
 

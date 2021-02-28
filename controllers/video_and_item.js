@@ -195,6 +195,8 @@ let VideoAndItemController = {
     newVideo.averagePrice = totalPrice / newItems.length;
     newVideo.totalStocks = totalStocks;
 
+    console.log(newVideo.amazonLink,"AMAZON LINK")
+
     await videoItemService.saveAmazonReviews(newVideo._id, newVideo.amazonLink);
 
     try {

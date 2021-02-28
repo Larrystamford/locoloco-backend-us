@@ -132,7 +132,7 @@ let VideoAndItemController = {
     req.body.video.gender = req.body.video.gender.toLowerCase();
 
     let newVideo = new Video(req.body.video);
-    
+
     newVideo.likes = [];
     newVideo.shares = 0;
     try {
@@ -193,7 +193,8 @@ let VideoAndItemController = {
     newVideo.averagePrice = totalPrice / newItems.length;
     newVideo.totalStocks = totalStocks;
 
-    await videoItemService.saveAmazonReviews(newVideo._id, newVideo.amazonLink);
+    // the npm package doenst work in elastic bean stalk
+    // await videoItemService.saveAmazonReviews(newVideo._id, newVideo.amazonLink);
 
     try {
       await newVideo.save();
@@ -265,7 +266,8 @@ let VideoAndItemController = {
   postReview: async (req, res, next) => {
     let { amazonLink } = req.body;
     try {
-      await videoItemService.saveAmazonReviews(videoId, amazonLink);
+      // await videoItemService.saveAmazonReviews(videoId, amazonLink);
+
 
       res.status(201).send("done");
     } catch (err) {

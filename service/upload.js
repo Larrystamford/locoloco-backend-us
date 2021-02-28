@@ -40,6 +40,7 @@ async function uploadFirstFrame(data, fileName, mimetype) {
       err == null ? resolve(data) : reject(err)
     );
   });
+  
   return { url: resFirstFrame.Location };
 }
 

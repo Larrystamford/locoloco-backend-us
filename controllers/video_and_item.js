@@ -123,7 +123,6 @@ let VideoAndItemController = {
 
   uploadVideoAndItem: async (req, res, next) => {
     let user;
-
     const userId = req.query.userId;
 
     req.body.video.categories = req.body.video.categories.map((v) =>
@@ -135,6 +134,7 @@ let VideoAndItemController = {
     req.body.video.gender = req.body.video.gender.toLowerCase();
 
     let newVideo = new Video(req.body.video);
+    
     newVideo.likes = [];
     newVideo.shares = 0;
     try {
@@ -194,8 +194,6 @@ let VideoAndItemController = {
     newVideo.feedId = videoFeedId;
     newVideo.averagePrice = totalPrice / newItems.length;
     newVideo.totalStocks = totalStocks;
-
-    console.log(newVideo.amazonLink,"AMAZON LINK")
 
     await videoItemService.saveAmazonReviews(newVideo._id, newVideo.amazonLink);
 

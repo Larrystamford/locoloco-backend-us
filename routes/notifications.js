@@ -2,12 +2,12 @@ const router = require("express-promise-router")();
 const NotificationsController = require("../controllers/notifications");
 
 router
-  .route("/handlePushNotificationSubscription/")
+  .route("/handlePushNotificationSubscription/:userId")
   .post(NotificationsController.handlePushNotificationSubscription);
 
 router
-  .route("/sendPushNotification/:id")
-  .get(NotificationsController.sendPushNotification);
+  .route("/sendPushNotification/:userId")
+  .post(NotificationsController.sendPushNotification);
 
 router
   .route("/newNotificationsCount")

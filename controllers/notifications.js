@@ -24,44 +24,80 @@ module.exports = {
 
   handlePushNotificationSubscription: async (req, res, next) => {
     try {
+      const { userId } = req.params;
       const subscriptionRequest = req.body;
 
       if (!subscriptionRequest || !subscriptionRequest.endpoint) {
         throw "bad subscription request";
       }
 
-      const newSubscriptionRequest = new PushNotificationSubscription(
-        subscriptionRequest
-      );
-      await newSubscriptionRequest.save();
+      const subscriptionExist = await PushNotificationSubscription.findOne({
+        endpoint: subscriptionRequest.endpoint,
+      });
+
+      if (!subscriptionExist) {
+        const newSubscriptionRequest = new PushNotificationSubscription(
+          subscriptionRequest
+        );
+        await newSubscriptionRequest.save();
+
+        await User.updateOne(
+          { _id: userId },
+          {
+            $addToSet: {
+              pushNotificationSubscriptions: newSubscriptionRequest,
+            },
+          },
+          { upsert: false }
+        );
+      }
+
       res.status(201).json("success");
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },
 
   sendPushNotification: async (req, res, next) => {
-    const subscriptionId = req.params.id;
-    const pushSubscription = subscriptions[subscriptionId];
+    const { userId } = req.params;
+    const { title, text, image, tag, url } = req.body;
 
-    await webpush
-      .sendNotification(
-        pushSubscription,
-        JSON.stringify({
-          title: "New Product Available ",
-          text: "HEY! Take a look at this brand new t-shirt!",
-          image:
-            "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/icon-192x192.png",
-          tag: "new-product",
-          url: "https://www.shoplocoloco.com/",
-        })
-      )
-      .catch((err) => {
-        console.log(err);
+    try {
+      const subscriptionExist = await User.findById(userId).populate(
+        "pushNotificationSubscriptions"
+      );
+      const userSubsciptions = subscriptionExist.pushNotificationSubscriptions;
+
+      for (const eachSubscriptionObject of userSubsciptions) {
+        let pushSubscription = {};
+        pushSubscription.keys = eachSubscriptionObject.keys;
+        pushSubscription.endpoint = eachSubscriptionObject.endpoint;
+        pushSubscription.expirationTime = eachSubscriptionObject.expirationTime;
+
+        try {
+          await webpush.sendNotification(
+            pushSubscription,
+            JSON.stringify({
+              title: title,
+              text: text,
+              image: image,
+              tag: tag,
+              url: url,
+            })
+          );
+          console.log("success notif");
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      res.status(200).json({
+        message: "success",
       });
-
-    console.log("sents");
-    res.status(202).json({});
+    } catch (err) {
+      res.status(500).send(err);
+    }
   },
 
   massSendPushNotification: async (req, res, next) => {
@@ -69,8 +105,6 @@ module.exports = {
 
     try {
       const listOfPushNotificationSubscriptions = await PushNotificationSubscription.find();
-
-      console.log(listOfPushNotificationSubscriptions, text);
 
       for (const eachSubscriptionObject of listOfPushNotificationSubscriptions) {
         let pushSubscription = {};

@@ -104,6 +104,12 @@ const userSchema = new Schema(
         ref: "Notification",
       },
     ],
+    pushNotificationSubscriptions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "PushNotificationSubscription",
+      },
+    ],
     comments: [
       {
         type: Schema.Types.ObjectId,

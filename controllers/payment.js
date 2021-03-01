@@ -72,7 +72,7 @@ module.exports = {
           itemId,
           newBuySellItemId
         );
-        console.log("failed to create payment intent");
+        console.log("failed to create payment intent", err);
         winston.error("failed to create payment intent", err.toString());
         res.send({
           status: err.toString(),

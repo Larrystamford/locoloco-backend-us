@@ -467,9 +467,8 @@ module.exports = {
     try {
       // if on fyp and feed does not exist, update the latest session nextUnseenFeedId
 
-      // why we only update for feed is because for other categories
-      // they may not finish the feed. So we cant tell if we should skip
-      // so just have to while loop to get all
+      // this is to update the latest feed session only. This is no updated for other categories as the
+      // other categories feedId is jumping around, so we shouldnt say for sure to jump to this feedId.
       if (category == "Feed") {
         feedWatching = await SeenVideos.findOne({
           userId: userId,

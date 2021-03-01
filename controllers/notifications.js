@@ -72,12 +72,15 @@ module.exports = {
   sendPushNotification: async (req, res, next) => {
     const { userId } = req.params;
     const { title, text, image, tag, url } = req.body;
-
     try {
       const subscriptionExist = await User.findById(userId).populate(
         "pushNotificationSubscriptions"
       );
-      const userSubsciptions = subscriptionExist.pushNotificationSubscriptions;
+
+      let userSubsciptions = [];
+      if (subscriptionExist) {
+        userSubsciptions = subscriptionExist.pushNotificationSubscriptions;
+      }
 
       for (const eachSubscriptionObject of userSubsciptions) {
         let pushSubscription = {};
@@ -106,6 +109,7 @@ module.exports = {
         message: "success",
       });
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },

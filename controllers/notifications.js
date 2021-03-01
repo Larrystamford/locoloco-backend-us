@@ -31,11 +31,21 @@ module.exports = {
         throw "bad subscription request";
       }
 
-      const subscriptionExist = await PushNotificationSubscription.findOne({
-        endpoint: subscriptionRequest.endpoint,
-      });
+      const userSubsciptionsExist = await User.findById(userId).populate(
+        "pushNotificationSubscriptions"
+      );
+      const userSubsciptions =
+        userSubsciptionsExist.pushNotificationSubscriptions;
 
-      if (!subscriptionExist) {
+      let userHasSubscription = false;
+      for (const eachSubscriptionObject of userSubsciptions) {
+        if (eachSubscriptionObject.endpoint == subscriptionRequest.endpoint) {
+          userHasSubscription = true;
+          break;
+        }
+      }
+
+      if (!userHasSubscription) {
         const newSubscriptionRequest = new PushNotificationSubscription(
           subscriptionRequest
         );

@@ -18,6 +18,8 @@ router
     UsersController.signIn
   );
 
+router.route("/changePassword").post(UsersController.changePassword);
+
 router
   .route("/secret")
   .get(
@@ -32,9 +34,7 @@ router
     UsersController.googleOAuth
   );
 
-router.route("/oauth/googleIdToken").post(
-  UsersController.googleIdToken
-);
+router.route("/oauth/googleIdToken").post(UsersController.googleIdToken);
 
 // .get(passport.authenticate("jwt", { session: false }), UsersController.list);
 
@@ -66,9 +66,7 @@ router
 router.route("/pushVideoSeen/:userId").put(UsersController.pushVideoSeen);
 
 // CHECK USER ADDRESS
-router
-  .route("/getUserInfo/:userId")
-  .get(UsersController.getUserInfo);
+router.route("/getUserInfo/:userId").get(UsersController.getUserInfo);
 
 // UPDATE SHIPPING ADDRESS FOR BOTH USERS
 router.route("/updateShippingStatus").put(UsersController.updateShippingStatus);

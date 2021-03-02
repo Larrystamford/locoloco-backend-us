@@ -9,6 +9,7 @@ const usersHelper = require("../helpers/usersHelper");
 const sendEmailService = require("../service/email");
 const moment = require("moment");
 const { registerOrLogin } = require("../service/oauth");
+const bcrypt = require("bcryptjs");
 
 const _ = require("lodash/core");
 
@@ -93,11 +94,13 @@ module.exports = {
     });
     await welcomeNotification.save();
 
+    const passwordHash = bcrypt.hashSync(password, 10);
+
     const newUser = new User({
       method: "local",
       local: {
         email: email.toLowerCase(),
-        password: password,
+        password: passwordHash,
       },
       email: email.toLowerCase(),
     });
@@ -125,7 +128,6 @@ module.exports = {
 
     // Generate the Token
     const token = signToken(newUser);
-    console.log(savedUser);
 
     // send sign up email
     sendEmailService.sendEmailSignUp(
@@ -153,6 +155,23 @@ module.exports = {
       userName: req.user.userName,
       picture: req.user.picture,
     });
+  },
+
+  changePassword: async (req, res, next) => {
+    try {
+      const { email, newPassword } = req.body;
+
+      const user = await User.findOne({ email: email });
+      // const salt = await bcrypt.genSalt(4);
+      const passwordHash = bcrypt.hashSync(newPassword, 10);
+      user.local.password = passwordHash;
+      await user.save();
+
+      res.status(200).send("password changed");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
   },
 
   secret: async (req, res, next) => {

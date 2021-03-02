@@ -126,31 +126,13 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-// Mongoose functionality which allows us to run a function before something happens.
-userSchema.pre("save", async function (next) {
-  // In this, we want this function to run before the userschema is saved
-  try {
-    if (this.method !== "local") {
-      next();
-    }
-    // Generate a salt
-    const salt = await bcrypt.genSalt(10);
-    // Hash password with salt
-    const passwordHash = await bcrypt.hash(this.local.password, salt);
-    // Store hashed password instead of original password
-    this.local.password = passwordHash;
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
 userSchema.methods.isValidPassword = async function (enterPassword) {
   try {
-    const passwordMatch = await bcrypt.compare(
+    const passwordMatch = bcrypt.compareSync(
       enterPassword,
       this.local.password
     );
+
     return passwordMatch; // True if matches
   } catch (error) {
     throw new Error(error);

@@ -29,7 +29,7 @@ async function sendEmailSignUp(receiverEmail, subject, message) {
     },
   });
 
-  const htmlFile = await readFile("./service/signUp.html", "utf8");
+  const htmlFile = await readFile("./service/sign_up_email.html", "utf8");
 
   var mailOptions = {
     from: "shoplocoloco.sg@gmail.com",
@@ -58,7 +58,7 @@ async function sendEmailPurchase(receiverEmail, subject, message) {
     },
   });
 
-  const htmlFile = await readFile("./service/signUp.html", "utf8");
+  const htmlFile = await readFile("./service/purchased_email.html", "utf8");
 
   var mailOptions = {
     from: "shoplocoloco.sg@gmail.com",

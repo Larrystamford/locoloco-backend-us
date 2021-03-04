@@ -122,6 +122,12 @@ const userSchema = new Schema(
         ref: "SubComment",
       },
     ],
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
   },
   { timestamps: true }
 );

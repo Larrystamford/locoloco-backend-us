@@ -5,12 +5,13 @@ const Schema = mongoose.Schema;
 const reviewSchema = new Schema(
   {
     videoId: String,
+    itemId: String,
     userName: String, // temp fake user names
     userPicture: String,
     userId: String,
     rating: Number, // which video it belongs to
     text: String,
-    media: String, // uploaded review image or video
+    media: String, // media link
   },
   { timestamps: true }
 );

@@ -57,6 +57,7 @@ app.use("/v1/email", require("./routes/email"));
 app.use("/v1/payment", require("./routes/payment"));
 app.use("/v1/admin", require("./routes/admin"));
 app.use("/v1/comment", require("./routes/comment"));
+app.use("/v1/review", require("./routes/review"));
 app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/error", require("./routes/error"));

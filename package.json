@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon app.js"
   },
-  "author": "Glendon",
+  "author": "Larry",
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",

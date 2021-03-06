@@ -21,6 +21,7 @@ passport.use(
         // Find the user specified in token
         const user = await User.findById(payload.sub);
         // If user doesn't exist, return 'error' or null
+
         if (!user) {
           return done(null, false);
         }

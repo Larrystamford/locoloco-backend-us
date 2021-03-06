@@ -236,7 +236,7 @@ let FeedController = {
           feedWatched.count = skipCount;
         }
       }
-
+      
       res.status(200).send(feedWatched);
     } catch (err) {
       console.log(err);

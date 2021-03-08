@@ -61,6 +61,14 @@ app.use("/v1/review", require("./routes/review"));
 app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/error", require("./routes/error"));
+app.get("/.well-known/apple-developer-merchantid-domain-association", function (
+  req,
+  res
+) {
+  res.sendfile(
+    __dirname + "/.well-known/apple-developer-merchantid-domain-association"
+  );
+});
 
 // Start the Server
 const port = process.env.PORT || 5000;

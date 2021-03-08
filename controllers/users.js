@@ -29,7 +29,6 @@ const sensitiveDataUserName = {
   authStatus: 0,
   purchases: 0,
   likedVideo: 0,
-  seenVideos: 0,
   method: 0,
   number: 0,
 };

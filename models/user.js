@@ -70,8 +70,6 @@ const userSchema = new Schema(
         ref: "BuySellItem",
       },
     ],
-    // video ids that user has seen
-    seenVideos: [String],
     // video objects that the user has liked
     likedVideos: [
       {

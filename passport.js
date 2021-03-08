@@ -129,7 +129,6 @@ passport.use(
             picture: locoProfilePic[randomSelectProfilePic],
             email: profile.emails[0].value,
             authStatus: "AUTH_SIGN_UP",
-            seenVideos: [],
             likedVideos: [],
           });
           newUser.notifications = [welcomeNotification];

@@ -1,6 +1,8 @@
 var crypto = require("crypto");
 const webpush = require("web-push");
 const User = require("../models/user");
+const Video = require("../models/video");
+const Notification = require("../models/notification");
 const PushNotificationSubscription = require("../models/pushNotificationSubscription");
 
 if (process.env.NODE_ENV !== "production") {
@@ -21,7 +23,6 @@ function createHash(input) {
 
 module.exports = {
   // push notifications
-
   handlePushNotificationSubscription: async (req, res, next) => {
     try {
       const { userId } = req.params;
@@ -196,6 +197,36 @@ module.exports = {
 
       res.status(200).send(userNotifications);
     } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
+  createInboxNotification: async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      let newNotification = req.body;
+
+      if (newNotification.videoId) {
+        const leadVideo = await Video.findById(
+          newNotification.videoId
+        ).populate("user");
+        newNotification.userName = leadVideo.userName;
+        newNotification.userPicture = leadVideo.user.picture;
+        newNotification.userId = leadVideo.user._id;
+      }
+
+      console.log(newNotification);
+
+      newNotification = new Notification(newNotification);
+      await User.findByIdAndUpdate(
+        { _id: userId },
+        { $push: { notifications: newNotification } }
+      );
+      await newNotification.save();
+
+      res.status(200).send(newNotification);
+    } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },

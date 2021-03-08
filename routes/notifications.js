@@ -6,6 +6,10 @@ router
   .post(NotificationsController.handlePushNotificationSubscription);
 
 router
+  .route("/createInboxNotification/:userId")
+  .post(NotificationsController.createInboxNotification);
+
+router
   .route("/sendPushNotification/:userId")
   .post(NotificationsController.sendPushNotification);
 

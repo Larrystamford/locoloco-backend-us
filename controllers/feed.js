@@ -61,8 +61,6 @@ let FeedController = {
 
       if (watchingFeedId != 0) {
         potentialFeed = filterVideosByCategory(potentialFeed, category);
-        console.log("category", category);
-        console.log(potentialFeed);
         totalVideoCount += potentialFeed.videos.length;
       }
       potentialFeeds.push(potentialFeed);
@@ -236,7 +234,7 @@ let FeedController = {
           feedWatched.count = skipCount;
         }
       }
-      
+
       res.status(200).send(feedWatched);
     } catch (err) {
       console.log(err);

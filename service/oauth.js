@@ -67,7 +67,6 @@ async function registerOrLogin(id_token) {
         lastName: "",
         picture: locoProfilePic[randomSelectProfilePic],
         email: email,
-        seenVideos: [],
         likedVideos: [],
       });
       newUser.notifications = [welcomeNotification];

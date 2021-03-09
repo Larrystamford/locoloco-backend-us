@@ -56,6 +56,7 @@ async function handleItemStock(userId, sellerId, quantity, itemId) {
     buyerName: buyerName,
     buyerAddress: buyerAddress,
     buyerPostalCode: buyerPostalCode,
+    buyerId: userId,
   });
 
   // update both users purchases and sales items

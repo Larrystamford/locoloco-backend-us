@@ -23,6 +23,7 @@ const buySellItemSchema = new Schema(
     deliveredAt: String,
     refundedAt: String,
     shippingDelayed: Boolean,
+    buyerId: String,
   },
   { timestamps: true }
 );

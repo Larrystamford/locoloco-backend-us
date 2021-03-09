@@ -39,7 +39,6 @@ signToken = (userId) => {
       iss: "Authenticator",
       sub: userId, // can get user id with sub after decrypt
       iat: new Date().getTime(), // Current Time
-      exp: new Date().setDate(new Date().getDate() + 10000000), // Expiry Date = Current Time + 1 Day ahead
     },
     "authentication"
   );

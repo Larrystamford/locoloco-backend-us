@@ -638,4 +638,23 @@ module.exports = {
       res.status(500).send(err);
     }
   },
+
+  addCoins: async (req, res, next) => {
+    const { userId } = req.params;
+    const { locoCoins } = req.body;
+    try {
+      await User.updateOne(
+        { _id: userId },
+        {
+          $inc: { locoCoins: locoCoins },
+        },
+        { upsert: false }
+      );
+
+      res.status(201).send("success");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
 };

@@ -43,7 +43,7 @@ const userSchema = new Schema(
     address: String,
     profileBio: String,
     latestFeedIdPerSession: Number,
-
+    locoCoins: Number,
     followers: [
       {
         id: String,

@@ -71,43 +71,7 @@ router.route("/getUserInfo/:userId").get(UsersController.getUserInfo);
 // UPDATE SHIPPING ADDRESS FOR BOTH USERS
 router.route("/updateShippingStatus").put(UsersController.updateShippingStatus);
 
-// login local
-//   .route("/signup")
-//   .post(validateBody(schemas.authSchema), UsersController.signUp);
+router.route("/addCoins/:userId").put(UsersController.addCoins);
 
-// router
-//   .route("/signin")
-//   .post(
-//     validateBody(schemas.authSchema),
-//     passport.authenticate("local", { session: false }),
-//     UsersController.signIn
-//   );
-
-// router
-//   .route("/v1/userinfo/")
-//   .get(
-//     passport.authenticate("jwt", { session: false }),
-//     UsersController.userinfo
-//   );
-
-// router
-//   .route("/v1/update/")
-//   .put(
-//     passport.authenticate("jwt", { session: false }),
-//     UsersController.update
-//   );
-
-// router.route("/v1/updateUserAsAdmin/:id").put(
-//   passport.authenticate("jwt", { session: false }),
-//   // verify.isAdmin,
-//   UsersController.updateUserAsAdmin
-// );
-
-// router
-//   .route("/v1/updateUserArrays/")
-//   .put(
-//     passport.authenticate("jwt", { session: false }),
-//     UsersController.updateUserArrays
-//   );
 
 module.exports = router;

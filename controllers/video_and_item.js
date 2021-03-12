@@ -271,6 +271,7 @@ let VideoAndItemController = {
       const listOfVideosItems = await Video.find();
       for (eachVideo of listOfVideosItems) {
         if (!eachVideo.reviews || eachVideo.reviews.length == 0) {
+          console.log(eachVideo._id, eachVideo.amazonLink);
           await videoItemService.saveAmazonReviews(
             eachVideo._id,
             eachVideo.amazonLink

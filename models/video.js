@@ -48,7 +48,11 @@ const videoSchema = new Schema(
       },
     ],
     amazonLink: String,
-    amazonOrInternal: String,
+    amazonOrInternal: String, // amazon, small_shop, internal
+    amazons: [],
+    aliexpress: [],
+    smallShopLink: String,
+    productImages: [], // s3 image links of product
   },
   { timestamps: true }
 );

@@ -114,6 +114,47 @@ let UtilsController = {
       res.status(500).send(err);
     }
   },
+
+  // temporary use
+  changeAmazonLinks: async (req, res, next) => {
+    try {
+      const listOfVideosItems = await Video.find().populate("items");
+
+      for (eachVideo of listOfVideosItems) {
+        if (eachVideo.amazonLink && eachVideo.items.length > 0) {
+          eachVideo.amazons.push({
+            amazon_name: eachVideo.items[0].name,
+            amazon_link: eachVideo.amazonLink,
+          });
+        } else {
+          console.log(eachVideo)
+        }
+        // let videoUrl = eachVideo.url;
+        // let videoCoverImageUrl = eachVideo.coverImageUrl;
+
+        // let newVideoUrl = videoUrl.split(".com");
+        // newVideoUrl =
+        //   "https://media2locoloco-us.s3.amazonaws.com" + newVideoUrl[1];
+
+        // let newVideoCoverImageUrl = videoCoverImageUrl.split(".com");
+        // newVideoCoverImageUrl =
+        //   "https://media2locoloco-us.s3.amazonaws.com" +
+        //   newVideoCoverImageUrl[1];
+
+        // console.log(newVideoUrl);
+
+        // console.log(newVideoCoverImageUrl);
+        // eachVideo.url = newVideoUrl;
+        // eachVideo.coverImageUrl = newVideoCoverImageUrl;
+
+        await eachVideo.save();
+      }
+
+      res.status(200).send("success");
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
 };
 
 module.exports = UtilsController;

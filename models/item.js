@@ -14,10 +14,6 @@ const itemSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Video",
     },
-
-    createdTime: String,
-    updatedTime: String,
-    shoppingLinks: [], // for quick reference to which link to buy from etc
   },
   { timestamps: true }
 );

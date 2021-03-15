@@ -155,53 +155,55 @@ async function handleStocksRevert(
   }
 }
 
-async function saveAmazonReviews(videoId, amazonLink) {
+async function saveAmazonReviews(videoId, amazons) {
   try {
-    const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
-    let asin = amazonLink.match(ASINreg);
-    if (asin) {
-      asin = asin[1];
-    }
+    for (const eachAmazon of amazons) {
+      const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
+      let asin = eachAmazon.amazon_link.match(ASINreg);
+      if (asin) {
+        asin = asin[1];
+      }
 
-    if (asin) {
-      const reviews = await reviewsCrawler(asin);
+      if (asin) {
+        const reviews = await reviewsCrawler(asin);
 
-      let newReview;
-      for (const review of reviews.reviews) {
-        if (review.rating > 2) {
-          let fakeUserName = fakerator.names.name().split(" ")[0];
-          while (fakeUserName.includes(".")) {
-            fakeUserName = fakerator.names.name().split(" ")[0];
-          }
-
-          const randomSelectProfilePic = Math.floor(Math.random() * 8);
-          const locoProfilePic = [
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
-          ];
-
-          newReview = new Review({
-            userName: fakeUserName,
-            userPicture: locoProfilePic[randomSelectProfilePic],
-            videoId: videoId,
-            rating: review.rating,
-            text: review.text.trim(),
-          });
-
-          await Video.findByIdAndUpdate(
-            { _id: videoId },
-            {
-              $push: { reviews: newReview },
-              $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+        let newReview;
+        for (const review of reviews.reviews) {
+          if (review.rating > 2) {
+            let fakeUserName = fakerator.names.name().split(" ")[0];
+            while (fakeUserName.includes(".")) {
+              fakeUserName = fakerator.names.name().split(" ")[0];
             }
-          );
-          await newReview.save();
+
+            const randomSelectProfilePic = Math.floor(Math.random() * 8);
+            const locoProfilePic = [
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+            ];
+
+            newReview = new Review({
+              userName: fakeUserName,
+              userPicture: locoProfilePic[randomSelectProfilePic],
+              videoId: videoId,
+              rating: review.rating,
+              text: review.text.trim(),
+            });
+
+            await Video.findByIdAndUpdate(
+              { _id: videoId },
+              {
+                $push: { reviews: newReview },
+                $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+              }
+            );
+            await newReview.save();
+          }
         }
       }
     }

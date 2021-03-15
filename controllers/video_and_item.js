@@ -169,32 +169,37 @@ let VideoAndItemController = {
       res.status(500).send(err);
     }
 
-    const newItems = req.body.items;
-    console.log(newItems, "cool");
-    let totalPrice = 0;
-    let totalStocks = 0;
-    for (let eachItem of newItems) {
-      eachItem = new Item(eachItem);
-      eachItem.video = newVideo;
-      totalPrice = totalPrice + eachItem.price;
-      totalStocks = totalStocks + eachItem.stocks;
+    if (
+      newVideo.amazonOrInternal == "internal" ||
+      newVideo.amazonOrInternal == "both"
+    ) {
+      const newItems = req.body.items;
+      let totalPrice = 0;
+      let totalStocks = 0;
+      for (let eachItem of newItems) {
+        eachItem = new Item(eachItem);
+        eachItem.video = newVideo;
+        totalPrice = totalPrice + eachItem.price;
+        totalStocks = totalStocks + eachItem.stocks;
 
-      try {
-        eachItem = await eachItem.save();
-      } catch (err) {
-        console.log("Saving each item", err);
-        res.status(500).send(err);
+        try {
+          eachItem = await eachItem.save();
+        } catch (err) {
+          console.log("Saving each item", err);
+          res.status(500).send(err);
+        }
+
+        newVideo.items = [...newVideo.items, eachItem._id];
       }
 
-      newVideo.items = [...newVideo.items, eachItem._id];
+      newVideo.averagePrice = totalPrice / newItems.length;
+      newVideo.totalStocks = totalStocks;
+    } else {
+      newVideo.averagePrice = 0;
+      newVideo.totalStocks = 0;
     }
 
-    console.log(newVideo, "save this vid");
-
-    // save video again with updated fields
     newVideo.feedId = videoFeedId;
-    newVideo.averagePrice = totalPrice / newItems.length;
-    newVideo.totalStocks = totalStocks;
 
     // the npm package doenst work in elastic bean stalk
     // await videoItemService.saveAmazonReviews(newVideo._id, newVideo.amazonLink);
@@ -271,10 +276,9 @@ let VideoAndItemController = {
       const listOfVideosItems = await Video.find();
       for (eachVideo of listOfVideosItems) {
         if (!eachVideo.reviews || eachVideo.reviews.length == 0) {
-          console.log(eachVideo._id, eachVideo.amazonLink);
           await videoItemService.saveAmazonReviews(
             eachVideo._id,
-            eachVideo.amazonLink
+            eachVideo.amazons
           );
         }
       }

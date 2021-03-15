@@ -14,6 +14,7 @@ router
   .get(UtilsController.addExistingVideosToFeed);
 
 router.route("/changeSeaToUsLinks").get(UtilsController.changeSeaToUsLinks);
+router.route("/changeAmazonLinks").get(UtilsController.changeAmazonLinks);
 
 router.route("/createAdmin").get(UtilsController.createAdmin);
 

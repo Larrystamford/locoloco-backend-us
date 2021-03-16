@@ -130,6 +130,7 @@ passport.use(
             email: profile.emails[0].value,
             authStatus: "AUTH_SIGN_UP",
             likedVideos: [],
+            profileBio: "shoplocoloco.com",
           });
           newUser.notifications = [welcomeNotification];
           newUser.userName = await usersHelper.generateUsername(newUser.email);

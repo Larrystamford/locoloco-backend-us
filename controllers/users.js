@@ -101,6 +101,7 @@ module.exports = {
         password: passwordHash,
       },
       email: email.toLowerCase(),
+      profileBio: "shoplocoloco.com",
     });
 
     const randomSelectProfilePic = Math.floor(Math.random() * 8);

@@ -119,8 +119,9 @@ let UtilsController = {
   changeAmazonLinks: async (req, res, next) => {
     try {
       const listOfVideosItems = await Video.find().populate("items");
-      const productImages = [];
       for (eachVideo of listOfVideosItems) {
+        const productImages = [];
+
         if (eachVideo.items.length > 0) {
           for (const eachItem of eachVideo.items) {
             productImages.push(eachItem.image);

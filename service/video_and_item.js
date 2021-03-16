@@ -157,6 +157,17 @@ async function handleStocksRevert(
 
 async function saveAmazonReviews(videoId, amazons) {
   try {
+    let totalReviewsWanted = 12;
+    let reviewsPerItems;
+    
+    if (amazons.length == 0) {
+      reviewsPerItems = 12;
+    } else if (amazons.length <= 4) {
+      reviewsPerItems = Math.floor(totalReviewsWanted / amazons.length);
+    } else {
+      reviewsPerItems = 3;
+    }
+
     for (const eachAmazon of amazons) {
       const ASINreg = new RegExp(/(?:\/)([A-Z0-9]{10})(?:$|\/|\?)/);
       let asin = eachAmazon.amazon_link.match(ASINreg);
@@ -166,43 +177,48 @@ async function saveAmazonReviews(videoId, amazons) {
 
       if (asin) {
         const reviews = await reviewsCrawler(asin);
+        let reviewCount = 0;
 
         let newReview;
         for (const review of reviews.reviews) {
-          if (review.rating > 2) {
-            let fakeUserName = fakerator.names.name().split(" ")[0];
-            while (fakeUserName.includes(".")) {
-              fakeUserName = fakerator.names.name().split(" ")[0];
+          let fakeUserName = fakerator.names.name().split(" ")[0];
+          while (fakeUserName.includes(".")) {
+            fakeUserName = fakerator.names.name().split(" ")[0];
+          }
+
+          const randomSelectProfilePic = Math.floor(Math.random() * 8);
+          const locoProfilePic = [
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+          ];
+
+          newReview = new Review({
+            userName: fakeUserName,
+            userPicture: locoProfilePic[randomSelectProfilePic],
+            videoId: videoId,
+            rating: review.rating,
+            text: review.text.trim(),
+          });
+
+          await Video.findByIdAndUpdate(
+            { _id: videoId },
+            {
+              $push: { reviews: newReview },
+              $inc: { reviewCounts: 1, totalReviewRating: review.rating },
             }
+          );
+          await newReview.save();
 
-            const randomSelectProfilePic = Math.floor(Math.random() * 8);
-            const locoProfilePic = [
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
-              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
-            ];
+          reviewCount += 1;
 
-            newReview = new Review({
-              userName: fakeUserName,
-              userPicture: locoProfilePic[randomSelectProfilePic],
-              videoId: videoId,
-              rating: review.rating,
-              text: review.text.trim(),
-            });
-
-            await Video.findByIdAndUpdate(
-              { _id: videoId },
-              {
-                $push: { reviews: newReview },
-                $inc: { reviewCounts: 1, totalReviewRating: review.rating },
-              }
-            );
-            await newReview.save();
+          if (reviewCount >= reviewsPerItems) {
+            break;
           }
         }
       }

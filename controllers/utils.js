@@ -4,6 +4,7 @@ const User = require("../models/user");
 const Notification = require("../models/notification");
 const Admin = require("../models/admin");
 const { addVideoToFeed } = require("../service/feed");
+const videoItemService = require("../service/video_and_item");
 
 var mongoose = require("mongoose");
 
@@ -115,25 +116,25 @@ let UtilsController = {
     }
   },
 
-  // temporary use
+  // temporary use for changing amazon reviews
   changeAmazonLinks: async (req, res, next) => {
     try {
-      const listOfVideosItems = await Video.find().populate("items");
+      const listOfVideosItems = await Video.find();
       for (eachVideo of listOfVideosItems) {
-        const productImages = [];
+        console.log(eachVideo.amazons);
+        await videoItemService.saveAmazonReviews(
+          eachVideo._id,
+          eachVideo.amazons
+        );
 
-        if (eachVideo.items.length > 0) {
-          for (const eachItem of eachVideo.items) {
-            productImages.push(eachItem.image);
-          }
-        }
-        eachVideo.productImages = productImages;
-
-        await eachVideo.save();
+        // eachVideo.reviews = [];
+        // eachVideo.reviewCounts = 0;
+        // eachVideo.totalReviewRating = 0;
+        // await eachVideo.save();
       }
-
-      res.status(200).send("success");
+      res.status(201).send("done");
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },

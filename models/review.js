@@ -6,6 +6,7 @@ const reviewSchema = new Schema(
   {
     videoId: String,
     itemId: String,
+    itemName: String,
     userName: String, // temp fake user names
     userPicture: String,
     userId: String,

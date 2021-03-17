@@ -68,7 +68,7 @@ async function registerOrLogin(id_token) {
         picture: locoProfilePic[randomSelectProfilePic],
         email: email,
         likedVideos: [],
-        profileBio: "shoplocoloco.com",
+        profileBio: "welcome to shoplocoloco.com 🎉",
       });
       newUser.notifications = [welcomeNotification];
       newUser.userName = newUserName;

@@ -159,7 +159,7 @@ async function saveAmazonReviews(videoId, amazons) {
   try {
     let totalReviewsWanted = 12;
     let reviewsPerItems;
-    
+
     if (amazons.length == 0) {
       reviewsPerItems = 12;
     } else if (amazons.length <= 4) {
@@ -200,10 +200,13 @@ async function saveAmazonReviews(videoId, amazons) {
 
           newReview = new Review({
             userName: fakeUserName,
+            itemName: eachAmazon.amazon_name,
             userPicture: locoProfilePic[randomSelectProfilePic],
             videoId: videoId,
             rating: review.rating,
-            text: review.text.trim(),
+            text: review.text
+              .replace("Your browser does not support HTML5 video.", "")
+              .trim(),
           });
 
           await Video.findByIdAndUpdate(

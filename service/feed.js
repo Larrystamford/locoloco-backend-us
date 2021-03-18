@@ -39,6 +39,7 @@ async function getPotentialFeed(userId, watchedFeedId) {
   if (watchedFeedId == 1) {
     return {
       id: 0,
+      videos: [],
     };
   }
 
@@ -79,15 +80,6 @@ async function getPotentialFeed(userId, watchedFeedId) {
         feedId: toWatchFeedId,
       });
 
-      if (feedWatched) {
-        console.log(
-          feedWatched.count,
-          feedWatched.videos.length,
-          potentialFeedCount,
-          "sWAKA"
-        );
-      }
-
       // all videos in the latest feed has been watched
       if (feedWatched && feedWatched.videos.length == potentialFeedCount) {
         // get next unseen feed
@@ -96,6 +88,7 @@ async function getPotentialFeed(userId, watchedFeedId) {
         if (toWatchFeedId == 0) {
           return {
             id: 0,
+            videos: [],
           };
         }
 
@@ -145,6 +138,7 @@ async function getPotentialFeed(userId, watchedFeedId) {
     if (toWatchFeedId == 0) {
       return {
         id: 0,
+        videos: [],
       };
     }
 
@@ -175,6 +169,7 @@ async function getPotentialFeed(userId, watchedFeedId) {
         if (toWatchFeedId == 0) {
           return {
             id: 0,
+            videos: [],
           };
         }
 
@@ -224,6 +219,12 @@ async function getPotentialFeed(userId, watchedFeedId) {
 
 function filterVideosByCategory(potentialFeed, category) {
   const videosWithCategory = [];
+
+  console.log("hey 22233");
+  console.log(potentialFeed);
+  console.log("hey 3");
+  console.log(potentialFeed.videos.length);
+  console.log("hey 4");
 
   for (let i = 0; i < potentialFeed.videos.length; i++) {
     if (potentialFeed.videos[i].categories.includes(category.toLowerCase())) {

@@ -53,6 +53,7 @@ const videoSchema = new Schema(
     aliexpress: [],
     smallShopLink: String,
     productImages: [], // s3 image links of product
+    originalCreator: String,
   },
   { timestamps: true }
 );

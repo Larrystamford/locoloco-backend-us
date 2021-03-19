@@ -12,7 +12,7 @@ let ReviewController = {
       newReview.userName = user.userName;
       newReview.userPicture = user.picture;
       newReview = new Review(newReview);
-      await newReview.save();
+      const reviewId = await newReview.save();
 
       await User.updateOne(
         { _id: newReview.userId },
@@ -32,7 +32,7 @@ let ReviewController = {
         }
       );
 
-      res.status(200).send("success");
+      res.status(200).send(reviewId._id);
     } catch (err) {
       console.log(err);
       res.status(500).send(err);

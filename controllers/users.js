@@ -564,6 +564,7 @@ module.exports = {
       shippingDelayed,
       sellerDeliveryStatus,
       buyerDeliveryStatus,
+      reviewId,
     } = req.body;
 
     // update seller item status
@@ -628,6 +629,15 @@ module.exports = {
             buyerDeliveryStatus: buyerDeliveryStatus,
             sellerDeliveryStatus: sellerDeliveryStatus,
             refundedAt: statusChangeDate,
+          }
+        );
+      }
+
+      if (reviewId) {
+        await BuySellItem.updateOne(
+          { _id: buySellItemId },
+          {
+            reviewId: reviewId,
           }
         );
       }

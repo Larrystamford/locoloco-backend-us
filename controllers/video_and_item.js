@@ -270,18 +270,20 @@ let VideoAndItemController = {
     }
   },
 
-  // post review using amazon link, not in use currently merged into the post video item
+  // post review using amazon link
   addReviews: async (req, res, next) => {
     try {
       const listOfVideosItems = await Video.find();
       for (eachVideo of listOfVideosItems) {
         if (!eachVideo.reviews || eachVideo.reviews.length == 0) {
+          console.log(eachVideo.amazons);
           await videoItemService.saveAmazonReviews(
             eachVideo._id,
             eachVideo.amazons
           );
         }
       }
+      console.log("done");
       res.status(201).send("done");
     } catch (err) {
       console.log(err);

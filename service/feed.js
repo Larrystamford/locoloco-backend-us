@@ -220,12 +220,6 @@ async function getPotentialFeed(userId, watchedFeedId) {
 function filterVideosByCategory(potentialFeed, category) {
   const videosWithCategory = [];
 
-  console.log("hey 22233");
-  console.log(potentialFeed);
-  console.log("hey 3");
-  console.log(potentialFeed.videos.length);
-  console.log("hey 4");
-
   for (let i = 0; i < potentialFeed.videos.length; i++) {
     if (potentialFeed.videos[i].categories.includes(category.toLowerCase())) {
       videosWithCategory.push(potentialFeed.videos[i]);

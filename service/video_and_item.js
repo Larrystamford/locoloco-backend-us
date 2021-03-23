@@ -181,47 +181,49 @@ async function saveAmazonReviews(videoId, amazons) {
 
         let newReview;
         for (const review of reviews.reviews) {
-          let fakeUserName = fakerator.names.name().split(" ")[0];
-          while (fakeUserName.includes(".")) {
-            fakeUserName = fakerator.names.name().split(" ")[0];
-          }
-
-          const randomSelectProfilePic = Math.floor(Math.random() * 8);
-          const locoProfilePic = [
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
-            "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
-          ];
-
-          newReview = new Review({
-            userName: fakeUserName,
-            itemName: eachAmazon.amazon_name,
-            userPicture: locoProfilePic[randomSelectProfilePic],
-            videoId: videoId,
-            rating: review.rating,
-            text: review.text
-              .replace("Your browser does not support HTML5 video.", "")
-              .trim(),
-          });
-
-          await Video.findByIdAndUpdate(
-            { _id: videoId },
-            {
-              $push: { reviews: newReview },
-              $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+          if (review.rating > 1) {
+            let fakeUserName = fakerator.names.name().split(" ")[0];
+            while (fakeUserName.includes(".")) {
+              fakeUserName = fakerator.names.name().split(" ")[0];
             }
-          );
-          await newReview.save();
 
-          reviewCount += 1;
+            const randomSelectProfilePic = Math.floor(Math.random() * 8);
+            const locoProfilePic = [
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
+              "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+            ];
 
-          if (reviewCount >= reviewsPerItems) {
-            break;
+            newReview = new Review({
+              userName: fakeUserName,
+              itemName: eachAmazon.amazon_name,
+              userPicture: locoProfilePic[randomSelectProfilePic],
+              videoId: videoId,
+              rating: review.rating,
+              text: review.text
+                .replace("Your browser does not support HTML5 video.", "")
+                .trim(),
+            });
+
+            await Video.findByIdAndUpdate(
+              { _id: videoId },
+              {
+                $push: { reviews: newReview },
+                $inc: { reviewCounts: 1, totalReviewRating: review.rating },
+              }
+            );
+            await newReview.save();
+
+            reviewCount += 1;
+
+            if (reviewCount >= reviewsPerItems) {
+              break;
+            }
           }
         }
       }

@@ -124,7 +124,7 @@ let FeedController = {
           };
         }
 
-        // use count as skip
+        // temporarily use count as skip
         feedWatched.count = skipCount;
 
         let currentFeedId = feedWatched.feedId;
@@ -162,7 +162,7 @@ let FeedController = {
             ...nextFeedWatched.videos.reverse(),
           ];
 
-          // use count as skip
+          // temporarily use count as skip
           feedWatched.count = skipCount;
         }
       } else {
@@ -192,7 +192,7 @@ let FeedController = {
             count: -1,
           };
         }
-        // use count as skip
+        // temporarily use count as skip
         feedWatched.count = skipCount;
 
         let currentFeedId = feedWatched.feedId;
@@ -230,7 +230,7 @@ let FeedController = {
             ...nextFeedWatched.videos.reverse(),
           ];
 
-          // use count as skip
+          // temporarily use count as skip
           feedWatched.count = skipCount;
         }
       }

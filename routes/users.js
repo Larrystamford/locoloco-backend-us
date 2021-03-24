@@ -35,6 +35,7 @@ router
   );
 
 router.route("/oauth/googleIdToken").post(UsersController.googleIdToken);
+router.route("/oauth/localRedirect").post(UsersController.localRedirect);
 
 // .get(passport.authenticate("jwt", { session: false }), UsersController.list);
 
@@ -72,6 +73,5 @@ router.route("/getUserInfo/:userId").get(UsersController.getUserInfo);
 router.route("/updateShippingStatus").put(UsersController.updateShippingStatus);
 
 router.route("/addCoins/:userId").put(UsersController.addCoins);
-
 
 module.exports = router;

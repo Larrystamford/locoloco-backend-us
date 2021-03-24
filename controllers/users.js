@@ -72,6 +72,20 @@ module.exports = {
     });
   },
 
+  // REDIRECT LOGIN
+  localRedirect: async (req, res, next) => {
+    const { user_id } = req.body;
+    const user = await User.findOne({ _id: user_id });
+    const token = signToken(user_id);
+
+    res.status(200).json({
+      token: token,
+      userId: user_id,
+      userName: user.userName,
+      picture: user.picture,
+    });
+  },
+
   signUp: async (req, res, next) => {
     const { email, password } = req.value.body;
 
@@ -239,7 +253,6 @@ module.exports = {
           populate: { path: "reviews" },
         });
 
-      console.log(userVideos);
       res.status(200).send(userVideos);
     } catch (err) {
       res.status(500).send(err);
@@ -454,7 +467,7 @@ module.exports = {
   pullUserSubCommentFavourites: async (req, res, next) => {
     const { userId } = req.params;
     const { commentId } = req.body;
-    console.log(commentId);
+
     // update user
     try {
       let user = await User.findByIdAndUpdate(
@@ -481,10 +494,12 @@ module.exports = {
 
   pushVideoSeen: async (req, res, next) => {
     const { userId } = req.params;
-    const { videoId, feedId, category } = req.body;
+    const { videoId, category } = req.body;
     try {
-      // if on fyp and feed does not exist, update the latest session nextUnseenFeedId
+      const video = await Video.findOne({ _id: videoId });
+      const feedId = video.feedId;
 
+      // if on fyp and feed does not exist, update the latest session nextUnseenFeedId
       // this is to update the latest feed session only. This is no updated for other categories as the
       // other categories feedId is jumping around, so we shouldnt say for sure to jump to this feedId.
       if (category == "Feed") {
@@ -493,11 +508,14 @@ module.exports = {
           feedId: feedId,
         });
 
+        // haven't watch this feed before
         if (!feedWatching) {
           const user = await User.findOne({ _id: userId });
-          const latestFeedIdPerSession = user.latestFeedIdPerSession;
+          const latestFeedIdOfTheSession = user.latestFeedIdPerSession;
+
+          // now it allow user to skip feedId if he restarts
           await SeenVideos.updateOne(
-            { userId: userId, feedId: latestFeedIdPerSession },
+            { userId: userId, feedId: latestFeedIdOfTheSession },
             {
               nextUnseenFeedId: feedId,
             },

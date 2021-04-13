@@ -5,5 +5,6 @@ router.route("/onSignUp").post(EmailController.onSignUp);
 router.route("/onPurchase").post(EmailController.onPurchase);
 router.route("/customerSupport").post(EmailController.customerSupport);
 router.route("/customerFeedback").post(EmailController.customerFeedback);
+router.route("/advertisementEmail").post(EmailController.advertisementEmail);
 
 module.exports = router;

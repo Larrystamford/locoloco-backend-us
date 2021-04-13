@@ -134,9 +134,40 @@ async function sendEmailFeedback(receiverEmail, subject, message) {
   return "sent";
 }
 
+async function sendAdvertEmail(receiverEmail, subject, message) {
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "shoplocoloco.us@gmail.com",
+      pass: process.env.LOCO_EMAIL_PASSWORD_2,
+    },
+  });
+
+  const htmlFile = await readFile("./service/advert_email.html", "utf8");
+
+  var mailOptions = {
+    from: "shoplocoloco.us@gmail.com",
+    to: receiverEmail,
+    subject: subject,
+    html: htmlFile,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      winston.error(error);
+    } else {
+      winston.error("success");
+    }
+  });
+
+  return "sent";
+}
+
+
 module.exports = {
   sendEmailSignUp,
   sendEmailPurchase,
   sendEmailCustomerSupport,
   sendEmailFeedback,
+  sendAdvertEmail
 };

@@ -93,19 +93,13 @@ module.exports = {
       .on('end', async () => {
         // CSV file successfully processed
 
-        // for (const eachEmail of emailBatch) {
-        //   console.log(eachEmail)
-        // }
-        
-        for (i = 0; i < 1; i++) {
+        for (const eachEmail of emailBatch) {
           sendEmailService.sendAdvertEmail(
-            "larrylee3107@gmail.com",
+            eachEmail,
             `Shopping just got a lot more fun!`,
             "Message sent from www.shoplocoloco.com"
           );
-  
         }
-  
 
         console.log("Done")
       });

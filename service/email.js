@@ -138,7 +138,7 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "shoplocoloco.us@gmail.com",
+      user: "deals@shoplocoloco.com",
       pass: process.env.LOCO_EMAIL_PASSWORD_2,
     },
   });
@@ -146,7 +146,7 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
   const htmlFile = await readFile("./service/advert_email.html", "utf8");
 
   var mailOptions = {
-    from: "shoplocoloco.us@gmail.com",
+    from: "deals@shoplocoloco.com",
     to: receiverEmail,
     subject: subject,
     html: htmlFile,
@@ -154,9 +154,11 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      winston.error(error);
+      console.log(error)
+      // winston.error(error);
     } else {
-      winston.error("success");
+      console.log("success")
+      // winston.error("success");
     }
   });
 

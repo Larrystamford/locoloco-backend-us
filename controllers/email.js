@@ -75,8 +75,14 @@ module.exports = {
       const endBatch = (batchNumber + 1) * 490
       const emailBatch = []
 
-
       var counter = 0
+
+      function sleep(ms) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
+      } 
+
       fs.createReadStream('../usa01.csv')
       .pipe(csv())
       .on('data', (row) => {
@@ -87,16 +93,16 @@ module.exports = {
         } 
 
         counter+=1
-        // console.log("counter", counter);
-        // console.log("endBatch", endBatch);
       })
       .on('end', async () => {
-        // CSV file successfully processed
 
-        for (const eachEmail of emailBatch) {
+        for (var i = 0; i < emailBatch.length; i++) {
+          await sleep(5000)
+          var eachEmail = emailBatch[i];
+          console.log(eachEmail, i)
           sendEmailService.sendAdvertEmail(
             eachEmail,
-            `Shopping just got a lot more fun!`,
+            `Your daily shopping recommendations have arrived`,
             "Message sent from www.shoplocoloco.com"
           );
         }
@@ -104,11 +110,6 @@ module.exports = {
         console.log("Done")
       });
 
-
-
-  
-    
-  
       res.send("success");
     },
   

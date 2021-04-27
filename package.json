@@ -50,6 +50,7 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "stripe": "^8.127.0",
+    "tiktok-scraper": "^1.4.22",
     "util": "^0.12.3",
     "web-push": "^3.4.4",
     "winston": "^3.3.3",

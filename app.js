@@ -1,9 +1,7 @@
 // Packages
 const express = require("express");
 const morgan = require("morgan");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-// const Pusher = require("pusher");
 const cors = require("cors");
 
 if (process.env.NODE_ENV !== "production") {
@@ -43,7 +41,7 @@ app.use(cors());
 if (!process.env.NODE_ENV === "test") {
   app.use(morgan("dev"));
 }
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 // Routes
 app.get("/", async (req, res) => {
@@ -60,12 +58,13 @@ app.use("/v1/comment", require("./routes/comment"));
 app.use("/v1/review", require("./routes/review"));
 app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
+app.use("/v1/downloadTiktoks", require("./routes/download-tiktoks"));
 app.use("/v1/error", require("./routes/error"));
 app.get("/.well-known/apple-developer-merchantid-domain-association", function (
   req,
   res
 ) {
-  res.sendfile(
+  res.sendFile(
     __dirname + "/.well-known/apple-developer-merchantid-domain-association"
   );
 });

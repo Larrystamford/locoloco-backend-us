@@ -20,6 +20,9 @@ router
 
 router.route("/changePassword").post(UsersController.changePassword);
 
+router.route("/userNameTaken/:userName").get(UsersController.userNameTaken);
+router.route("/userNameIsPro/:userName").get(UsersController.userNameIsPro);
+
 router
   .route("/secret")
   .get(
@@ -28,9 +31,9 @@ router
   );
 
 router
-  .route("/oauth/google")
+  .route("/googleOAuth")
   .post(
-    passport.authenticate("googleToken", { session: false }),
+    passport.authenticate("googleStrategy", { session: false }),
     UsersController.googleOAuth
   );
 

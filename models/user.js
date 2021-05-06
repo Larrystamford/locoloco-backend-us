@@ -126,6 +126,28 @@ const userSchema = new Schema(
         ref: "Review",
       },
     ],
+    accountType: String,
+    socialAccounts: [
+      {
+        id: String,
+        userIdentifier: String,
+        socialType: String,
+        socialLink: String,
+      },
+    ],
+    proLinks: [
+      {
+        id: String,
+        proLinkName: String,
+        proLink: String,
+      },
+    ],
+    proCategories: [
+      {
+        id: String,
+        proCategoryName: String,
+      },
+    ],
   },
   { timestamps: true }
 );

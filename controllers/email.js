@@ -9,8 +9,8 @@ module.exports = {
   onSignUp: async (req, res, next) => {
     const response = sendEmailService.sendEmailSignUp(
       "larrylee3107@gmail.com",
-      "Welcome to the Loco Family! 🎉",
-      "Message sent from www.shoplocoloco.com"
+      "Welcome to the Vosh Family! 🎉",
+      "Message sent from vosh.club"
     );
     res.send(response);
   },

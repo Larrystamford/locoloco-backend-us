@@ -99,8 +99,8 @@ module.exports = {
     const welcomeNotification = new Notification({
       userPicture:
         "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
-      userName: "shoplocoloco",
-      message: "Welcome to the Loco Family! Start watching now!",
+      userName: "vosh.club",
+      message: "Welcome to the Vosh Club! Start watching now!",
       notificationType: "broadcast",
       redirectLink: "/",
     });
@@ -254,6 +254,36 @@ module.exports = {
         });
 
       res.status(200).send(userVideos);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
+  userNameTaken: async (req, res, next) => {
+    const { userName } = req.params;
+    try {
+      let username = await User.findOne({ userName: userName });
+      if (username) {
+        username = true;
+      } else {
+        username = false;
+      }
+      res.status(201).send({ userNameTaken: username });
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
+  userNameIsPro: async (req, res, next) => {
+    const { userName } = req.params;
+    try {
+      let username = await User.findOne({ userName: userName });
+      if (username && username.accountType == "pro") {
+        usernameIsPro = true;
+      } else {
+        usernameIsPro = false;
+      }
+      res.status(201).send({ userNameIsPro: usernameIsPro });
     } catch (err) {
       res.status(500).send(err);
     }

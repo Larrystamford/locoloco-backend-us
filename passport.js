@@ -2,7 +2,8 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const { ExtractJwt } = require("passport-jwt");
 const LocalStrategy = require("passport-local").Strategy;
-const GoogleTokenStrategy = require("passport-google-token").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
 const User = require("./models/user");
 const Notification = require("./models/notification");
 const usersHelper = require("./helpers/usersHelper");
@@ -67,8 +68,8 @@ passport.use(
 
 // Google OAuth Strategy
 passport.use(
-  "googleToken",
-  new GoogleTokenStrategy(
+  "googleStrategy",
+  new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_AUTH_ID,
       clientSecret: process.env.GOOGLE_AUTH_SECRET,
@@ -89,7 +90,7 @@ passport.use(
           existingUser.authStatus = "AUTH_SIGN_IN";
           await existingUser.save();
 
-          return done(null, existingUser);
+          return done(null, profile);
         } else {
           console.log(
             "User doesn't exist - We are creating a new one with Google Account"
@@ -139,13 +140,14 @@ passport.use(
 
           sendEmailService.sendEmailSignUp(
             newUser.email,
-            "Welcome to the Loco Family! 🎉",
-            "Message sent from www.shoplocoloco.com"
+            "Welcome to the Vosh Family! 🎉",
+            "Message sent from vosh.club"
           );
 
-          done(null, newUser);
+          done(null, profile);
         }
       } catch (error) {
+        console.log(error);
         done(error, false, error.message);
       }
     }

@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const bodyparser = require("body-parser");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -41,7 +42,7 @@ app.use(cors());
 if (!process.env.NODE_ENV === "test") {
   app.use(morgan("dev"));
 }
-// app.use(bodyParser.json());
+app.use(bodyparser.json());
 
 // Routes
 app.get("/", async (req, res) => {
@@ -60,16 +61,17 @@ app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/downloadTiktoks", require("./routes/download-tiktoks"));
 app.use("/v1/error", require("./routes/error"));
-app.get("/.well-known/apple-developer-merchantid-domain-association", function (
-  req,
-  res
-) {
-  res.sendFile(
-    __dirname + "/.well-known/apple-developer-merchantid-domain-association"
-  );
-});
+app.get(
+  "/.well-known/apple-developer-merchantid-domain-association",
+  function (req, res) {
+    res.sendFile(
+      __dirname + "/.well-known/apple-developer-merchantid-domain-association"
+    );
+  }
+);
 
 // Start the Server
 const port = process.env.PORT || 5000;
-app.listen(port);
+let server = app.listen(port);
+server.timeout = 300000;
 console.log(`Server listening at ${port}`);

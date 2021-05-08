@@ -51,6 +51,7 @@
     "pusher": "^3.0.1",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
+    "shelljs": "^0.8.4",
     "stripe": "^8.127.0",
     "tiktok-scraper": "^1.4.23",
     "util": "^0.12.3",

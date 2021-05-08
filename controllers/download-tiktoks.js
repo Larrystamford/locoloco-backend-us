@@ -2,6 +2,7 @@ const Review = require("../models/review");
 const User = require("../models/user");
 const Video = require("../models/video");
 const fs = require("fs");
+const shell = require("shelljs");
 
 const {
   uploadByFolder,
@@ -96,7 +97,7 @@ let DownloadTiktoksController = {
       }
 
       const options = defaultOptions;
-      options.filepath = options.filepath + tiktokUsername + "-info/";
+      options.filepath = "./tiktok-videos/" + tiktokUsername + "-info/";
       if (!fs.existsSync(options.filepath)) {
         fs.mkdirSync(options.filepath);
       }

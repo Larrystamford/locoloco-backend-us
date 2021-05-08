@@ -115,6 +115,7 @@ let DownloadTiktoksController = {
 
   download: async (req, res, next) => {
     try {
+      console.log("downloading tiktoks");
       const { userId } = req.params;
 
       const options = defaultOptions;
@@ -176,6 +177,8 @@ let DownloadTiktoksController = {
 
   saveTikToks: async (req, res, next) => {
     try {
+      console.log("saving tiktoks");
+
       const { userId } = req.params;
 
       let tiktokUsername;
@@ -194,7 +197,8 @@ let DownloadTiktoksController = {
 
         const screenShots = [];
         for (const videoFile of uploadedVideos) {
-          let newImageName = videoFile.key.slice(0, -4);
+          console.log(videoFile);
+          let newImageName = videoFile.Key.slice(0, -4);
           screenShots.push(
             screenshotTiktok(
               newImageName,
@@ -216,8 +220,8 @@ let DownloadTiktoksController = {
         let imageKey;
         const jsonObj = JSON.parse(rawJsonFile);
         for (let i = 0; i < uploadedVideos.length; i++) {
-          videoKey = uploadedVideos[i].key.slice(0, -4);
-          imageKey = uploadedImages[i].key.slice(0, -4);
+          videoKey = uploadedVideos[i].Key.slice(0, -4);
+          imageKey = uploadedImages[i].Key.slice(0, -4);
           jsonKey = jsonObj[i].id;
 
           if (!(videoKey in videoAndImageS3)) {
@@ -278,6 +282,20 @@ let DownloadTiktoksController = {
       console.log("save tiktok error");
       res.status(500).send(err);
     }
+  },
+
+  deleteTikTokFolder: async (req, res, next) => {
+    if (fs.existsSync(`./tiktok-videos/`)) {
+      await del(`./tiktok-videos/`);
+    }
+    res.status(200).send("success");
+  },
+
+  createTikTokFolder: async (req, res, next) => {
+    if (!fs.existsSync(`./tiktok-videos/`)) {
+      fs.mkdirSync(`./tiktok-videos/`, { recursive: true });
+    }
+    res.status(200).send("success");
   },
 };
 

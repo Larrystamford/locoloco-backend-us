@@ -235,6 +235,7 @@ async function saveAmazonReviews(videoId, amazons) {
 
 async function saveTikTokVideo(key, value, userId, tiktokUsername) {
   try {
+    console.log("saving video");
     const newVideo = new Video();
     newVideo.url = value.video;
     newVideo.coverImageUrl = value.image;

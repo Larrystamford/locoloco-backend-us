@@ -99,7 +99,7 @@ let DownloadTiktoksController = {
       const options = defaultOptions;
       options.filepath = "./tiktok-videos/" + tiktokUsername + "-info/";
       if (!fs.existsSync(options.filepath)) {
-        fs.mkdirSync(options.filepath);
+        fs.mkdirSync(options.filepath, { recursive: true });
       }
 
       options.download = false;

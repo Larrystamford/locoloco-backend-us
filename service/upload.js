@@ -8,6 +8,10 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+const ffmpeg = require("fluent-ffmpeg");
+ffmpeg.setFfmpegPath(ffmpegPath);
+
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_ID,
   secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -49,6 +53,22 @@ async function uploadFirstFrame(data, fileName, mimetype) {
   return { url: resFirstFrame.Location };
 }
 
+async function readJsonInfo(folderPathName) {
+  const filenames = await readdir(folderPathName);
+  let jsonFileData;
+  let curFileExtension;
+
+  for (const filename of filenames) {
+    curFileExtension = path.extname(filename);
+    if (curFileExtension == ".json") {
+      jsonFileData = await readfile(folderPathName + filename);
+      break;
+    }
+  }
+
+  return jsonFileData;
+}
+
 async function uploadByFolder(folderPathName, fileExtension) {
   const uploadedFiles = [];
   const filenames = await readdir(folderPathName);
@@ -56,6 +76,7 @@ async function uploadByFolder(folderPathName, fileExtension) {
   let fileData;
   let res;
   let params;
+  let jsonFileData;
   for (const filename of filenames) {
     curFileExtension = path.extname(filename);
     if (curFileExtension == fileExtension) {
@@ -66,24 +87,57 @@ async function uploadByFolder(folderPathName, fileExtension) {
         Body: fileData,
         ACL: "public-read",
       };
-      res = await new Promise((resolve, reject) => {
+      res = new Promise((resolve, reject) => {
         s3.upload(params, (err, data) =>
           err == null ? resolve(data) : reject(err)
         );
       });
       uploadedFiles.push(res);
+    } else if (curFileExtension == ".json") {
+      jsonFileData = await readfile(folderPathName + filename);
     }
   }
 
-  // for (const file of uploadedFiles) {
-  //   console.log(file);
-  // }
+  return [await Promise.all(uploadedFiles), jsonFileData];
+}
 
-  return uploadedFiles;
+function ffmpegSync(uploadRes) {
+  return new Promise((resolve, reject) => {
+    ffmpeg(uploadRes.url)
+      .screenshots({
+        // Will take screens at 20%, 40%, 60% and 80% of the video
+        filename: "firstFrame.png",
+        timestamps: [0.001],
+        folder: "./helpers/firstFrame/",
+      })
+      .on("end", async () => {
+        console.log("Screenshot taken");
+        resolve();
+      });
+  });
+}
+
+function screenshotTiktok(imageName, downloadToPath, videoFileLocation) {
+  return new Promise((resolve, reject) => {
+    ffmpeg(videoFileLocation)
+      .screenshots({
+        // Will take screens at 20%, 40%, 60% and 80% of the video
+        filename: imageName,
+        timestamps: [0.001],
+        folder: downloadToPath,
+      })
+      .on("end", async () => {
+        console.log("Screenshot taken");
+        resolve();
+      });
+  });
 }
 
 module.exports = {
   uploadFileToAws,
   uploadFirstFrame,
   uploadByFolder,
+  ffmpegSync,
+  screenshotTiktok,
+  readJsonInfo,
 };

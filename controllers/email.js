@@ -1,8 +1,7 @@
 const User = require("../models/user");
 const sendEmailService = require("../service/email");
-const fs = require('fs');
-const csv = require('csv-parser');
-
+const fs = require("fs");
+const csv = require("csv-parser");
 
 module.exports = {
   // POST
@@ -67,39 +66,51 @@ module.exports = {
     res.send(response);
   },
 
-    // POST
-    advertisementEmail: async (req, res, next) => {
-      const { batchNumber } = req.body;
+  // POST
+  severeError: async (req, res, next) => {
+    const { userId, userName } = req.body;
 
-      const startBatch = batchNumber * 490
-      const endBatch = (batchNumber + 1) * 490
-      const emailBatch = []
+    const response = sendEmailService.sendEmailFeedback(
+      "larrylee3107@gmail.com",
+      `TikTok Download Error from  ${userName}, ID: ${userId}`,
+      "ERROR"
+    );
 
-      var counter = 0
+    res.send(response);
+  },
 
-      function sleep(ms) {
-        return new Promise((resolve) => {
-          setTimeout(resolve, ms);
-        });
-      } 
+  // POST
+  advertisementEmail: async (req, res, next) => {
+    const { batchNumber } = req.body;
 
-      fs.createReadStream('../usa01.csv')
+    const startBatch = batchNumber * 490;
+    const endBatch = (batchNumber + 1) * 490;
+    const emailBatch = [];
+
+    var counter = 0;
+
+    function sleep(ms) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    }
+
+    fs.createReadStream("../usa01.csv")
       .pipe(csv())
-      .on('data', (row) => {
+      .on("data", (row) => {
         if (startBatch <= counter && counter < endBatch) {
           for (key in row) {
-            emailBatch.push(row[key])
+            emailBatch.push(row[key]);
           }
-        } 
+        }
 
-        counter+=1
+        counter += 1;
       })
-      .on('end', async () => {
-
+      .on("end", async () => {
         for (var i = 0; i < emailBatch.length; i++) {
-          await sleep(5000)
+          await sleep(5000);
           var eachEmail = emailBatch[i];
-          console.log(eachEmail, i)
+          console.log(eachEmail, i);
           sendEmailService.sendAdvertEmail(
             eachEmail,
             `Your daily shopping recommendations have arrived`,
@@ -107,10 +118,9 @@ module.exports = {
           );
         }
 
-        console.log("Done")
+        console.log("Done");
       });
 
-      res.send("success");
-    },
-  
+    res.send("success");
+  },
 };

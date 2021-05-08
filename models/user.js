@@ -126,7 +126,16 @@ const userSchema = new Schema(
         ref: "Review",
       },
     ],
+    processingTikToksStartTime: Number,
+    latestTikTokVideoId: String,
     accountType: String,
+    noNewTiktokVideos: Boolean,
+    proVideos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Video",
+      },
+    ],
     socialAccounts: [
       {
         id: String,
@@ -146,6 +155,7 @@ const userSchema = new Schema(
       {
         id: String,
         proCategoryName: String,
+        proCategoryImage: String,
       },
     ],
   },

@@ -233,8 +233,59 @@ async function saveAmazonReviews(videoId, amazons) {
   }
 }
 
+async function saveTikTokVideo(key, value, userId, tiktokUsername) {
+  try {
+    const newVideo = new Video();
+    newVideo.url = value.video;
+    newVideo.coverImageUrl = value.image;
+    newVideo.tiktokCreatedAt = value.createTime;
+    newVideo.caption = value.caption;
+    newVideo.proShareCount = value.proShareCount;
+    newVideo.mediaType = "video";
+    newVideo.tiktokKey = key;
+
+    let user;
+    try {
+      user = await User.findById(userId);
+    } catch (err) {
+      console.log("saving tiktok error", err);
+      throw err;
+    }
+
+    newVideo.user = user;
+    newVideo.userName = user.userName;
+    newVideo.originalCreator = tiktokUsername;
+
+    // SAVING VIDEO
+    try {
+      await newVideo.save();
+    } catch (err) {
+      console.log("saving tiktok error", err);
+      throw err;
+    }
+
+    // SAVING USER
+    // user.videos = [...user.videos, newVideo._id];
+    try {
+      await User.findByIdAndUpdate(
+        { _id: userId },
+        { $push: { videos: newVideo._id } }
+      );
+    } catch (err) {
+      console.log("saving tiktok error", err);
+      throw err;
+    }
+
+    return "success";
+  } catch (error) {
+    console.log("saving tiktok error", error);
+    throw error;
+  }
+}
+
 module.exports = {
   handleItemStock,
   handleStocksRevert,
   saveAmazonReviews,
+  saveTikTokVideo,
 };

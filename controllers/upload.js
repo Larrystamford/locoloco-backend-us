@@ -1,12 +1,8 @@
-const fileUploadService = require("../service/upload");
+const { fileUploadService, ffmpegSync } = require("../service/upload");
 const extractFrames = require("ffmpeg-extract-frames");
 var fs = require("fs");
 const util = require("util");
 const readFile = util.promisify(fs.readFile);
-
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-const ffmpeg = require("fluent-ffmpeg");
-ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function uploadFileToAws(req, res, next) {
   try {
@@ -73,22 +69,6 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
     console.log(err);
     res.status(500).send(err);
   }
-}
-
-function ffmpegSync(uploadRes) {
-  return new Promise((resolve, reject) => {
-    ffmpeg(uploadRes.url)
-      .screenshots({
-        // Will take screens at 20%, 40%, 60% and 80% of the video
-        filename: "firstFrame.png",
-        timestamps: [0.001],
-        folder: "./helpers/firstFrame/",
-      })
-      .on("end", async () => {
-        console.log("Screenshot taken");
-        resolve();
-      });
-  });
 }
 
 module.exports = { uploadFileToAws, uploadVideoAndFirstFrameToAws };

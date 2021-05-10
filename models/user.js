@@ -158,6 +158,16 @@ const userSchema = new Schema(
         proCategoryImage: String,
       },
     ],
+    // can check if list too long then delete until left 30 etc
+    previousProductLinks: [
+      {
+        id: String,
+        itemLink: String,
+        itemLinkName: String,
+      },
+    ],
+    previousMainHashtags: [String],
+    previousSubHashtags: [String],
   },
   { timestamps: true }
 );

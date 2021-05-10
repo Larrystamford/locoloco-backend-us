@@ -53,6 +53,7 @@ const videoSchema = new Schema(
         ref: "Review",
       },
     ],
+    affiliateProducts: [],
     amazonLink: String,
     amazonOrInternal: String, // amazon, small_shop, internal
     amazons: [],

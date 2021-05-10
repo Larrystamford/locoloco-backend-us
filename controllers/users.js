@@ -302,6 +302,23 @@ module.exports = {
   },
 
   // ACTIONS
+
+  // push previousProductLinks
+  pushPreviousProductLinks: async (req, res, next) => {
+    const { userId } = req.params;
+    const { previousProductLinks } = req.body;
+    try {
+      let user = await User.findByIdAndUpdate(
+        { _id: userId },
+        { $push: { previousProductLinks: previousProductLinks } }
+      );
+
+      res.status(201).send("success");
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
   // update followings and followers needs to be synchronous as it can be done by many people at one time
   pushFollowers: async (req, res, next) => {
     const { userId } = req.params;

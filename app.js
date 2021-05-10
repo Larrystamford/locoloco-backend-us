@@ -45,6 +45,11 @@ if (!process.env.NODE_ENV === "test") {
 app.use(bodyparser.json());
 
 // Routes
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", process.env.CORS_WEB);
+  next();
+});
+
 app.get("/", async (req, res) => {
   res.send({ v1: "usa version" });
 });
@@ -61,6 +66,7 @@ app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/tiktok", require("./routes/download-tiktoks"));
 app.use("/v1/error", require("./routes/error"));
+
 app.get(
   "/.well-known/apple-developer-merchantid-domain-association",
   function (req, res) {

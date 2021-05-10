@@ -52,6 +52,10 @@ router.route("/update/:userId").put(UsersController.update);
 
 // ACTION ROUTES
 
+router
+  .route("/pushPreviousProductLinks/:userId")
+  .put(UsersController.pushPreviousProductLinks);
+
 // FOLLOW UNFOLLOW ETC
 router.route("/pushFollowings/:userId").put(UsersController.pushFollowings);
 router.route("/pullFollowings/:userId").put(UsersController.pullFollowings);

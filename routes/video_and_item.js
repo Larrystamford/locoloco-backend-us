@@ -15,6 +15,8 @@ router
   .route("/uploadVideoAndItem")
   .post(videoAndItemController.uploadVideoAndItem);
 
+router.route("/update/:videoId").put(videoAndItemController.update);
+
 // actions to take after item has been purchased
 router
   .route("/handleItemPurchase")

@@ -119,6 +119,19 @@ let VideoAndItemController = {
     }
   },
 
+  update: async (req, res, next) => {
+    const { videoId } = req.params;
+
+    try {
+      await Video.findByIdAndUpdate({ _id: videoId }, req.body);
+
+      res.status(201).send("success");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
+
   uploadVideoAndItem: async (req, res, next) => {
     let user;
     const userId = req.query.userId;

@@ -48,6 +48,10 @@ router
   .route("/getByUserName/:userName")
   .get(UsersController.getVideosItemsByUserName);
 
+router
+  .route("/getVideosItemsByUserNamePro/:userName")
+  .get(UsersController.getVideosItemsByUserNamePro);
+
 router.route("/update/:userId").put(UsersController.update);
 
 // ACTION ROUTES

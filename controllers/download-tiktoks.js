@@ -284,6 +284,117 @@ let DownloadTiktoksController = {
     }
   },
 
+  downloadLimit: async (req, res, next) => {
+    try {
+      console.log("downloading tiktoks");
+      const { userId, importNumber } = req.body;
+
+      const options = defaultOptions;
+      options.download = true;
+      options.filepath = "./tiktok-videos/";
+      options.number = importNumber;
+
+      let tiktokUsername;
+      const user = await User.findById(userId);
+      for (const eachSocialAccount of user.socialAccounts) {
+        if (eachSocialAccount.socialType == "TikTok") {
+          tiktokUsername = eachSocialAccount.userIdentifier;
+        }
+      }
+
+      await TikTokScraper.user(tiktokUsername, options);
+
+      res.status(200).send("success");
+    } catch (err) {
+      console.log(err);
+      console.log("download tiktok error");
+      res.status(500).send(err);
+    }
+  },
+
+  saveTikToksLimit: async (req, res, next) => {
+    try {
+      console.log("saving tiktoks");
+
+      const { userId } = req.params;
+
+      let tiktokUsername;
+      const user = await User.findById(userId);
+      for (const eachSocialAccount of user.socialAccounts) {
+        if (eachSocialAccount.socialType == "TikTok") {
+          tiktokUsername = eachSocialAccount.userIdentifier;
+        }
+      }
+
+      const [uploadedVideos, rawJsonFile] = await uploadByFolder(
+        `./tiktok-videos/${tiktokUsername}/`,
+        ".mp4"
+      );
+
+      const screenShots = [];
+      for (const videoFile of uploadedVideos) {
+        let newImageName = videoFile.Key.slice(0, -4);
+        screenShots.push(
+          screenshotTiktok(
+            newImageName,
+            `./tiktok-videos/${tiktokUsername}/`,
+            videoFile.Location
+          )
+        );
+      }
+      await Promise.all(screenShots);
+
+      const [uploadedImages, _] = await uploadByFolder(
+        `./tiktok-videos/${tiktokUsername}/`,
+        ".png"
+      );
+
+      // data processing
+      const videoAndImageS3 = {};
+      let videoKey;
+      let imageKey;
+      const jsonObj = JSON.parse(rawJsonFile);
+      for (let i = 0; i < uploadedVideos.length; i++) {
+        videoKey = uploadedVideos[i].Key.slice(0, -4);
+        imageKey = uploadedImages[i].Key.slice(0, -4);
+        jsonKey = jsonObj[i].id;
+
+        if (!(videoKey in videoAndImageS3)) {
+          videoAndImageS3[videoKey] = {};
+        }
+        if (!(imageKey in videoAndImageS3)) {
+          videoAndImageS3[imageKey] = {};
+        }
+        if (!(jsonKey in videoAndImageS3)) {
+          videoAndImageS3[jsonKey] = {};
+        }
+
+        videoAndImageS3[videoKey].video = uploadedVideos[i].Location;
+        videoAndImageS3[imageKey].image = uploadedImages[i].Location;
+        videoAndImageS3[jsonKey].caption = jsonObj[i].text;
+        videoAndImageS3[jsonKey].createTime = jsonObj[i].createTime;
+        videoAndImageS3[jsonKey].proShareCount = jsonObj[i].shareCount;
+      }
+
+      // saving to mongo
+      const savedVideos = [];
+      for (const [key, value] of Object.entries(videoAndImageS3)) {
+        savedVideos.push(saveTikTokVideo(key, value, userId, tiktokUsername));
+      }
+      await Promise.all(savedVideos);
+
+      if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
+        await del(`./tiktok-videos/${tiktokUsername}/`);
+      }
+
+      res.status(200).send("success");
+    } catch (err) {
+      console.log(err);
+      console.log("save tiktok error");
+      res.status(500).send(err);
+    }
+  },
+
   deleteTikTokFolder: async (req, res, next) => {
     if (fs.existsSync(`./tiktok-videos/`)) {
       await del(`./tiktok-videos/`);

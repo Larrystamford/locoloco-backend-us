@@ -216,6 +216,7 @@ module.exports = {
           path: "videos",
           populate: { path: "reviews" },
         })
+        .populate("proVideos")
         .populate("purchases")
         .populate("sales");
 
@@ -251,6 +252,30 @@ module.exports = {
         .populate({
           path: "videos",
           populate: { path: "reviews" },
+        });
+
+      res.status(200).send(userVideos);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
+  // use for loading users page
+  getVideosItemsByUserNamePro: async (req, res, next) => {
+    const { userName } = req.params;
+
+    try {
+      const userVideos = await User.find(
+        { userName: userName },
+        sensitiveDataUserName
+      )
+        .sort({ _id: 1 })
+        .populate({
+          path: "proVideos",
+          populate: {
+            path: "comments",
+            populate: { path: "replies" },
+          },
         });
 
       res.status(200).send(userVideos);
@@ -306,11 +331,17 @@ module.exports = {
   // push previousProductLinks
   pushPreviousProductLinks: async (req, res, next) => {
     const { userId } = req.params;
-    const { previousProductLinks } = req.body;
+    const { previousProductLinks, proVideo } = req.body;
+    console.log(proVideo);
     try {
       let user = await User.findByIdAndUpdate(
         { _id: userId },
-        { $push: { previousProductLinks: previousProductLinks } }
+        {
+          $push: {
+            previousProductLinks: previousProductLinks,
+            proVideos: proVideo,
+          },
+        }
       );
 
       res.status(201).send("success");

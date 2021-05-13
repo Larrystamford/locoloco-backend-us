@@ -31,6 +31,8 @@ const app = express();
 
 let whitelist = [
   "https://www.vosh.club",
+  "https://vosh.club",
+  "vosh.club",
   "http://localhost:3000",
   "http://localhost:5000",
 ]; //white list consumers

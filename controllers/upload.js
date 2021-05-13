@@ -1,20 +1,25 @@
-const { fileUploadService, ffmpegSync } = require("../service/upload");
+const {
+  uploadFileToAws,
+  uploadFirstFrame,
+  ffmpegSync,
+} = require("../service/upload");
+
 const extractFrames = require("ffmpeg-extract-frames");
 var fs = require("fs");
 const util = require("util");
 const readFile = util.promisify(fs.readFile);
 
-async function uploadFileToAws(req, res, next) {
+async function uploadFileToAwsCtrl(req, res, next) {
   try {
     if (req.files && req.files.media) {
       const file = req.files.media;
-      const uploadRes = await fileUploadService.uploadFileToAws(file);
+      const uploadRes = await uploadFileToAws(file);
       uploadRes.url = uploadRes.url.replace(
         "https://media2locoloco-us.s3.amazonaws.com/",
         "https://dciv99su0d7r5.cloudfront.net/"
       );
 
-      return res.send(uploadRes);
+      https: return res.send(uploadRes);
     }
     const errMsg = {
       message: "FILES_NOT_FOUND",
@@ -23,6 +28,7 @@ async function uploadFileToAws(req, res, next) {
     };
     return res.status(404).send(errMsg);
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 }
@@ -39,7 +45,7 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
 
     if (req.files && req.files.media) {
       const file = req.files.media;
-      const uploadRes = await fileUploadService.uploadFileToAws(file);
+      const uploadRes = await uploadFileToAws(file);
 
       // ffmpeg -i inputfile.mkv -vf "select=eq(n\,0)" -q:v 3 output_image.jpg
       // await extractFrames({
@@ -51,7 +57,7 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
       // taking screen shot of video
       await ffmpegSync(uploadRes);
       const data = await readFile("./helpers/firstFrame/firstFrame.png");
-      const uploadFirstFrameRes = await fileUploadService.uploadFirstFrame(
+      const uploadFirstFrameRes = await uploadFirstFrame(
         data,
         file.name + "first_frame",
         "image/png"
@@ -81,4 +87,4 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
   }
 }
 
-module.exports = { uploadFileToAws, uploadVideoAndFirstFrameToAws };
+module.exports = { uploadFileToAwsCtrl, uploadVideoAndFirstFrameToAws };

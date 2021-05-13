@@ -5,7 +5,7 @@ const uploadCtrl = require("../controllers/upload");
 router.use(fileUpload({}));
 
 /* POST http://localhost:5000/v1/upload/aws - upload files to aws s3 bucket */
-router.route("/aws").post(uploadCtrl.uploadFileToAws);
+router.route("/aws").post(uploadCtrl.uploadFileToAwsCtrl);
 router
   .route("/awsWithFirstFrame")
   .post(uploadCtrl.uploadVideoAndFirstFrameToAws);

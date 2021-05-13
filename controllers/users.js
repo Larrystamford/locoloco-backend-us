@@ -216,7 +216,6 @@ module.exports = {
           path: "videos",
           populate: { path: "reviews" },
         })
-        .populate("proVideos")
         .populate("purchases")
         .populate("sales");
 
@@ -260,6 +259,27 @@ module.exports = {
     }
   },
 
+  getVideosItemsByUserIdPro: async (req, res, next) => {
+    const { userId } = req.params;
+
+    try {
+      const userVideos = await User.find(
+        { _id: userId },
+        sensitiveDataUserId
+      ).populate({
+        path: "proVideos",
+        populate: {
+          path: "comments",
+          populate: { path: "replies" },
+        },
+      });
+
+      res.status(200).send(userVideos);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
   // use for loading users page
   getVideosItemsByUserNamePro: async (req, res, next) => {
     const { userName } = req.params;
@@ -276,8 +296,8 @@ module.exports = {
             path: "comments",
             populate: { path: "replies" },
           },
-        });
-
+        })
+   
       res.status(200).send(userVideos);
     } catch (err) {
       res.status(500).send(err);

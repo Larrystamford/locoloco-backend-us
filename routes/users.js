@@ -44,18 +44,18 @@ router.route("/oauth/localRedirect").post(UsersController.localRedirect);
 
 // REST Routes
 router.route("/get/:userId").get(UsersController.getVideosItemsByUserId);
+router.route("/getPro/:userId").get(UsersController.getVideosItemsByUserIdPro);
+
 router
   .route("/getByUserName/:userName")
   .get(UsersController.getVideosItemsByUserName);
-
 router
-  .route("/getVideosItemsByUserNamePro/:userName")
+  .route("/getByUserNamePro/:userName")
   .get(UsersController.getVideosItemsByUserNamePro);
 
 router.route("/update/:userId").put(UsersController.update);
 
 // ACTION ROUTES
-
 router
   .route("/pushPreviousProductLinks/:userId")
   .put(UsersController.pushPreviousProductLinks);

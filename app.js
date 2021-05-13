@@ -35,6 +35,7 @@ let whitelist = [
   "vosh.club",
   "http://localhost:3000",
   "http://localhost:5000",
+  "https://main.daoo3v9o1vafi.amplifyapp.com",
 ]; //white list consumers
 let corsOptions = {
   origin: function (origin, callback) {

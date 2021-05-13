@@ -68,7 +68,7 @@ const defaultOptions = {
 
   // Create link to HD video: {boolean default: false}
   // This option will only work if {noWaterMark} is set to {true}
-  hdVideo: false,
+  hdVideo: true,
 
   // verifyFp is used to verify the request and avoid captcha
   // When you are using proxy then there are high chances that the request will be

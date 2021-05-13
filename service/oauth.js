@@ -36,14 +36,14 @@ async function registerOrLogin(id_token) {
 
       const randomSelectProfilePic = Math.floor(Math.random() * 8);
       const locoProfilePic = [
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_1.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_2.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_3.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_4.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_5.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_6.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_7.png",
-        "https://media2locoloco-us.s3.amazonaws.com/profile_pic_loco_8.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_1.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_2.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_3.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_4.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_5.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_6.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_7.png",
+        "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_8.png",
       ];
 
       const welcomeNotification = new Notification({

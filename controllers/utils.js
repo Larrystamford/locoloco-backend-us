@@ -66,11 +66,11 @@ let UtilsController = {
 
         let newVideoUrl = videoUrl.split(".com");
         newVideoUrl =
-          "https://media2locoloco-us.s3.amazonaws.com" + newVideoUrl[1];
+          "https://dciv99su0d7r5.cloudfront.net/" + newVideoUrl[1];
 
         let newVideoCoverImageUrl = videoCoverImageUrl.split(".com");
         newVideoCoverImageUrl =
-          "https://media2locoloco-us.s3.amazonaws.com" +
+          "https://dciv99su0d7r5.cloudfront.net/" +
           newVideoCoverImageUrl[1];
 
         console.log(newVideoUrl);
@@ -88,7 +88,7 @@ let UtilsController = {
 
         let newImageUrl = imageUrl.split(".com");
         newImageUrl =
-          "https://media2locoloco-us.s3.amazonaws.com" + newImageUrl[1];
+          "https://dciv99su0d7r5.cloudfront.net/" + newImageUrl[1];
 
         console.log(newImageUrl);
 

@@ -11,7 +11,7 @@ const videoSchema = new Schema(
     mediaType: String, // video or image
     caption: String,
     likes: [String], // list of userIds that has liked the video
-    likesCount: Number,
+    likesCount: { type: Number, default: 0 },
     shares: Number,
     categories: [String],
     subCategories: [String],
@@ -53,6 +53,7 @@ const videoSchema = new Schema(
         ref: "Review",
       },
     ],
+    affiliateGroupName: String,
     affiliateProducts: [],
     amazonLink: String,
     amazonOrInternal: String, // amazon, small_shop, internal

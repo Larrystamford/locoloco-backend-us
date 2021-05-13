@@ -9,6 +9,10 @@ async function uploadFileToAws(req, res, next) {
     if (req.files && req.files.media) {
       const file = req.files.media;
       const uploadRes = await fileUploadService.uploadFileToAws(file);
+      uploadRes.url = uploadRes.url.replace(
+        "https://media2locoloco-us.s3.amazonaws.com/",
+        "https://dciv99su0d7r5.cloudfront.net/"
+      );
 
       return res.send(uploadRes);
     }
@@ -54,8 +58,14 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
       );
 
       return res.send({
-        videoUrl: uploadRes.url,
-        imageUrl: uploadFirstFrameRes.url,
+        videoUrl: uploadRes.url.replace(
+          "https://media2locoloco-us.s3.amazonaws.com/",
+          "https://dciv99su0d7r5.cloudfront.net/"
+        ),
+        imageUrl: uploadFirstFrameRes.url.replace(
+          "https://media2locoloco-us.s3.amazonaws.com/",
+          "https://dciv99su0d7r5.cloudfront.net/"
+        ),
       });
     }
     const errMsg = {

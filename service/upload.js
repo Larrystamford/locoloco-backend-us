@@ -25,7 +25,6 @@ async function uploadFileToAws(file) {
     Key: fileName,
     Body: file.data,
     ContentType: mimetype,
-    ACL: "public-read",
   };
   const res = await new Promise((resolve, reject) => {
     s3.upload(params, (err, data) =>
@@ -42,7 +41,6 @@ async function uploadFirstFrame(data, fileName, mimetype) {
     Key: fileNameFirstFrame,
     Body: data,
     ContentType: mimetype,
-    ACL: "public-read",
   };
   const resFirstFrame = await new Promise((resolve, reject) => {
     s3.upload(paramsFirstFrame, (err, data) =>
@@ -85,7 +83,6 @@ async function uploadByFolder(folderPathName, fileExtension) {
         Bucket: process.env.AWS_S3_BUCKET,
         Key: filename,
         Body: fileData,
-        ACL: "public-read",
       };
       res = new Promise((resolve, reject) => {
         s3.upload(params, (err, data) =>

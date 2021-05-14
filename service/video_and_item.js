@@ -237,8 +237,14 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
   try {
     console.log("saving video");
     const newVideo = new Video();
-    newVideo.url = value.video.replace("https://media2locoloco-us.s3.amazonaws.com/", "https://dciv99su0d7r5.cloudfront.net/");;
-    newVideo.coverImageUrl = value.image.replace("https://media2locoloco-us.s3.amazonaws.com/", "https://dciv99su0d7r5.cloudfront.net/");;
+    newVideo.url = value.video.replace(
+      "https://media2locoloco-us.s3.amazonaws.com/",
+      "https://dciv99su0d7r5.cloudfront.net/"
+    );
+    newVideo.coverImageUrl = value.image.replace(
+      "https://media2locoloco-us.s3.amazonaws.com/",
+      "https://dciv99su0d7r5.cloudfront.net/"
+    );
     newVideo.tiktokCreatedAt = value.createTime;
     newVideo.caption = value.caption;
     newVideo.proShareCount = value.proShareCount;
@@ -257,6 +263,7 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
     newVideo.userName = user.userName;
     newVideo.originalCreator = tiktokUsername;
 
+
     // SAVING VIDEO
     try {
       await newVideo.save();
@@ -266,7 +273,7 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
     }
 
     // SAVING USER
-    // user.videos = [...user.videos, newVideo._id];
+    // add to set wont work because video id is new. But anyways currently we wont add duplicate if normal 3 calls.
     try {
       await User.findByIdAndUpdate(
         { _id: userId },
@@ -276,6 +283,9 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
       console.log("saving tiktok error", err);
       throw err;
     }
+
+    const ussser = await User.findById({ _id: userId });
+    console.log(ussser);
 
     return "success";
   } catch (error) {

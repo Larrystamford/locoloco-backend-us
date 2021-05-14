@@ -19,7 +19,7 @@ var mongoose = require("mongoose");
 
 const defaultOptions = {
   number: 0,
-  sessionList: ["sid_tt=612d5cda4a5db3478df5b1ca434d5430"],
+  sessionList: ["sid_tt=1160c86a1fa35ccd0c26486683521293"],
 
   // Set proxy {string[] | string default: ''}
   // http proxy: 127.0.0.1:8080
@@ -94,6 +94,13 @@ let DownloadTiktoksController = {
         if (eachSocialAccount.socialType == "TikTok") {
           tiktokUsername = eachSocialAccount.userIdentifier;
         }
+      }
+
+      if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
+        await del(`./tiktok-videos/${tiktokUsername}/`);
+      }
+      if (fs.existsSync(`./tiktok-videos/${tiktokUsername + "-info"}/`)) {
+        await del(`./tiktok-videos/${tiktokUsername + "-info"}/`);
       }
 
       const options = defaultOptions;

@@ -263,16 +263,15 @@ module.exports = {
     const { userId } = req.params;
 
     try {
-      const userVideos = await User.find(
-        { _id: userId },
-        sensitiveDataUserId
-      ).populate({
-        path: "proVideos",
-        populate: {
-          path: "comments",
-          populate: { path: "replies" },
-        },
-      });
+      const userVideos = await User.find({ _id: userId }, sensitiveDataUserId)
+        .populate({
+          path: "proVideos",
+          populate: {
+            path: "comments",
+            populate: { path: "replies" },
+          },
+        })
+        .populate("videos");
 
       res.status(200).send(userVideos);
     } catch (err) {
@@ -296,8 +295,8 @@ module.exports = {
             path: "comments",
             populate: { path: "replies" },
           },
-        })
-   
+        });
+
       res.status(200).send(userVideos);
     } catch (err) {
       res.status(500).send(err);

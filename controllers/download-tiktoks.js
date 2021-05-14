@@ -204,13 +204,15 @@ let DownloadTiktoksController = {
 
         const screenShots = [];
         for (const videoFile of uploadedVideos) {
-          console.log(videoFile);
           let newImageName = videoFile.Key.slice(0, -4);
           screenShots.push(
             screenshotTiktok(
               newImageName,
               `./tiktok-videos/${tiktokUsername}/`,
-              videoFile.Location
+              videoFile.Location.replace(
+                "https://media2locoloco-us.s3.amazonaws.com/",
+                "https://dciv99su0d7r5.cloudfront.net/"
+              )
             )
           );
         }

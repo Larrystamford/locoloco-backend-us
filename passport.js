@@ -110,9 +110,9 @@ passport.use(
 
           const welcomeNotification = new Notification({
             userPicture:
-              "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
-            userName: "shoplocoloco",
-            message: "Welcome to the Loco Family! Start watching now!",
+              "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_1.png",
+            userName: "vosh.club",
+            message: "Welcome to Vosh Club! Start watching now!",
             notificationType: "broadcast",
             redirectLink: "/",
           });
@@ -131,7 +131,7 @@ passport.use(
             email: profile.emails[0].value,
             authStatus: "AUTH_SIGN_UP",
             likedVideos: [],
-            profileBio: "welcome to shoplocoloco.com 🎉",
+            profileBio: "welcome to vosh.club 🎉",
           });
           newUser.notifications = [welcomeNotification];
           newUser.userName = await usersHelper.generateUsername(newUser.email);
@@ -140,7 +140,7 @@ passport.use(
 
           sendEmailService.sendEmailSignUp(
             newUser.email,
-            "Welcome to the Vosh Family! 🎉",
+            "Welcome to Vosh Club! 🎉",
             "Message sent from vosh.club"
           );
 

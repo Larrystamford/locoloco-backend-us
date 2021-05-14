@@ -100,7 +100,7 @@ module.exports = {
       userPicture:
         "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
       userName: "vosh.club",
-      message: "Welcome to the Vosh Club! Start watching now!",
+      message: "Welcome to Vosh Club! Start watching now!",
       notificationType: "broadcast",
       redirectLink: "/",
     });
@@ -115,7 +115,7 @@ module.exports = {
         password: passwordHash,
       },
       email: email.toLowerCase(),
-      profileBio: "welcome to shoplocoloco.com 🎉",
+      profileBio: "welcome to vosh.club 🎉",
     });
 
     const randomSelectProfilePic = Math.floor(Math.random() * 8);
@@ -145,8 +145,8 @@ module.exports = {
     // send sign up email
     sendEmailService.sendEmailSignUp(
       newUser.email,
-      "Welcome to the Loco Family! 🎉",
-      "Message sent from www.shoplocoloco.com"
+      "Welcome to Vosh Club! 🎉",
+      "Message sent from vosh.club"
     );
 
     /// Respond to Client with Token

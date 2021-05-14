@@ -48,9 +48,9 @@ async function registerOrLogin(id_token) {
 
       const welcomeNotification = new Notification({
         userPicture:
-          "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
-        userName: "shoplocoloco",
-        message: "Welcome to the Loco Family! Start watching now!",
+          "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_1.png",
+        userName: "vosh.club",
+        message: "Welcome to Vosh Club! Start watching now!",
         notificationType: "broadcast",
         redirectLink: "/",
       });
@@ -68,7 +68,7 @@ async function registerOrLogin(id_token) {
         picture: locoProfilePic[randomSelectProfilePic],
         email: email,
         likedVideos: [],
-        profileBio: "welcome to shoplocoloco.com 🎉",
+        profileBio: "welcome to vosh.club 🎉",
       });
       newUser.notifications = [welcomeNotification];
       newUser.userName = newUserName;
@@ -76,8 +76,8 @@ async function registerOrLogin(id_token) {
 
       sendEmailService.sendEmailSignUp(
         email,
-        "Welcome to the Loco Family! 🎉",
-        "Message sent from www.shoplocoloco.com"
+        "Welcome to Vosh Club! 🎉",
+        "Message sent from vosh.club"
       );
 
       return newUser;

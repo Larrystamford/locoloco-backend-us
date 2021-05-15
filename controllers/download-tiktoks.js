@@ -176,6 +176,7 @@ let DownloadTiktoksController = {
       }
 
       if (options.number >= 0) {
+        console.log("all good until here?");
         await TikTokScraper.user(tiktokUsername, options);
       } else {
         await User.findByIdAndUpdate(
@@ -185,6 +186,8 @@ let DownloadTiktoksController = {
           }
         );
       }
+
+      console.log("success");
 
       res.status(200).send("success");
     } catch (err) {

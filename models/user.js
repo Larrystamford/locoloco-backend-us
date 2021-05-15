@@ -160,8 +160,12 @@ const userSchema = new Schema(
     ],
     proTheme: {
       arrangement: String,
+      // background
       background1: String,
+      // box background
       background2: String,
+      linkBoxColor: { type: String, default: "grey" },
+
       fontType: String,
       // black or white
       socialIconsColor: String,

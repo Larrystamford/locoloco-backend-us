@@ -65,10 +65,6 @@ async function readJsonInfo(folderPathName) {
   for (const filename of filenames) {
     curFileExtension = path.extname(filename);
     if (curFileExtension == ".json") {
-      console.log("hello");
-      console.log(folderPathName);
-      console.log(filename);
-
       jsonFileData = await readfile(folderPathName + filename);
       break;
     }
@@ -85,8 +81,7 @@ async function uploadByFolder(folderPathName, fileExtension) {
   let res;
   let params;
   let jsonFileData;
-  console.log("filenames");
-  console.log(filenames);
+
   for (const filename of filenames) {
     curFileExtension = path.extname(filename);
     if (curFileExtension == fileExtension) {
@@ -104,8 +99,7 @@ async function uploadByFolder(folderPathName, fileExtension) {
           err == null ? resolve(data) : reject(err)
         );
       });
-      console.log("uploading by folder");
-      console.log(res);
+
       uploadedFiles.push(res);
     } else if (curFileExtension == ".json") {
       jsonFileData = await readfile(folderPathName + filename);

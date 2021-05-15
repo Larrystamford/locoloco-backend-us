@@ -49,7 +49,7 @@ const defaultOptions = {
   // 'json' to save in json
   // 'all' to save in json and csv
   // 'na' to skip this step
-  filetype: `json`,
+  filetype: "json",
 
   // Set custom headers: user-agent, cookie and etc
   // NOTE: When you parse video feed or single video metadata then in return you will receive {headers} object
@@ -127,7 +127,7 @@ let DownloadTiktoksController = {
 
       const options = defaultOptions;
       options.download = true;
-      options.filepath = "./tiktok-videos/";
+      options.filepath = "./tiktok-videos";
       options.number = 3;
 
       let tiktokUsername;

@@ -101,5 +101,5 @@ app.get(
 // Start the Server
 const port = process.env.PORT || 5000;
 let server = app.listen(port);
-server.timeout = 300000;
+server.timeout = 600000;
 console.log(`Server listening at ${port}`);

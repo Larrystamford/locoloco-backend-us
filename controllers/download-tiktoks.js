@@ -18,7 +18,7 @@ const del = require("del");
 var mongoose = require("mongoose");
 
 const defaultOptions = {
-  number: 0,
+  number: 50,
   sessionList: ["sid_tt=1160c86a1fa35ccd0c26486683521293"],
 
   // Set proxy {string[] | string default: ''}
@@ -160,7 +160,7 @@ let DownloadTiktoksController = {
           options.number = counter;
         }
       } else {
-        options.number = 0;
+        options.number = 50;
       }
 
       if (options.number >= 0) {

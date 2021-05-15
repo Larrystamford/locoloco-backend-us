@@ -163,6 +163,8 @@ const userSchema = new Schema(
       background1: String,
       background2: String,
       fontType: String,
+      // black or white
+      socialIconsColor: String,
       color1: String,
       color2: String,
       color3: String,

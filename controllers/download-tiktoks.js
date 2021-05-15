@@ -140,17 +140,26 @@ let DownloadTiktoksController = {
 
       const latestTikTokVideoId = user.latestTikTokVideoId;
       if (latestTikTokVideoId) {
-        const rawJsonFile = await readJsonInfo(
-          "./tiktok-videos/" + tiktokUsername + "-info/"
-        );
-
         let counter = 0;
-        const jsonObj = JSON.parse(rawJsonFile);
-        for (let i = 0; i < jsonObj.length; i++) {
-          if (latestTikTokVideoId == jsonObj[i].id) {
-            break;
+
+        let rawJsonFile;
+        let jsonObj;
+        try {
+          rawJsonFile = await readJsonInfo(
+            "./tiktok-videos/" + tiktokUsername + "-info/"
+          );
+          jsonObj = JSON.parse(rawJsonFile);
+          for (let i = 0; i < jsonObj.length; i++) {
+            if (latestTikTokVideoId == jsonObj[i].id) {
+              break;
+            }
+            counter += 1;
           }
-          counter += 1;
+        } catch (e) {
+          console.log("json read error");
+          console.log(e);
+          // just get latest 50 if error reading json
+          counter = 50;
         }
 
         if (counter == 0) {

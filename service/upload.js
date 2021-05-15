@@ -65,6 +65,10 @@ async function readJsonInfo(folderPathName) {
   for (const filename of filenames) {
     curFileExtension = path.extname(filename);
     if (curFileExtension == ".json") {
+      console.log("hello");
+      console.log(folderPathName);
+      console.log(filename);
+
       jsonFileData = await readfile(folderPathName + filename);
       break;
     }

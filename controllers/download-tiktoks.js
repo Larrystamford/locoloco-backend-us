@@ -104,6 +104,8 @@ let DownloadTiktoksController = {
       }
 
       const options = defaultOptions;
+      options.filetype = "json";
+
       options.filepath = "./tiktok-videos/" + tiktokUsername + "-info/";
       if (!fs.existsSync(options.filepath)) {
         fs.mkdirSync(options.filepath, { recursive: true });
@@ -128,6 +130,7 @@ let DownloadTiktoksController = {
       const options = defaultOptions;
       options.download = true;
       options.filepath = "./tiktok-videos";
+      options.filetype = "na";
       options.number = 3;
 
       let tiktokUsername;

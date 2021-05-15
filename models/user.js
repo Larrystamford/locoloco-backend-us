@@ -164,7 +164,7 @@ const userSchema = new Schema(
       background1: String,
       // box background
       background2: String,
-      linkBoxColor: { type: String, default: "grey" },
+      linkBoxColor: { type: String, default: "slategray" },
 
       fontType: String,
       // black or white

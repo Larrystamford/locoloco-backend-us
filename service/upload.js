@@ -26,9 +26,9 @@ async function uploadFileToAws(file) {
     Body: file.data,
     ContentType: mimetype,
   };
-  if (process.env.NODE_ENV !== "production") {
-    params["ACL"] = "public-read";
-  }
+  // if (process.env.NODE_ENV !== "production") {
+  //   params["ACL"] = "public-read";
+  // }
   const res = await new Promise((resolve, reject) => {
     s3.upload(params, (err, data) =>
       err == null ? resolve(data) : reject(err)
@@ -45,9 +45,9 @@ async function uploadFirstFrame(data, fileName, mimetype) {
     Body: data,
     ContentType: mimetype,
   };
-  if (process.env.NODE_ENV !== "production") {
-    paramsFirstFrame["ACL"] = "public-read";
-  }
+  // if (process.env.NODE_ENV !== "production") {
+  //   paramsFirstFrame["ACL"] = "public-read";
+  // }
   const resFirstFrame = await new Promise((resolve, reject) => {
     s3.upload(paramsFirstFrame, (err, data) =>
       err == null ? resolve(data) : reject(err)
@@ -93,9 +93,12 @@ async function uploadByFolder(folderPathName, fileExtension) {
         Key: filename,
         Body: fileData,
       };
-      if (process.env.NODE_ENV !== "production") {
-        params["ACL"] = "public-read";
-      }
+
+      console.log("environment");
+      console.log(process.env.NODE_ENV);
+      // if (process.env.NODE_ENV !== "production") {
+      //   params["ACL"] = "public-read";
+      // }
       res = new Promise((resolve, reject) => {
         s3.upload(params, (err, data) =>
           err == null ? resolve(data) : reject(err)

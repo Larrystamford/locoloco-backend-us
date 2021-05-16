@@ -8,6 +8,7 @@ const {
   uploadByFolder,
   screenshotTiktok,
   readJsonInfo,
+  getTikTokJson,
 } = require("../service/upload");
 
 const { saveTikTokVideo } = require("../service/video_and_item");
@@ -88,31 +89,21 @@ let DownloadTiktoksController = {
     try {
       const { userId } = req.params;
 
-      let tiktokUsername;
-      const user = await User.findById(userId);
-      for (const eachSocialAccount of user.socialAccounts) {
-        if (eachSocialAccount.socialType == "TikTok") {
-          tiktokUsername = eachSocialAccount.userIdentifier;
+      let result;
+      result = await getTikTokJson(userId, defaultOptions);
+      if (result != "success") {
+        for (let i = 0; i < 3; i++) {
+          console.log("retry " + i);
+          result = await getTikTokJson(userId, defaultOptions);
+          if (result == "success") {
+            break;
+          }
         }
       }
 
-      if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
-        await del(`./tiktok-videos/${tiktokUsername}/`);
+      if (result != "success") {
+        throw new Error("get tiktok json failed");
       }
-      if (fs.existsSync(`./tiktok-videos/${tiktokUsername + "-info"}/`)) {
-        await del(`./tiktok-videos/${tiktokUsername + "-info"}/`);
-      }
-
-      const options = defaultOptions;
-      options.filetype = "json";
-
-      options.filepath = "./tiktok-videos/" + tiktokUsername + "-info/";
-      if (!fs.existsSync(options.filepath)) {
-        fs.mkdirSync(options.filepath, { recursive: true });
-      }
-
-      options.download = false;
-      await TikTokScraper.user(tiktokUsername, options);
 
       res.status(200).send("success");
     } catch (err) {
@@ -217,9 +208,33 @@ let DownloadTiktoksController = {
           ".mp4"
         );
 
-        const rawJsonFile = await readJsonInfo(
-          "./tiktok-videos/" + tiktokUsername + "-info/"
-        );
+        let rawJsonFile;
+        try {
+          rawJsonFile = await readJsonInfo(
+            "./tiktok-videos/" + tiktokUsername + "-info/"
+          );
+        } catch {
+          let result;
+          result = await getTikTokJson(userId, defaultOptions);
+          if (result != "success") {
+            for (let i = 0; i < 3; i++) {
+              console.log("retry " + i);
+              result = await getTikTokJson(userId, defaultOptions);
+              if (result == "success") {
+                break;
+              }
+            }
+          }
+
+          if (result != "success") {
+            throw new Error("get tiktok json failed");
+          }
+
+          rawJsonFile = await readJsonInfo(
+            "./tiktok-videos/" + tiktokUsername + "-info/"
+          );
+        }
+
         const jsonObj = JSON.parse(rawJsonFile);
 
         const screenShots = [];
@@ -247,23 +262,39 @@ let DownloadTiktoksController = {
         const videoAndImageS3 = {};
         let videoKey;
         let imageKey;
-        for (let i = 0; i < uploadedVideos.length; i++) {
-          videoKey = uploadedVideos[i].Key.slice(0, -4);
-          imageKey = uploadedImages[i].Key.slice(0, -4);
+        for (let i = 0; i < jsonObj.length; i++) {
+          if (i >= uploadedVideos.length) {
+            videoKey = "";
+          } else {
+            videoKey = uploadedVideos[i].Key.slice(0, -4);
+          }
+
+          if (i >= uploadedVideos.length) {
+            imageKey = "";
+          } else {
+            imageKey = uploadedImages[i].Key.slice(0, -4);
+          }
+
           jsonKey = jsonObj[i].id;
 
-          if (!(videoKey in videoAndImageS3)) {
+          if (videoKey && !(videoKey in videoAndImageS3)) {
             videoAndImageS3[videoKey] = {};
           }
-          if (!(imageKey in videoAndImageS3)) {
+          if (imageKey && !(imageKey in videoAndImageS3)) {
             videoAndImageS3[imageKey] = {};
           }
           if (!(jsonKey in videoAndImageS3)) {
             videoAndImageS3[jsonKey] = {};
           }
 
-          videoAndImageS3[videoKey].video = uploadedVideos[i].Location;
-          videoAndImageS3[imageKey].image = uploadedImages[i].Location;
+          if (videoKey) {
+            videoAndImageS3[videoKey].video = uploadedVideos[i].Location;
+          }
+
+          if (imageKey) {
+            videoAndImageS3[imageKey].image = uploadedImages[i].Location;
+          }
+
           videoAndImageS3[jsonKey].caption = jsonObj[i].text;
           videoAndImageS3[jsonKey].createTime = jsonObj[i].createTime;
           videoAndImageS3[jsonKey].proShareCount = jsonObj[i].shareCount;
@@ -382,7 +413,7 @@ let DownloadTiktoksController = {
       let videoKey;
       let imageKey;
       const jsonObj = JSON.parse(rawJsonFile);
-      for (let i = 0; i < uploadedVideos.length; i++) {
+      for (let i = 0; i < jsonObj.length; i++) {
         videoKey = uploadedVideos[i].Key.slice(0, -4);
         imageKey = uploadedImages[i].Key.slice(0, -4);
         jsonKey = jsonObj[i].id;

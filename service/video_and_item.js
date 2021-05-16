@@ -235,7 +235,6 @@ async function saveAmazonReviews(videoId, amazons) {
 
 async function saveTikTokVideo(key, value, userId, tiktokUsername) {
   try {
-    console.log("saving video");
     const newVideo = new Video();
     newVideo.url = value.video.replace(
       "https://media2locoloco-us.s3.amazonaws.com/",
@@ -283,9 +282,6 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
       console.log("saving tiktok error", err);
       throw err;
     }
-
-    const ussser = await User.findById({ _id: userId });
-    console.log(ussser);
 
     return "success";
   } catch (error) {

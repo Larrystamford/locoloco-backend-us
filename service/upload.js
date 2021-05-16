@@ -3,6 +3,8 @@ const fs = require("fs");
 const util = require("util");
 const readdir = util.promisify(fs.readdir);
 const readfile = util.promisify(fs.readFile);
+const User = require("../models/user");
+
 const path = require("path");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -11,6 +13,9 @@ if (process.env.NODE_ENV !== "production") {
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
+
+const TikTokScraper = require("tiktok-scraper");
+const del = require("del");
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_ID,
@@ -82,9 +87,10 @@ async function uploadByFolder(folderPathName, fileExtension) {
   let params;
   let jsonFileData;
 
+  console.log("number of downloaded videos");
+  console.log(filenames.length);
+
   for (const filename of filenames) {
-    console.log(filename);
-    console.log("filename");
     curFileExtension = path.extname(filename);
     if (curFileExtension == fileExtension) {
       fileData = await readfile(folderPathName + filename);
@@ -94,8 +100,6 @@ async function uploadByFolder(folderPathName, fileExtension) {
         Body: fileData,
       };
 
-      console.log("environment");
-      console.log(process.env.NODE_ENV);
       if (process.env.NODE_ENV === "dev") {
         params["ACL"] = "public-read";
       }
@@ -144,6 +148,41 @@ function screenshotTiktok(imageName, downloadToPath, videoFileLocation) {
   });
 }
 
+async function getTikTokJson(userId, defaultOptions) {
+  try {
+    let tiktokUsername;
+    const user = await User.findById(userId);
+    for (const eachSocialAccount of user.socialAccounts) {
+      if (eachSocialAccount.socialType == "TikTok") {
+        tiktokUsername = eachSocialAccount.userIdentifier;
+      }
+    }
+
+    if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
+      await del(`./tiktok-videos/${tiktokUsername}/`);
+    }
+    if (fs.existsSync(`./tiktok-videos/${tiktokUsername + "-info"}/`)) {
+      await del(`./tiktok-videos/${tiktokUsername + "-info"}/`);
+    }
+
+    const options = defaultOptions;
+    options.filetype = "json";
+
+    options.filepath = "./tiktok-videos/" + tiktokUsername + "-info/";
+    if (!fs.existsSync(options.filepath)) {
+      fs.mkdirSync(options.filepath, { recursive: true });
+    }
+
+    options.download = false;
+    await TikTokScraper.user(tiktokUsername, options);
+
+    return "success";
+  } catch (e) {
+    console.log(e);
+    return "failed";
+  }
+}
+
 module.exports = {
   uploadFileToAws,
   uploadFirstFrame,
@@ -151,4 +190,5 @@ module.exports = {
   ffmpegSync,
   screenshotTiktok,
   readJsonInfo,
+  getTikTokJson,
 };

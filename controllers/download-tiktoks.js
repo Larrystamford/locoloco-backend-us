@@ -130,7 +130,7 @@ let DownloadTiktoksController = {
       const options = defaultOptions;
       options.download = true;
       options.filepath = "./tiktok-videos";
-      options.filetype = "json";
+      options.filetype = "na";
       options.number = 3;
 
       let tiktokUsername;
@@ -212,10 +212,15 @@ let DownloadTiktoksController = {
       }
 
       if (!user.noNewTiktokVideos) {
-        const [uploadedVideos, rawJsonFile] = await uploadByFolder(
+        const uploadedVideos = await uploadByFolder(
           `./tiktok-videos/${tiktokUsername}/`,
           ".mp4"
         );
+
+        const rawJsonFile = await readJsonInfo(
+          "./tiktok-videos/" + tiktokUsername + "-info/"
+        );
+        const jsonObj = JSON.parse(rawJsonFile);
 
         const screenShots = [];
         for (const videoFile of uploadedVideos) {
@@ -233,7 +238,7 @@ let DownloadTiktoksController = {
         }
         await Promise.all(screenShots);
 
-        const [uploadedImages, _] = await uploadByFolder(
+        const uploadedImages = await uploadByFolder(
           `./tiktok-videos/${tiktokUsername}/`,
           ".png"
         );
@@ -242,7 +247,6 @@ let DownloadTiktoksController = {
         const videoAndImageS3 = {};
         let videoKey;
         let imageKey;
-        const jsonObj = JSON.parse(rawJsonFile);
         for (let i = 0; i < uploadedVideos.length; i++) {
           videoKey = uploadedVideos[i].Key.slice(0, -4);
           imageKey = uploadedImages[i].Key.slice(0, -4);
@@ -268,19 +272,19 @@ let DownloadTiktoksController = {
         // saving to mongo
         const savedVideos = [];
         for (const [key, value] of Object.entries(videoAndImageS3)) {
-          savedVideos.push(saveTikTokVideo(key, value, userId, tiktokUsername));
+          if (value.video) {
+            savedVideos.push(
+              saveTikTokVideo(key, value, userId, tiktokUsername)
+            );
+          }
         }
         await Promise.all(savedVideos);
 
-        const fullRawJsonObj = await readJsonInfo(
-          "./tiktok-videos/" + tiktokUsername + "-info/"
-        );
-        const fullJsonObj = JSON.parse(fullRawJsonObj);
-        if (fullJsonObj.length > 0) {
+        if (jsonObj.length > 0) {
           await User.findByIdAndUpdate(
             { _id: userId },
             {
-              latestTikTokVideoId: fullJsonObj[0].id,
+              latestTikTokVideoId: jsonObj[0].id,
             }
           );
         }

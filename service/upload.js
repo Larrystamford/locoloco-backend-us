@@ -83,6 +83,8 @@ async function uploadByFolder(folderPathName, fileExtension) {
   let jsonFileData;
 
   for (const filename of filenames) {
+    console.log(filename);
+    console.log("filename");
     curFileExtension = path.extname(filename);
     if (curFileExtension == fileExtension) {
       fileData = await readfile(folderPathName + filename);

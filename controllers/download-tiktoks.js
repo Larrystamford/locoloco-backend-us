@@ -130,7 +130,7 @@ let DownloadTiktoksController = {
       const options = defaultOptions;
       options.download = true;
       options.filepath = "./tiktok-videos";
-      options.filetype = "na";
+      options.filetype = "json";
       options.number = 3;
 
       let tiktokUsername;

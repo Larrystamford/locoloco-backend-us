@@ -170,17 +170,31 @@ module.exports = {
     });
   },
 
+  checkCurrentPassword: async (req, res, next) => {
+    try {
+      const { userId, currentPassword } = req.body;
+
+      const user = await User.findOne({ _id: userId });
+      const isMatch = await user.isValidPassword(currentPassword);
+
+      res.status(200).send(isMatch);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
+  },
+
   changePassword: async (req, res, next) => {
     try {
-      const { email, newPassword } = req.body;
+      const { userId, newPassword } = req.body;
 
-      const user = await User.findOne({ email: email });
+      const user = await User.findOne({ _id: userId });
       // const salt = await bcrypt.genSalt(4);
       const passwordHash = bcrypt.hashSync(newPassword, 10);
       user.local.password = passwordHash;
       await user.save();
 
-      res.status(200).send("password changed");
+      res.status(200).send("success");
     } catch (error) {
       console.log(error);
       res.status(500).send(error);

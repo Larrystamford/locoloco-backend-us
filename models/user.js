@@ -164,7 +164,12 @@ const userSchema = new Schema(
       background1: String,
       // box background
       background2: String,
+
+      primaryFontColor: { type: String, default: "black" },
+      socialIconsColor: { type: String, default: "black" },
       linkBoxColor: { type: String, default: "slategray" },
+      linkWordsColor: { type: String, default: "white" },
+      categoryWordsColor: { type: String, default: "black" },
 
       fontType: String,
       // black or white

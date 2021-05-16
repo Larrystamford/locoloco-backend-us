@@ -19,6 +19,9 @@ router
   );
 
 router.route("/changePassword").post(UsersController.changePassword);
+router
+  .route("/checkCurrentPassword")
+  .post(UsersController.checkCurrentPassword);
 
 router.route("/userNameTaken/:userName").get(UsersController.userNameTaken);
 router.route("/userNameIsPro/:userName").get(UsersController.userNameIsPro);

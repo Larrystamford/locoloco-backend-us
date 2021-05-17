@@ -65,13 +65,11 @@ let UtilsController = {
         let videoCoverImageUrl = eachVideo.coverImageUrl;
 
         let newVideoUrl = videoUrl.split(".com");
-        newVideoUrl =
-          "https://dciv99su0d7r5.cloudfront.net/" + newVideoUrl[1];
+        newVideoUrl = "https://dciv99su0d7r5.cloudfront.net/" + newVideoUrl[1];
 
         let newVideoCoverImageUrl = videoCoverImageUrl.split(".com");
         newVideoCoverImageUrl =
-          "https://dciv99su0d7r5.cloudfront.net/" +
-          newVideoCoverImageUrl[1];
+          "https://dciv99su0d7r5.cloudfront.net/" + newVideoCoverImageUrl[1];
 
         console.log(newVideoUrl);
 
@@ -87,8 +85,7 @@ let UtilsController = {
         let imageUrl = eachItem.image;
 
         let newImageUrl = imageUrl.split(".com");
-        newImageUrl =
-          "https://dciv99su0d7r5.cloudfront.net/" + newImageUrl[1];
+        newImageUrl = "https://dciv99su0d7r5.cloudfront.net/" + newImageUrl[1];
 
         console.log(newImageUrl);
 
@@ -121,16 +118,19 @@ let UtilsController = {
     try {
       const listOfVideosItems = await Video.find();
       for (eachVideo of listOfVideosItems) {
-        console.log(eachVideo.amazons);
-        await videoItemService.saveAmazonReviews(
-          eachVideo._id,
-          eachVideo.amazons
+        eachVideo.url = eachVideo.url.replace(
+          "https://media2locoloco-us.s3.amazonaws.com/",
+          "https://dciv99su0d7r5.cloudfront.net/"
+        );
+        eachVideo.coverImageUrl = eachVideo.coverImageUrl.replace(
+          "https://media2locoloco-us.s3.amazonaws.com/",
+          "https://dciv99su0d7r5.cloudfront.net/"
         );
 
         // eachVideo.reviews = [];
         // eachVideo.reviewCounts = 0;
         // eachVideo.totalReviewRating = 0;
-        // await eachVideo.save();
+        await eachVideo.save();
       }
       res.status(201).send("done");
     } catch (err) {

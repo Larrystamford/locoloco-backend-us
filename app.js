@@ -87,6 +87,7 @@ app.use("/v1/review", require("./routes/review"));
 app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/tiktok", require("./routes/download-tiktoks"));
+app.use("/v1/metrics", require("./routes/metrics"));
 app.use("/v1/error", require("./routes/error"));
 
 app.get(

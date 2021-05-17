@@ -178,9 +178,6 @@ const userSchema = new Schema(
       color2: String,
       color3: String,
     },
-
-    metricsTotalVisits: { type: Number, default: "black" },
-
     // can check if list too long then delete until left 30 etc
     previousProductLinks: [
       {

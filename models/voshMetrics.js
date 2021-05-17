@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Create a Schema
-const metricsSchema = new Schema(
+const voshMetricsSchema = new Schema(
   {
     // either user or video id etc
     id: String,
@@ -15,6 +15,6 @@ const metricsSchema = new Schema(
   { timestamps: true }
 );
 
-const Metrics = mongoose.model("Metrics", metricsSchema);
+const voshMetrics = mongoose.model("voshMetrics", voshMetricsSchema);
 
-module.exports = Metrics;
+module.exports = voshMetrics;

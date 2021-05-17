@@ -1,11 +1,11 @@
-const Metrics = require("../models/Metrics");
+const voshMetrics = require("../models/voshMetrics");
 
 module.exports = {
   incrementMetrics: async (req, res, next) => {
     try {
       const { id, unqiueIdentifier } = req.body;
 
-      await Metrics.updateOne(
+      await voshMetrics.updateOne(
         { id: id, unqiueIdentifier: unqiueIdentifier },
         {
           $setOnInsert: { id: id, unqiueIdentifier: unqiueIdentifier },

@@ -7,6 +7,8 @@ const metricsSchema = new Schema(
     // either user or video id etc
     id: String,
     // a unique string description
+    // unqiueIdentifier
+    // total page visits, total profile shares,
     unqiueIdentifier: String,
     clickCount: { type: Number, default: 0 },
   },
@@ -16,7 +18,3 @@ const metricsSchema = new Schema(
 const Metrics = mongoose.model("Metrics", metricsSchema);
 
 module.exports = Metrics;
-
-
-// unqiueIdentifier
-// total page visits, total profile shares, 

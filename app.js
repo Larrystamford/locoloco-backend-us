@@ -88,6 +88,8 @@ app.use("/v1/notifications", require("./routes/notifications"));
 app.use("/v1/utils", require("./routes/utils"));
 app.use("/v1/tiktok", require("./routes/download-tiktoks"));
 app.use("/v1/metrics", require("./routes/voshMetrics"));
+app.use("/v1/follow", require("./routes/follow"));
+app.use("/v1/likesForVideos", require("./routes/likesForVideos"));
 app.use("/v1/error", require("./routes/error"));
 
 app.get(

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Create a Schema
-const likesSchema = new Schema(
+const likesForVideosSchema = new Schema(
   {
     likerId: {
       type: Schema.Types.ObjectId,
@@ -16,6 +16,6 @@ const likesSchema = new Schema(
   { timestamps: true }
 );
 
-const likes = mongoose.model("likes", likesSchema);
+const likesForVideos = mongoose.model("likesForVideos", likesForVideosSchema);
 
-module.exports = likes;
+module.exports = likesForVideos;

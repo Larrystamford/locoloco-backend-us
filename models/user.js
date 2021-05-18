@@ -58,6 +58,7 @@ const userSchema = new Schema(
         picture: String,
       },
     ],
+    followersCount: { type: Number, default: 0 },
     purchases: [
       {
         type: Schema.Types.ObjectId,

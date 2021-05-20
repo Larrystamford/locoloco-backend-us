@@ -228,7 +228,7 @@ let DownloadTiktoksController = {
           let result;
           result = await getTikTokJson(userId, defaultOptions);
           if (result != "success") {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 5; i++) {
               console.log("retry " + i);
               result = await getTikTokJson(userId, defaultOptions);
               if (result == "success") {
@@ -287,7 +287,13 @@ let DownloadTiktoksController = {
             }
           }
 
-          s3Link = await CdnLinktoS3Link(jsonObj[jsonIndex].covers.default);
+          try {
+            s3Link = await CdnLinktoS3Link(jsonObj[jsonIndex].covers.default);
+          } catch (e) {
+            console.log(e);
+            console.log(jsonObj[jsonIndex]);
+            s3Link = "";
+          }
 
           if (videoKey && !(videoKey in videoAndImageS3)) {
             videoAndImageS3[videoKey] = {};

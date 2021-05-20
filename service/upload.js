@@ -252,8 +252,6 @@ async function getOpenGraphImage2(webLink) {
         url: webLink,
         onlyGetOpenGraphInfo: true,
         allMedia: true,
-        retry: 10,
-        maxRedirects: 5,
       }).then((data) => {
         const { error, result, response } = data;
 

@@ -96,32 +96,39 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
 async function getImageURLByScrapping(req, res, next) {
   try {
     const { webLink } = req.body;
+    let productLink;
 
-    let imgLink = await getOpenGraphImage1(webLink);
-    if (!imgLink) {
-      imgLink = await getOpenGraphImage2(webLink);
-    }
+    if (
+      webLink.indexOf("https://amzn.to") > -1 ||
+      webLink.indexOf("https://www.amazon.com") > -1
+    ) {
+      productLink = "";
+    } else {
+      let imgLink = await getOpenGraphImage1(webLink);
+      if (!imgLink) {
+        imgLink = await getOpenGraphImage2(webLink);
+      }
 
-    if (!imgLink) {
-      for (let i = 0; i < 10; i++) {
-        console.log("retry " + i);
-        imgLink = await getOpenGraphImage1(webLink);
-        if (!imgLink) {
-          imgLink = await getOpenGraphImage2(webLink);
-        }
+      if (!imgLink) {
+        for (let i = 0; i < 10; i++) {
+          console.log("retry " + i);
+          imgLink = await getOpenGraphImage1(webLink);
+          if (!imgLink) {
+            imgLink = await getOpenGraphImage2(webLink);
+          }
 
-        if (imgLink) {
-          break;
+          if (imgLink) {
+            break;
+          }
         }
       }
-    }
 
-    let productLink;
-    if (imgLink) {
-      try {
-        productLink = await CdnLinktoS3Link(imgLink);
-      } catch (e) {
-        productLink = imgLink;
+      if (imgLink) {
+        try {
+          productLink = await CdnLinktoS3Link(imgLink);
+        } catch (e) {
+          productLink = imgLink;
+        }
       }
     }
 

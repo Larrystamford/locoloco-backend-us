@@ -110,7 +110,7 @@ async function getImageURLByScrapping(req, res, next) {
       }
 
       if (!imgLink) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 2; i++) {
           console.log("retry " + i);
           imgLink = await getOpenGraphImage1(webLink);
           if (!imgLink) {

@@ -168,7 +168,7 @@ let DownloadTiktoksController = {
           options.number = counter;
         }
       } else {
-        options.number = 50;
+        options.number = 120;
       }
 
       if (options.number >= 0) {

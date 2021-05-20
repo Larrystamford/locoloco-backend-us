@@ -9,6 +9,7 @@ const {
   screenshotTiktok,
   readJsonInfo,
   getTikTokJson,
+  CdnLinktoS3Link,
 } = require("../service/upload");
 
 const { saveTikTokVideo } = require("../service/video_and_item");
@@ -20,7 +21,11 @@ var mongoose = require("mongoose");
 
 const defaultOptions = {
   number: 50,
-  sessionList: ["sid_tt=1160c86a1fa35ccd0c26486683521293"],
+  sessionList: [
+    "sid_tt=1160c86a1fa35ccd0c26486683521293",
+    "sid_tt=8534db4fdd7084bc6ad02e490b40d9e5",
+    "sid_tt=6d1d924aacaae76be863f8e413a95f4c",
+  ],
 
   // Set proxy {string[] | string default: ''}
   // http proxy: 127.0.0.1:8080
@@ -167,7 +172,13 @@ let DownloadTiktoksController = {
       }
 
       if (options.number >= 0) {
-        console.log("all good until here?");
+        await User.findByIdAndUpdate(
+          { _id: userId },
+          {
+            noNewTiktokVideos: false,
+          }
+        );
+
         await TikTokScraper.user(tiktokUsername, options);
       } else {
         await User.findByIdAndUpdate(
@@ -262,42 +273,34 @@ let DownloadTiktoksController = {
         const videoAndImageS3 = {};
         let videoKey;
         let imageKey;
-        for (let i = 0; i < jsonObj.length; i++) {
-          if (i >= uploadedVideos.length) {
-            videoKey = "";
-          } else {
-            videoKey = uploadedVideos[i].Key.slice(0, -4);
+        let jsonIndex;
+        let s3Link;
+
+        for (let i = 0; i < uploadedVideos.length; i++) {
+          videoKey = uploadedVideos[i].Key.slice(0, -4);
+          imageKey = uploadedImages[i].Key.slice(0, -4);
+
+          for (let i = 0; i < jsonObj.length; i++) {
+            if (jsonObj[i].id == videoKey) {
+              jsonIndex = i;
+              break;
+            }
           }
 
-          if (i >= uploadedVideos.length) {
-            imageKey = "";
-          } else {
-            imageKey = uploadedImages[i].Key.slice(0, -4);
-          }
-
-          jsonKey = jsonObj[i].id;
+          s3Link = await CdnLinktoS3Link(jsonObj[jsonIndex].covers.default);
 
           if (videoKey && !(videoKey in videoAndImageS3)) {
             videoAndImageS3[videoKey] = {};
-          }
-          if (imageKey && !(imageKey in videoAndImageS3)) {
-            videoAndImageS3[imageKey] = {};
-          }
-          if (!(jsonKey in videoAndImageS3)) {
-            videoAndImageS3[jsonKey] = {};
-          }
 
-          if (videoKey) {
+            videoAndImageS3[videoKey].tiktokImage = s3Link;
+            videoAndImageS3[videoKey].caption = jsonObj[jsonIndex].text;
+            videoAndImageS3[videoKey].createTime =
+              jsonObj[jsonIndex].createTime;
+            videoAndImageS3[videoKey].proShareCount =
+              jsonObj[jsonIndex].shareCount;
             videoAndImageS3[videoKey].video = uploadedVideos[i].Location;
+            videoAndImageS3[videoKey].image = uploadedImages[i].Location;
           }
-
-          if (imageKey) {
-            videoAndImageS3[imageKey].image = uploadedImages[i].Location;
-          }
-
-          videoAndImageS3[jsonKey].caption = jsonObj[i].text;
-          videoAndImageS3[jsonKey].createTime = jsonObj[i].createTime;
-          videoAndImageS3[jsonKey].proShareCount = jsonObj[i].shareCount;
         }
 
         // saving to mongo
@@ -321,18 +324,15 @@ let DownloadTiktoksController = {
         }
       }
 
-      await User.findByIdAndUpdate(
-        { _id: userId },
-        {
-          noNewTiktokVideos: false,
+      try {
+        if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
+          await del(`./tiktok-videos/${tiktokUsername}/`);
         }
-      );
-
-      if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
-        await del(`./tiktok-videos/${tiktokUsername}/`);
-      }
-      if (fs.existsSync(`./tiktok-videos/${tiktokUsername + "-info"}/`)) {
-        await del(`./tiktok-videos/${tiktokUsername + "-info"}/`);
+        if (fs.existsSync(`./tiktok-videos/${tiktokUsername + "-info"}/`)) {
+          await del(`./tiktok-videos/${tiktokUsername + "-info"}/`);
+        }
+      } catch (e) {
+        console.log(e);
       }
 
       res.status(200).send("success");

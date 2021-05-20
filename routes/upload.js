@@ -10,4 +10,8 @@ router
   .route("/awsWithFirstFrame")
   .post(uploadCtrl.uploadVideoAndFirstFrameToAws);
 
+router
+  .route("/getImageURLByScrapping/")
+  .post(uploadCtrl.getImageURLByScrapping);
+
 module.exports = router;

@@ -4,6 +4,12 @@ const {
   ffmpegSync,
 } = require("../service/upload");
 
+const {
+  CdnLinktoS3Link,
+  getOpenGraphImage1,
+  getOpenGraphImage2,
+} = require("../service/upload");
+
 const extractFrames = require("ffmpeg-extract-frames");
 var fs = require("fs");
 const util = require("util");
@@ -87,4 +93,47 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
   }
 }
 
-module.exports = { uploadFileToAwsCtrl, uploadVideoAndFirstFrameToAws };
+async function getImageURLByScrapping(req, res, next) {
+  try {
+    const { webLink } = req.body;
+
+    let imgLink = await getOpenGraphImage1(webLink);
+    if (!imgLink) {
+      imgLink = await getOpenGraphImage2(webLink);
+    }
+
+    if (!imgLink) {
+      for (let i = 0; i < 10; i++) {
+        console.log("retry " + i);
+        imgLink = await getOpenGraphImage1(webLink);
+        if (!imgLink) {
+          imgLink = await getOpenGraphImage2(webLink);
+        }
+
+        if (imgLink) {
+          break;
+        }
+      }
+    }
+
+    let productLink;
+    if (imgLink) {
+      try {
+        productLink = await CdnLinktoS3Link(imgLink);
+      } catch (e) {
+        productLink = imgLink;
+      }
+    }
+
+    res.status(201).send({ productLink: productLink });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+}
+
+module.exports = {
+  uploadFileToAwsCtrl,
+  uploadVideoAndFirstFrameToAws,
+  getImageURLByScrapping,
+};

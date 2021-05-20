@@ -4,6 +4,10 @@ const util = require("util");
 const readdir = util.promisify(fs.readdir);
 const readfile = util.promisify(fs.readFile);
 const User = require("../models/user");
+const fetch = require("node-fetch");
+const ogs = require("open-graph-scraper");
+const request = require("request");
+const cheerio = require("cheerio");
 
 const path = require("path");
 if (process.env.NODE_ENV !== "production") {
@@ -25,6 +29,7 @@ const s3 = new AWS.S3({
 async function uploadFileToAws(file) {
   const fileName = `${new Date().getTime()}_${file.name}`;
   const mimetype = file.mimetype;
+
   const params = {
     Bucket: process.env.AWS_S3_BUCKET,
     Key: fileName,
@@ -183,6 +188,90 @@ async function getTikTokJson(userId, defaultOptions) {
   }
 }
 
+async function CdnLinktoS3Link(cdnLink) {
+  try {
+    const file = await fetch(cdnLink);
+    let res = await file.buffer();
+
+    const fileName = `${new Date().getTime()}_${cdnLink}`;
+
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: fileName,
+      Body: res,
+      ContentType: "image/jpeg",
+    };
+    if (process.env.NODE_ENV === "dev") {
+      params["ACL"] = "public-read";
+    }
+
+    res = await new Promise((resolve, reject) => {
+      s3.upload(params, (err, data) =>
+        err == null ? resolve(data) : reject(err)
+      );
+    });
+
+    return res.Location.replace(
+      "https://media2locoloco-us.s3.amazonaws.com/",
+      "https://dciv99su0d7r5.cloudfront.net/"
+    );
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
+async function getOpenGraphImage1(webLink) {
+  try {
+    const res = await new Promise((resolve, reject) => {
+      request({ method: "GET", url: webLink }, (err, res, body) => {
+        let $ = cheerio.load(body);
+        let post = {
+          og_img: $('meta[property="og:image"]').attr("content"),
+        };
+
+        if (!err) {
+          resolve(post.og_img);
+        } else {
+          reject("");
+        }
+      });
+    });
+
+    return res;
+  } catch (err) {
+    console.log("open graph scrap error");
+    return err;
+  }
+}
+
+async function getOpenGraphImage2(webLink) {
+  try {
+    const res = await new Promise((resolve, reject) => {
+      ogs({
+        url: webLink,
+        onlyGetOpenGraphInfo: true,
+        allMedia: true,
+        retry: 20,
+        maxRedirects: 10,
+      }).then((data) => {
+        const { error, result, response } = data;
+
+        if (result.ogImage) {
+          resolve(result.ogImage[0].url);
+        } else {
+          reject("");
+        }
+      });
+    });
+
+    return res;
+  } catch (err) {
+    console.log("open graph scrap error");
+    return err;
+  }
+}
+
 module.exports = {
   uploadFileToAws,
   uploadFirstFrame,
@@ -191,4 +280,7 @@ module.exports = {
   screenshotTiktok,
   readJsonInfo,
   getTikTokJson,
+  CdnLinktoS3Link,
+  getOpenGraphImage1,
+  getOpenGraphImage2,
 };

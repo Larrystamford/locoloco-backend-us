@@ -8,6 +8,16 @@ const videoItemService = require("../service/video_and_item");
 
 var mongoose = require("mongoose");
 
+const {
+  uploadByFolder,
+  screenshotTiktok,
+  readJsonInfo,
+  getTikTokJson,
+  CdnLinktoS3Link,
+  getOpenGraphImage1,
+  getOpenGraphImage2,
+} = require("../service/upload");
+
 let UtilsController = {
   addNewFieldToCollection: async (req, res, next) => {
     Video.update(
@@ -138,6 +148,75 @@ let UtilsController = {
       res.status(500).send(err);
     }
   },
+
+  convertCDNToFile: async (req, res, next) => {
+    try {
+      const cdnLink =
+        "https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/6baa7d9c989f48638ad6d37568520047_1621507449~tplv-dmt-logom:tos-alisg-pv-0037/0d659de4408245e49b64fc193b76a7d6.image?x-expires=1621526400&x-signature=4J3rEzKKbY%2FvDzn5oHX%2FNNx7j%2Fc%3D";
+
+      let s3link = await CdnLinktoS3Link(cdnLink);
+      console.log(s3link);
+
+      res.status(201).send(s3link);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
+
+  getImageURLByScrapping: async (req, res, next) => {
+    try {
+      const webLink =
+        "https://www.lazada.sg/products/baseus-4pcs-car-clip-hook-cable-organiser-for-usb-cable-key-earphone-storage-management-protector-wall-hook-hanger-auto-sticker-holder-i481878022-s1314966183.html?spm=a2o42.pdp_revamp.0.0.394566f2kc3Y61&promotionId=91471120584690";
+
+      let imgLink = await getOpenGraphImage1(webLink);
+      if (!imgLink) {
+        imgLink = await getOpenGraphImage2(webLink);
+      }
+
+      if (!imgLink) {
+        for (let i = 0; i < 20; i++) {
+          console.log("retry " + i);
+          imgLink = await getOpenGraphImage1(webLink);
+          if (!imgLink) {
+            imgLink = await getOpenGraphImage2(webLink);
+          }
+
+          if (imgLink) {
+            break;
+          }
+        }
+      }
+
+      if (imgLink) {
+        try {
+          imgLink = await CdnLinktoS3Link(imgLink);
+        } catch {
+          console.log("not a cdn link");
+        }
+      }
+
+      res.status(201).send({ imgLink: imgLink });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
 };
 
 module.exports = UtilsController;
+
+// const checkForSpecialChar = function (char) {
+//   const specialChars = "<>@!#$%^&*()_+[]{}?:;|'\"\\,./~`-=";
+//   if (specialChars.includes(char)) {
+//     return true;
+//   }
+
+//   return false;
+// };
+
+// if (imgLink) {
+//   while (checkForSpecialChar(imgLink[0])) {
+//     imgLink = imgLink.substring(1);
+//   }
+// }

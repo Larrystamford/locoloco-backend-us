@@ -185,6 +185,7 @@ const userSchema = new Schema(
         id: String,
         itemLink: String,
         itemLinkName: String,
+        itemImage: String,
       },
     ],
     previousMainHashtags: [String],

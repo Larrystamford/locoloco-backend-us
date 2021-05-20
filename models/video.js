@@ -8,6 +8,7 @@ const videoSchema = new Schema(
     feedId: Number,
     url: { type: String, required: true },
     coverImageUrl: String,
+    tiktokCoverImageUrl: String,
     mediaType: String, // video or image
     caption: String,
     likes: [String], // list of userIds that has liked the video

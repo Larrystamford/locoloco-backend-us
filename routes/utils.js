@@ -18,4 +18,10 @@ router.route("/changeAmazonLinks").get(UtilsController.changeAmazonLinks);
 
 router.route("/createAdmin").get(UtilsController.createAdmin);
 
+router.route("/convertCDNToFile").get(UtilsController.convertCDNToFile);
+
+router.route("/getImageURLByScrapping").get(UtilsController.getImageURLByScrapping);
+
+
+
 module.exports = router;

@@ -244,6 +244,7 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
       "https://media2locoloco-us.s3.amazonaws.com/",
       "https://dciv99su0d7r5.cloudfront.net/"
     );
+    newVideo.tiktokCoverImageUrl = value.tiktokImage;
     newVideo.tiktokCreatedAt = value.createTime;
     newVideo.caption = value.caption;
     newVideo.proShareCount = value.proShareCount;
@@ -261,7 +262,6 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
     newVideo.user = user;
     newVideo.userName = user.userName;
     newVideo.originalCreator = tiktokUsername;
-
 
     // SAVING VIDEO
     try {

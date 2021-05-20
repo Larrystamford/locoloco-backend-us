@@ -245,7 +245,7 @@ module.exports = {
 
     try {
       const userVideos = await User.find(
-        { userName: userName },
+        { userName: userName.toLowerCase() },
         sensitiveDataUserName
       )
         .sort({ _id: 1 })
@@ -299,7 +299,7 @@ module.exports = {
 
     try {
       const userVideos = await User.find(
-        { userName: userName },
+        { userName: userName.toLowerCase() },
         sensitiveDataUserName
       )
         .sort({ _id: 1 })
@@ -335,7 +335,7 @@ module.exports = {
   userNameIsPro: async (req, res, next) => {
     const { userName } = req.params;
     try {
-      let username = await User.findOne({ userName: userName });
+      let username = await User.findOne({ userName: userName.toLowerCase() });
       if (username && username.accountType == "pro") {
         usernameIsPro = true;
       } else {

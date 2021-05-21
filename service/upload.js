@@ -6,7 +6,7 @@ const readfile = util.promisify(fs.readFile);
 const User = require("../models/user");
 const fetch = require("node-fetch");
 const ogs = require("open-graph-scraper");
-const request = require("request");
+const rp = require("request-promise");
 const cheerio = require("cheerio");
 
 const path = require("path");
@@ -224,19 +224,45 @@ async function CdnLinktoS3Link(cdnLink) {
 async function getOpenGraphImage1(webLink) {
   try {
     const res = await new Promise((resolve, reject) => {
-      request({ method: "GET", url: webLink }, (err, res, body) => {
-        let $ = cheerio.load(body);
-        let post = {
-          og_img: $('meta[property="og:image"]').attr("content"),
-        };
+      rp({ url: webLink, followAllRedirects: true }, (err, res, body) => {
+        // hard coded for shopee's universal-link
+        let lastLink = res.request.uri.href;
+        let indexUniversalLink = lastLink.indexOf("/universal-link");
+        if (indexUniversalLink > -1) {
+          lastLink = lastLink.replace("/universal-link", "");
+          rp({ url: lastLink, followAllRedirects: true }, (err, res, body) => {
+            let $ = cheerio.load(body);
+            let post = {
+              og_img: $('meta[property="og:image"]').attr("content"),
+            };
 
-        if (!err) {
-          resolve(post.og_img);
+            if (!err) {
+              resolve(post.og_img);
+            } else {
+              reject("");
+            }
+          });
         } else {
-          reject("");
+          // every other link
+
+          let $ = cheerio.load(body);
+          let post = {
+            og_img: $('meta[property="og:image"]').attr("content"),
+          };
+
+          if (!err) {
+            resolve(post.og_img);
+          } else {
+            reject("");
+          }
         }
       });
     });
+
+    // let r = request.get(webLink, function (err, res, body) {
+    //   console.log(r.uri.href);
+    //   console.log(res.request.uri.href);
+    // });
 
     return res;
   } catch (err) {

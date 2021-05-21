@@ -110,7 +110,7 @@ async function getImageURLByScrapping(req, res, next) {
       }
 
       if (!imgLink) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 1; i++) {
           console.log("retry " + i);
           imgLink = await getOpenGraphImage1(webLink);
           if (!imgLink) {
@@ -131,6 +131,8 @@ async function getImageURLByScrapping(req, res, next) {
         }
       }
     }
+
+    console.log("final product link ", productLink);
 
     res.status(201).send({ productLink: productLink });
   } catch (err) {

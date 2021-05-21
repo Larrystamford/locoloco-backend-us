@@ -24,7 +24,7 @@ async function sendEmailSignUp(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "shoplocoloco.sg@gmail.com",
+      user: "vosh.club@gmail.com",
       pass: process.env.LOCO_EMAIL_PASSWORD,
     },
   });
@@ -32,10 +32,10 @@ async function sendEmailSignUp(receiverEmail, subject, message) {
   const htmlFile = await readFile("./service/sign_up_email.html", "utf8");
 
   var mailOptions = {
-    from: "shoplocoloco.sg@gmail.com",
+    from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    html: htmlFile,
+    text: "Dear User,\n\nA big welcome to vosh.club.\n\nWe look forward to providing you with a platform to grow and engage your shopping audience, while serving you the customised shopping content that you love so much.\n\nFeel free to message us if you have any feedbacks or if you just want some company.\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -53,7 +53,7 @@ async function sendEmailPurchase(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "shoplocoloco.sg@gmail.com",
+      user: "vosh.club@gmail.com",
       pass: process.env.LOCO_EMAIL_PASSWORD,
     },
   });
@@ -61,7 +61,7 @@ async function sendEmailPurchase(receiverEmail, subject, message) {
   const htmlFile = await readFile("./service/purchased_email.html", "utf8");
 
   var mailOptions = {
-    from: "shoplocoloco.sg@gmail.com",
+    from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
     html: htmlFile,
@@ -82,17 +82,16 @@ async function sendEmailCustomerSupport(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "shoplocoloco.sg@gmail.com",
+      user: "vosh.club@gmail.com",
       pass: process.env.LOCO_EMAIL_PASSWORD,
     },
   });
 
   var mailOptions = {
-    from: "shoplocoloco.sg@gmail.com",
+    from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    text:
-      "Dear customer,\n\nThank you for contacting customer support. Please tell us the issue that you are facing by replying to this email and our supporting staff will get back to you as soon as possible. \n\nWe thank you for your patience and understanding.\n\nWith Love, \nShoplocoloco",
+    text: "Dear customer,\n\nThank you for contacting customer support. Please tell us the issue that you are facing by replying to this email and our supporting staff will get back to you as soon as possible. \n\nWe thank you for your patience and understanding.\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -110,17 +109,16 @@ async function sendEmailFeedback(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "shoplocoloco.sg@gmail.com",
+      user: "vosh.club@gmail.com",
       pass: process.env.LOCO_EMAIL_PASSWORD,
     },
   });
 
   var mailOptions = {
-    from: "shoplocoloco.sg@gmail.com",
+    from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    text:
-      "Dear customer,\n\nThank you for reaching out to us. Please reply your feedback to this email and we will get back to you as soon as possible. \n\nThank you for shopping with us!\n\nWith Love, \nShoplocoloco",
+    text: "Dear customer,\n\nThank you for reaching out to us. Please reply your feedback to this email and we will get back to you as soon as possible. \n\nThank you for shopping with us!\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -138,15 +136,15 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "deals@shoplocoloco.com",
-      pass: process.env.LOCO_EMAIL_PASSWORD_2,
+      user: "vosh.club@gmail.com",
+      pass: process.env.LOCO_EMAIL_PASSWORD,
     },
   });
 
   const htmlFile = await readFile("./service/advert_email.html", "utf8");
 
   var mailOptions = {
-    from: "deals@shoplocoloco.com",
+    from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
     html: htmlFile,
@@ -154,10 +152,10 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error)
+      console.log(error);
       // winston.error(error);
     } else {
-      console.log("success")
+      console.log("success");
       // winston.error("success");
     }
   });
@@ -165,11 +163,10 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
   return "sent";
 }
 
-
 module.exports = {
   sendEmailSignUp,
   sendEmailPurchase,
   sendEmailCustomerSupport,
   sendEmailFeedback,
-  sendAdvertEmail
+  sendAdvertEmail,
 };

@@ -110,9 +110,9 @@ passport.use(
 
           const welcomeNotification = new Notification({
             userPicture:
-              "https://dciv99su0d7r5.cloudfront.net/profile_pic_loco_1.png",
-            userName: "vosh.club",
-            message: "Welcome to Vosh Club! Start watching now!",
+              "https://dciv99su0d7r5.cloudfront.net/favicon-96x96.png",
+            userName: "vosh",
+            message: "Welcome to Vosh! Start watching now!",
             notificationType: "broadcast",
             redirectLink: "/",
           });

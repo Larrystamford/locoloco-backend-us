@@ -240,15 +240,6 @@ let VideoAndItemController = {
     );
 
     if (error == null) {
-      // get buyer email
-      // const buyer = await User.find({ _id: userId });
-      // const buyerEmail = buyer[0].email;
-
-      // sendEmailService.sendEmailPurchase(
-      //   buyerEmail,
-      //   "Your purchase was successful! 🥳",
-      //   "Message sent from www.shoplocoloco.com"
-      // );
 
       res
         .status(200)

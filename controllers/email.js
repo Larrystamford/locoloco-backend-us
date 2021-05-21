@@ -25,7 +25,7 @@ module.exports = {
     const response = sendEmailService.sendEmailPurchase(
       buyerEmail,
       "Your purchase was successful! 🥳",
-      "Message sent from www.shoplocoloco.com"
+      "Message sent from vosh.club"
     );
 
     res.send(response);
@@ -42,7 +42,7 @@ module.exports = {
     const response = sendEmailService.sendEmailCustomerSupport(
       buyerEmail,
       `Support Number: ${buySellItemId}`,
-      "Message sent from www.shoplocoloco.com"
+      "Message sent from vosh.club"
     );
 
     res.send(response);
@@ -60,7 +60,7 @@ module.exports = {
     const response = sendEmailService.sendEmailFeedback(
       buyerEmail,
       `Customer Feedback from  ${buyerUsername}`,
-      "Message sent from www.shoplocoloco.com"
+      "Message sent from vosh.club"
     );
 
     res.send(response);
@@ -114,7 +114,7 @@ module.exports = {
           sendEmailService.sendAdvertEmail(
             eachEmail,
             `Your daily shopping recommendations have arrived`,
-            "Message sent from www.shoplocoloco.com"
+            "Message sent from vosh.club"
           );
         }
 

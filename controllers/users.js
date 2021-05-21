@@ -98,9 +98,9 @@ module.exports = {
 
     const welcomeNotification = new Notification({
       userPicture:
-        "https://media2locoloco.s3-ap-southeast-1.amazonaws.com/just_loco_loco.jpg",
-      userName: "vosh.club",
-      message: "Welcome to Vosh Club! Start watching now!",
+        "https://dciv99su0d7r5.cloudfront.net/favicon-96x96.png",
+      userName: "vosh",
+      message: "Welcome to Vosh! Start watching now!",
       notificationType: "broadcast",
       redirectLink: "/",
     });

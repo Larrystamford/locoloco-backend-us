@@ -8,6 +8,15 @@ const videoItemService = require("../service/video_and_item");
 
 var mongoose = require("mongoose");
 
+var util = require("util"),
+  OperationHelper = require("apac").OperationHelper;
+
+var opHelper = new OperationHelper({
+  awsId: process.env.AWS_ACCESS_ID,
+  awsSecret: process.env.AWS_SECRET_KEY,
+  assocId: "shoplocoloc06-20",
+});
+
 const {
   uploadByFolder,
   screenshotTiktok,
@@ -197,6 +206,32 @@ let UtilsController = {
       }
 
       res.status(201).send({ imgLink: imgLink });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
+
+  getAmazonProductDetails: async (req, res, next) => {
+    try {
+      opHelper.execute(
+        "ItemLookup",
+        {
+          ItemId: "B08B55P42N",
+          MechantId: "All",
+          Condition: "All",
+          ResponseGroup: "Medium",
+        },
+        function (error, results) {
+          if (error) {
+            console.log("Error: " + error + "\n");
+          }
+          console.log(results);
+          console.log("Results:\n" + util.inspect(results) + "\n");
+        }
+      );
+
+      res.status(201).send("success");
     } catch (err) {
       console.log(err);
       res.status(500).send(err);

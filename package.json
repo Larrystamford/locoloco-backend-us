@@ -12,6 +12,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "amazon-review-scraper": "github:franzskuffka/amazon-review-scraper",
     "amazon-reviews-crawler": "^1.0.4",
+    "apac": "^3.0.2",
     "aws-sdk": "^2.799.0",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",

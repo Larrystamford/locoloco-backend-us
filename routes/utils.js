@@ -20,8 +20,12 @@ router.route("/createAdmin").get(UtilsController.createAdmin);
 
 router.route("/convertCDNToFile").get(UtilsController.convertCDNToFile);
 
-router.route("/getImageURLByScrapping").get(UtilsController.getImageURLByScrapping);
+router
+  .route("/getImageURLByScrapping")
+  .get(UtilsController.getImageURLByScrapping);
 
-
+router
+  .route("/getAmazonProductDetails")
+  .get(UtilsController.getAmazonProductDetails);
 
 module.exports = router;

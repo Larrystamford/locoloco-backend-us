@@ -303,7 +303,9 @@ let DownloadTiktoksController = {
             videoAndImageS3[videoKey].createTime =
               jsonObj[jsonIndex].createTime;
             videoAndImageS3[videoKey].proShareCount =
-              jsonObj[jsonIndex].shareCount;
+              jsonObj[jsonIndex].shareCount * 20 +
+              Math.floor(Math.random() * 40) +
+              20;
             videoAndImageS3[videoKey].video = uploadedVideos[i].Location;
             videoAndImageS3[videoKey].image = uploadedImages[i].Location;
           }

@@ -163,10 +163,41 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
   return "sent";
 }
 
+
+async function sendEmailInfluencerGetStarted(receiverEmail, subject, message) {
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "vosh.club@gmail.com",
+      pass: process.env.LOCO_EMAIL_PASSWORD,
+    },
+  });
+
+  var mailOptions = {
+    from: "vosh.club@gmail.com",
+    to: receiverEmail,
+    subject: subject,
+    text: "Dear Influencer,\n\nThank you for reaching out to us.\n\nYour interest with Vosh is well-received, and we will reach out to you via this e-mail thread as soon as possible!\n\nWith Love, \nVosh.Club",
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error)
+      winston.error(error);
+    } else {
+      console.log("success")
+      winston.error("success");
+    }
+  });
+
+  return "sent";
+}
+
 module.exports = {
   sendEmailSignUp,
   sendEmailPurchase,
   sendEmailCustomerSupport,
   sendEmailFeedback,
   sendAdvertEmail,
+  sendEmailInfluencerGetStarted
 };

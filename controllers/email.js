@@ -66,6 +66,7 @@ module.exports = {
     res.send(response);
   },
 
+
   // POST
   severeError: async (req, res, next) => {
     const { userId, userName } = req.body;
@@ -74,6 +75,20 @@ module.exports = {
       "larrylee3107@gmail.com",
       `TikTok Download Error from  ${userName}, ID: ${userId}`,
       "ERROR"
+    );
+
+    res.send(response);
+  },
+
+
+  // POST
+  influencerGetStarted: async (req, res, next) => {
+    const { userEmail } = req.body;
+
+    const response = sendEmailService.sendEmailInfluencerGetStarted(
+      userEmail,
+      `Getting Started with Vosh`,
+      "Message sent from vosh.club"
     );
 
     res.send(response);

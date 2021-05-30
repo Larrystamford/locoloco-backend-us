@@ -163,7 +163,6 @@ async function sendAdvertEmail(receiverEmail, subject, message) {
   return "sent";
 }
 
-
 async function sendEmailInfluencerGetStarted(receiverEmail, subject, message) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -177,15 +176,15 @@ async function sendEmailInfluencerGetStarted(receiverEmail, subject, message) {
     from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    text: "Dear Influencer,\n\nThank you for reaching out to us.\n\nYour interest with Vosh is well-received, and we will reach out to you via this e-mail thread as soon as possible!\n\nWith Love, \nVosh.Club",
+    text: "Dear Creator,\n\nThank you for reaching out to us.\n\nYour interest with Vosh is well-received, and we will reach out to you via this e-mail thread as soon as possible!\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error)
+      console.log(error);
       winston.error(error);
     } else {
-      console.log("success")
+      console.log("success");
       winston.error("success");
     }
   });
@@ -199,5 +198,5 @@ module.exports = {
   sendEmailCustomerSupport,
   sendEmailFeedback,
   sendAdvertEmail,
-  sendEmailInfluencerGetStarted
+  sendEmailInfluencerGetStarted,
 };

@@ -363,9 +363,17 @@ module.exports = {
   // push previousProductLinks
   pushPreviousProductLinks: async (req, res, next) => {
     const { userId } = req.params;
-    const { allProductLinks } = req.body;
+    const { allProductLinks, proVideo } = req.body;
     try {
-      let user = await User.findById({ _id: userId });
+      let user = await User.findByIdAndUpdate(
+        { _id: userId },
+        {
+          $addToSet: {
+            proVideos: proVideo,
+          },
+        }
+      );
+
       for (const eachProductLink of allProductLinks) {
         let existingLink = false;
         let i = 0;

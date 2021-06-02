@@ -173,6 +173,7 @@ const userSchema = new Schema(
       linkWordsColor: { type: String, default: "white" },
       categoryWordsColor: { type: String, default: "black" },
     },
+    // sense this change
     allProductLinks: [
       {
         id: String,

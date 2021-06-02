@@ -4,7 +4,6 @@ const BuySellItem = require("../models/buySellItem");
 const Review = require("../models/review");
 const Video = require("../models/video");
 
-const reviewsCrawler = require("amazon-reviews-crawler");
 const Fakerator = require("fakerator");
 var fakerator = Fakerator("de-DE");
 
@@ -176,7 +175,7 @@ async function saveAmazonReviews(videoId, amazons) {
       }
 
       if (asin) {
-        const reviews = await reviewsCrawler(asin);
+        // const reviews = await reviewsCrawler(asin);
         let reviewCount = 0;
 
         let newReview;

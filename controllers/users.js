@@ -97,8 +97,7 @@ module.exports = {
     }
 
     const welcomeNotification = new Notification({
-      userPicture:
-        "https://dciv99su0d7r5.cloudfront.net/favicon-96x96.png",
+      userPicture: "https://dciv99su0d7r5.cloudfront.net/favicon-96x96.png",
       userName: "vosh",
       message: "Welcome to Vosh! Start watching now!",
       notificationType: "broadcast",
@@ -364,20 +363,31 @@ module.exports = {
   // push previousProductLinks
   pushPreviousProductLinks: async (req, res, next) => {
     const { userId } = req.params;
-    const { previousProductLinks, proVideo } = req.body;
+    const { allProductLinks } = req.body;
     try {
-      let user = await User.findByIdAndUpdate(
-        { _id: userId },
-        {
-          $addToSet: {
-            previousProductLinks: previousProductLinks,
-            proVideos: proVideo,
-          },
+      let user = await User.findById({ _id: userId });
+      for (const eachProductLink of allProductLinks) {
+        let existingLink = false;
+        let i = 0;
+        for (i; i < user.allProductLinks.length; i++) {
+          if (user.allProductLinks[i].itemId === eachProductLink.itemId) {
+            existingLink = true;
+            break;
+          }
         }
-      );
+
+        if (existingLink) {
+          user.allProductLinks[i] = eachProductLink;
+        } else {
+          user.allProductLinks.unshift(eachProductLink);
+        }
+      }
+
+      await user.save();
 
       res.status(201).send("success");
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   },

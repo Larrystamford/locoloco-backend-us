@@ -9,6 +9,4 @@ router.route("/advertisementEmail").post(EmailController.advertisementEmail);
 router.route("/influencerGetStarted").post(EmailController.influencerGetStarted);
 router.route("/severeError").post(EmailController.severeError);
 
-
-
 module.exports = router;

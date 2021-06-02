@@ -105,11 +105,11 @@ async function getImageURLByScrapping(req, res, next) {
       productLink = "";
     } else {
       let imgLink = await getOpenGraphImage1(webLink);
-      if (!imgLink) {
+      if (!imgLink && imgLink != "error") {
         imgLink = await getOpenGraphImage2(webLink);
       }
 
-      if (!imgLink) {
+      if (!imgLink && imgLink != "error") {
         for (let i = 0; i < 1; i++) {
           console.log("retry " + i);
           imgLink = await getOpenGraphImage1(webLink);
@@ -123,16 +123,16 @@ async function getImageURLByScrapping(req, res, next) {
         }
       }
 
-      if (imgLink) {
+      if (imgLink && imgLink != "error") {
         try {
           productLink = await CdnLinktoS3Link(imgLink);
         } catch (e) {
           productLink = imgLink;
         }
+      } else {
+        productLink = "";
       }
     }
-
-    console.log("final product link ", productLink);
 
     res.status(201).send({ productLink: productLink });
   } catch (err) {

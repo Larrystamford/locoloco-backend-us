@@ -149,6 +149,7 @@ const userSchema = new Schema(
       {
         id: String,
         proLinkName: String,
+        proLinkDesc: String,
         proLink: String,
       },
     ],
@@ -171,15 +172,18 @@ const userSchema = new Schema(
       linkBoxColor: { type: String, default: "slategray" },
       linkWordsColor: { type: String, default: "white" },
       categoryWordsColor: { type: String, default: "black" },
-
-      fontType: String,
-      // black or white
-      socialIconsColor: String,
-      color1: String,
-      color2: String,
-      color3: String,
     },
-    // can check if list too long then delete until left 30 etc
+    allProductLinks: [
+      {
+        id: String,
+        itemId: String,
+        itemLink: String,
+        itemLinkName: String,
+        itemLinkDesc: String,
+        itemImage: String,
+      },
+    ],
+    // to be deprecated
     previousProductLinks: [
       {
         id: String,

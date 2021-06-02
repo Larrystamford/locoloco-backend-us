@@ -237,6 +237,53 @@ let UtilsController = {
       res.status(500).send(err);
     }
   },
+
+  // temporary use
+  createAllProductLinks: async (req, res, next) => {
+    try {
+      // const allUsers = await User.find().populate({
+      //   path: "videos",
+      // });
+
+      // for (eachUser of allUsers) {
+      //   let userVideos = eachUser.videos;
+      //   let allProductLinks = [];
+
+      //   for (eachVideo of userVideos) {
+      //     for (eachProduct of eachVideo.affiliateProducts) {
+      //       eachProduct["itemId"] = eachProduct.id;
+      //     }
+      //   }
+      // break;
+      // eachUser.allProductLinks = allProductLinks;
+
+      // await eachUser.save();
+      // const checkUSer = await User.findById({ _id: eachUser._id });
+      // console.log(eachUser.userName);
+      // console.log(eachUser.allProductLinks);
+
+      const listOfVideosItems = await Video.find();
+      for (const eachVideo of listOfVideosItems) {
+        let productList = [];
+        for (const eachProduct of eachVideo.affiliateProducts) {
+          eachProduct["itemId"] = eachProduct.id;
+          productList.push(eachProduct);
+        }
+
+        eachVideo.affiliateProducts = productList;
+        eachVideo.markModified("affiliateProducts");
+        // console.log(eachVideo.affiliateProducts);
+        await eachVideo.save();
+        const checkUSer = await Video.findById({ _id: eachVideo._id });
+        console.log(checkUSer.affiliateProducts);
+      }
+
+      res.status(201).send("done");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
 };
 
 module.exports = UtilsController;

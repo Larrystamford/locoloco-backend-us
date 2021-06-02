@@ -28,4 +28,8 @@ router
   .route("/getAmazonProductDetails")
   .get(UtilsController.getAmazonProductDetails);
 
+router
+  .route("/createAllProductLinks")
+  .get(UtilsController.createAllProductLinks);
+
 module.exports = router;

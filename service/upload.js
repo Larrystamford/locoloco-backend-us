@@ -225,12 +225,30 @@ async function getOpenGraphImage1(webLink) {
   try {
     const res = await new Promise((resolve, reject) => {
       rp({ url: webLink, followAllRedirects: true }, (err, res, body) => {
-        // hard coded for shopee's universal-link
-        let lastLink = res.request.uri.href;
-        let indexUniversalLink = lastLink.indexOf("/universal-link");
-        if (indexUniversalLink > -1) {
-          lastLink = lastLink.replace("/universal-link", "");
-          rp({ url: lastLink, followAllRedirects: true }, (err, res, body) => {
+        try {
+          // hard coded for shopee's universal-link
+          let lastLink = res.request.uri.href;
+          let indexUniversalLink = lastLink.indexOf("/universal-link");
+          if (indexUniversalLink > -1) {
+            lastLink = lastLink.replace("/universal-link", "");
+            rp(
+              { url: lastLink, followAllRedirects: true },
+              (err, res, body) => {
+                let $ = cheerio.load(body);
+                let post = {
+                  og_img: $('meta[property="og:image"]').attr("content"),
+                };
+
+                if (!err) {
+                  resolve(post.og_img);
+                } else {
+                  reject("error");
+                }
+              }
+            );
+          } else {
+            // every other link
+
             let $ = cheerio.load(body);
             let post = {
               og_img: $('meta[property="og:image"]').attr("content"),
@@ -239,35 +257,19 @@ async function getOpenGraphImage1(webLink) {
             if (!err) {
               resolve(post.og_img);
             } else {
-              reject("");
+              reject("error");
             }
-          });
-        } else {
-          // every other link
-
-          let $ = cheerio.load(body);
-          let post = {
-            og_img: $('meta[property="og:image"]').attr("content"),
-          };
-
-          if (!err) {
-            resolve(post.og_img);
-          } else {
-            reject("");
           }
+        } catch {
+          reject("error");
         }
       });
     });
 
-    // let r = request.get(webLink, function (err, res, body) {
-    //   console.log(r.uri.href);
-    //   console.log(res.request.uri.href);
-    // });
-
     return res;
   } catch (err) {
     console.log("open graph scrap error");
-    return err;
+    return "error";
   }
 }
 
@@ -280,21 +282,25 @@ async function getOpenGraphImage2(webLink) {
         allMedia: true,
         retry: 5,
         maxRedirects: 7,
-      }).then((data) => {
-        const { error, result, response } = data;
+      })
+        .then((data) => {
+          const { error, result, response } = data;
 
-        if (result.ogImage) {
-          resolve(result.ogImage[0].url);
-        } else {
-          reject("");
-        }
-      });
+          if (result.ogImage) {
+            resolve(result.ogImage[0].url);
+          } else {
+            reject("");
+          }
+        })
+        .catch((err) => {
+          reject("error");
+        });
     });
 
     return res;
   } catch (err) {
     console.log("open graph scrap error");
-    return err;
+    return "error";
   }
 }
 

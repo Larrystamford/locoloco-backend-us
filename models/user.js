@@ -97,6 +97,20 @@ const userSchema = new Schema(
         ref: "Video",
       },
     ],
+    // youtube videos
+    youtubeVideos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "YoutubeVideo",
+      },
+    ],
+    // published youtube videos
+    proYoutubeVideos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "YoutubeVideo",
+      },
+    ],
     notifications: [
       {
         type: Schema.Types.ObjectId,
@@ -163,9 +177,17 @@ const userSchema = new Schema(
     proTheme: {
       arrangement: String,
       // background
-      background1: String,
+      background1: {
+        type: String,
+        default: "https://dciv99su0d7r5.cloudfront.net/vosh-template-bg12.jpg",
+      },
       // box background
-      background2: String,
+      background2: {
+        type: String,
+        default: "https://dciv99su0d7r5.cloudfront.net/white_bg.jpg",
+      },
+
+      background3: { imageUrl: String, videoUrl: String },
 
       primaryFontColor: { type: String, default: "black" },
       socialIconsColor: { type: String, default: "black" },
@@ -173,6 +195,7 @@ const userSchema = new Schema(
       linkWordsColor: { type: String, default: "white" },
       categoryWordsColor: { type: String, default: "black" },
     },
+
     // sense this change
     allProductLinks: [
       {
@@ -195,6 +218,7 @@ const userSchema = new Schema(
     ],
     previousMainHashtags: [String],
     previousSubHashtags: [String],
+    showSocialSelections: [],
   },
   { timestamps: true }
 );

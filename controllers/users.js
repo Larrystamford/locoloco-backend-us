@@ -284,6 +284,7 @@ module.exports = {
             populate: { path: "replies" },
           },
         })
+        .populate("youtubeVideos")
         .populate("videos");
 
       res.status(200).send(userVideos);
@@ -302,6 +303,7 @@ module.exports = {
         sensitiveDataUserName
       )
         .sort({ _id: 1 })
+        .populate("youtubeVideos")
         .populate({
           path: "proVideos",
           populate: {
@@ -363,16 +365,34 @@ module.exports = {
   // push previousProductLinks
   pushPreviousProductLinks: async (req, res, next) => {
     const { userId } = req.params;
-    const { allProductLinks, proVideo } = req.body;
+    const { allProductLinks, proVideo, proYoutubeVideos } = req.body;
     try {
-      let user = await User.findByIdAndUpdate(
-        { _id: userId },
-        {
-          $addToSet: {
-            proVideos: proVideo,
-          },
-        }
-      );
+      let user;
+
+      console.log(proVideo);
+      console.log(proYoutubeVideos);
+
+      if (proVideo) {
+        user = await User.findByIdAndUpdate(
+          { _id: userId },
+          {
+            $addToSet: {
+              proVideos: proVideo,
+            },
+          }
+        );
+      }
+
+      if (proYoutubeVideos) {
+        user = await User.findByIdAndUpdate(
+          { _id: userId },
+          {
+            $addToSet: {
+              proYoutubeVideos: proYoutubeVideos,
+            },
+          }
+        );
+      }
 
       for (const eachProductLink of allProductLinks) {
         let existingLink = false;

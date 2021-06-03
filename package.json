@@ -27,6 +27,7 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-extract-frames": "^2.0.2",
     "fs": "0.0.1-security",
+    "get-youtube-channel-id": "0.0.4",
     "google-auth-library": "^6.1.4",
     "https": "^1.0.0",
     "joi": "^14.3.1",

@@ -52,6 +52,11 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
     if (req.files && req.files.media) {
       const file = req.files.media;
       const uploadRes = await uploadFileToAws(file);
+      const updatedCdnUrl = uploadRes.url.replace(
+        "https://media2locoloco-us.s3.amazonaws.com/",
+        "https://dciv99su0d7r5.cloudfront.net/"
+      );
+      uploadRes.url = updatedCdnUrl;
 
       // ffmpeg -i inputfile.mkv -vf "select=eq(n\,0)" -q:v 3 output_image.jpg
       // await extractFrames({
@@ -70,10 +75,7 @@ async function uploadVideoAndFirstFrameToAws(req, res, next) {
       );
 
       return res.send({
-        videoUrl: uploadRes.url.replace(
-          "https://media2locoloco-us.s3.amazonaws.com/",
-          "https://dciv99su0d7r5.cloudfront.net/"
-        ),
+        videoUrl: updatedCdnUrl,
         imageUrl: uploadFirstFrameRes.url.replace(
           "https://media2locoloco-us.s3.amazonaws.com/",
           "https://dciv99su0d7r5.cloudfront.net/"

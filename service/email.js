@@ -35,7 +35,7 @@ async function sendEmailSignUp(receiverEmail, subject, message) {
     from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    text: "Dear User,\n\nA big welcome to vosh.club.\n\nWe look forward to providing you with a platform to grow and engage your shopping audience, while serving you the customised shopping content that you love so much.\n\nFeel free to message us if you have any feedbacks or if you just want some company.\n\nWith Love, \nVosh.Club",
+    text: "Dear Creator,\n\nWelcome to vosh.club.\n\nA link-in-bio that showcases your best works.\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -118,7 +118,7 @@ async function sendEmailFeedback(receiverEmail, subject, message) {
     from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    text: "Dear customer,\n\nThank you for reaching out to us. Please reply your feedback to this email and we will get back to you as soon as possible. \n\nThank you for shopping with us!\n\nWith Love, \nVosh.Club",
+    text: "Dear customer,\n\nThank you for reaching out to us. Please reply your feedback to this email and we will get back to you as soon as possible.\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

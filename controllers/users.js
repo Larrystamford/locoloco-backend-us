@@ -285,7 +285,15 @@ module.exports = {
           },
         })
         .populate("youtubeVideos")
-        .populate("videos");
+        .populate("proYoutubeVideos")
+        .populate("videos")
+        .populate({
+          path: "proVideos",
+          populate: {
+            path: "comments",
+            populate: { path: "replies" },
+          },
+        });
 
       res.status(200).send(userVideos);
     } catch (err) {
@@ -304,8 +312,16 @@ module.exports = {
       )
         .sort({ _id: 1 })
         .populate("youtubeVideos")
+        .populate("proYoutubeVideos")
         .populate({
           path: "proVideos",
+          populate: {
+            path: "comments",
+            populate: { path: "replies" },
+          },
+        })
+        .populate({
+          path: "videos",
           populate: {
             path: "comments",
             populate: { path: "replies" },
@@ -368,9 +384,6 @@ module.exports = {
     const { allProductLinks, proVideo, proYoutubeVideos } = req.body;
     try {
       let user;
-
-      console.log(proVideo);
-      console.log(proYoutubeVideos);
 
       if (proVideo) {
         user = await User.findByIdAndUpdate(

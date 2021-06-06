@@ -109,6 +109,37 @@ let YoutubeController = {
       res.status(500).send(err);
     }
   },
+
+  unpublish: async (req, res, next) => {
+    const { userId, videoId } = req.body;
+
+    try {
+      await User.findByIdAndUpdate(
+        { _id: userId },
+        { $pull: { proYoutubeVideos: videoId } }
+      );
+
+      res.status(201).send("success");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
+
+  youtubeProOrAll: async (req, res, next) => {
+    const { userId, youtubeProOrAll } = req.body;
+    try {
+      await User.findByIdAndUpdate(
+        { _id: userId },
+        { youtubeProOrAll: youtubeProOrAll }
+      );
+
+      res.status(201).send("success");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+  },
 };
 
 module.exports = YoutubeController;

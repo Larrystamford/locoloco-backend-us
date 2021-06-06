@@ -97,6 +97,10 @@ const userSchema = new Schema(
         ref: "Video",
       },
     ],
+    tiktokProOrAll: {
+      type: Boolean,
+      default: false,
+    },
     // youtube videos
     youtubeVideos: [
       {
@@ -111,6 +115,10 @@ const userSchema = new Schema(
         ref: "YoutubeVideo",
       },
     ],
+    youtubeProOrAll: {
+      type: Boolean,
+      default: false,
+    },
     notifications: [
       {
         type: Schema.Types.ObjectId,
@@ -205,6 +213,7 @@ const userSchema = new Schema(
         itemLinkName: String,
         itemLinkDesc: String,
         itemImage: String,
+        taggedSrcLinks: [],
       },
     ],
     // to be deprecated

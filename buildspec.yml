@@ -6,5 +6,8 @@ phases:
       # Install dependencies needed for running tests
       - npm install
 
+      # install tiktok scrapper globally
+      - npm i -g tiktok-scraper
+
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli

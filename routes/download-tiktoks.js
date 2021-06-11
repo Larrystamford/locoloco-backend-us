@@ -16,4 +16,8 @@ router.route("/unpublish").put(downloadTiktoksController.unpublish);
 
 router.route("/tiktokProOrAll").put(downloadTiktoksController.tiktokProOrAll);
 
+router.route("/getVideoByUrl").get(downloadTiktoksController.getVideoByUrl);
+
+
+
 module.exports = router;

@@ -2,7 +2,6 @@ const Review = require("../models/review");
 const User = require("../models/user");
 const Video = require("../models/video");
 const fs = require("fs");
-const shell = require("shelljs");
 
 const {
   uploadByFolder,
@@ -12,16 +11,21 @@ const {
   CdnLinktoS3Link,
 } = require("../service/upload");
 
-const { saveTikTokVideo } = require("../service/video_and_item");
+const {
+  saveTikTokVideo,
+  execDownloadTikTokPromise,
+} = require("../service/video_and_item");
 
 const TikTokScraper = require("tiktok-scraper");
 const del = require("del");
 
 var mongoose = require("mongoose");
+const { video } = require("tiktok-scraper");
+const { ConsoleTransportOptions } = require("winston/lib/winston/transports");
 
 const defaultOptions = {
   number: 50,
-  sessionList: ["sid_tt=612d5cda4a5db3478df5b1ca434d5430"],
+  sessionList: ["sid_tt=bb1a8ea6181501d2a07acb57ba48b2f6"],
 
   // Set proxy {string[] | string default: ''}
   // http proxy: 127.0.0.1:8080
@@ -58,9 +62,9 @@ const defaultOptions = {
   // that was used to extract the information and in order to access and download video through received {videoUrl} value you need to use same headers
 
   // headers: {
-  //   "user-agent": "BLAH",
-  //   referer: "https://www.tiktok.com/",
-  //   cookie: `tt_webid_v2=68dssds`,
+  //   'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4146.152 Safari/537.36',
+  //   referer: 'https://www.tiktok.com/',
+  //   cookie: 'tt_webid_v2=686022008211767918'
   // },
 
   // Download video without the watermark: {boolean default: false}
@@ -312,7 +316,7 @@ let DownloadTiktoksController = {
         for (const [key, value] of Object.entries(videoAndImageS3)) {
           if (value.video) {
             savedVideos.push(
-              saveTikTokVideo(key, value, userId, tiktokUsername)
+              saveTikTokVideo(key, value, userId, tiktokUsername, "")
             );
           }
         }
@@ -389,6 +393,107 @@ let DownloadTiktoksController = {
       fs.mkdirSync(`./tiktok-videos/`, { recursive: true });
     }
     res.status(200).send("success");
+  },
+
+  getVideoByUrl: async (req, res, next) => {
+    const { userId, videoUrl } = req.body;
+    try {
+      let tiktokUsername;
+      const user = await User.findById(userId);
+      for (const eachSocialAccount of user.socialAccounts) {
+        if (eachSocialAccount.socialType == "TikTok") {
+          tiktokUsername = eachSocialAccount.userIdentifier;
+        }
+      }
+
+      if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
+        await del(`./tiktok-videos/${tiktokUsername}/`);
+      }
+      fs.mkdirSync(`./tiktok-videos/${tiktokUsername}/`, { recursive: true });
+
+      const options = defaultOptions;
+      options.filetype = "json";
+      options.download = false;
+
+      // data processing
+      const videoAndImageS3 = {};
+      let videoKey;
+      let coverImageS3Link;
+
+      await execDownloadTikTokPromise(
+        videoUrl,
+        `./tiktok-videos/${tiktokUsername}/`
+      );
+      const uploadedVideos = await uploadByFolder(
+        `./tiktok-videos/${tiktokUsername}/`,
+        ".mp4"
+      );
+      uploadedVideos[0].Location = uploadedVideos[0].Location.replace(
+        "https://media2locoloco-us.s3.amazonaws.com/",
+        "https://dciv99su0d7r5.cloudfront.net/"
+      );
+
+      let videoJson = await TikTokScraper.getVideoMeta(videoUrl, options);
+      if (videoJson && videoJson.collector && videoJson.collector.length > 0) {
+        coverImageS3Link = await CdnLinktoS3Link(
+          videoJson.collector[0].imageUrl
+        );
+        await screenshotTiktok(
+          videoKey,
+          `./tiktok-videos/${tiktokUsername}/`,
+          uploadedVideos[0].Location
+        );
+        const uploadedImages = await uploadByFolder(
+          `./tiktok-videos/${tiktokUsername}/`,
+          ".png"
+        );
+
+        videoKey = videoJson.collector[0].id;
+        videoAndImageS3[videoKey] = {};
+        videoAndImageS3[videoKey].video = uploadedVideos[0].Location;
+        videoAndImageS3[videoKey].tiktokImage = coverImageS3Link;
+        videoAndImageS3[videoKey].image = uploadedImages[0].Location;
+
+        videoAndImageS3[videoKey].caption = videoJson.collector[0].text;
+        videoAndImageS3[videoKey].createTime =
+          videoJson.collector[0].createTime;
+        videoAndImageS3[videoKey].proShareCount =
+          videoJson.collector[0].shareCount * 20 +
+          Math.floor(Math.random() * 40) +
+          20;
+      }
+
+      // saving to mongo
+      const savedVideos = [];
+      for (const [key, value] of Object.entries(videoAndImageS3)) {
+        if (value.video) {
+          savedVideos.push(
+            saveTikTokVideo(key, value, userId, tiktokUsername, videoUrl)
+          );
+        }
+      }
+      await Promise.all(savedVideos);
+
+      await User.findByIdAndUpdate(
+        { _id: userId },
+        {
+          latestTikTokVideoId: videoKey,
+        }
+      );
+
+      try {
+        if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
+          await del(`./tiktok-videos/${tiktokUsername}/`);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+
+      res.status(201).send("success");
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
   },
 };
 

@@ -29,6 +29,7 @@
     "fs": "0.0.1-security",
     "get-youtube-channel-id": "0.0.4",
     "google-auth-library": "^6.1.4",
+    "got": "^11.8.2",
     "https": "^1.0.0",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",

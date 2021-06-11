@@ -179,8 +179,9 @@ async function getTikTokJson(userId, defaultOptions) {
     }
 
     options.download = false;
-    await TikTokScraper.user(tiktokUsername, options);
 
+    const tiktokJson = await TikTokScraper.user("larrystamford");
+    
     return "success";
   } catch (e) {
     console.log(e);
@@ -188,7 +189,7 @@ async function getTikTokJson(userId, defaultOptions) {
   }
 }
 
-async function CdnLinktoS3Link(cdnLink) {
+async function CdnLinktoS3Link(cdnLink, contentType="image/jpeg") {
   try {
     const file = await fetch(cdnLink);
     let res = await file.buffer();
@@ -199,7 +200,7 @@ async function CdnLinktoS3Link(cdnLink) {
       Bucket: process.env.AWS_S3_BUCKET,
       Key: fileName,
       Body: res,
-      ContentType: "image/jpeg",
+      ContentType: contentType,
     };
     if (process.env.NODE_ENV === "dev") {
       params["ACL"] = "public-read";

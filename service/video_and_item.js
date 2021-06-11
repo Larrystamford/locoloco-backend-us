@@ -3,6 +3,7 @@ const User = require("../models/user");
 const BuySellItem = require("../models/buySellItem");
 const Review = require("../models/review");
 const Video = require("../models/video");
+const { exec } = require("child_process");
 
 const Fakerator = require("fakerator");
 var fakerator = Fakerator("de-DE");
@@ -232,7 +233,13 @@ async function saveAmazonReviews(videoId, amazons) {
   }
 }
 
-async function saveTikTokVideo(key, value, userId, tiktokUsername) {
+async function saveTikTokVideo(
+  key,
+  value,
+  userId,
+  tiktokUsername,
+  sharableLink = ""
+) {
   try {
     const newVideo = new Video();
     newVideo.url = value.video.replace(
@@ -249,6 +256,7 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
     newVideo.proShareCount = value.proShareCount;
     newVideo.mediaType = "video";
     newVideo.tiktokKey = key;
+    newVideo.sharableLink = sharableLink;
 
     let user;
     try {
@@ -289,9 +297,36 @@ async function saveTikTokVideo(key, value, userId, tiktokUsername) {
   }
 }
 
+async function execDownloadTikTokPromise(videoUrl, filePath) {
+  try {
+    const res = await new Promise((resolve, reject) => {
+      exec(
+        `tiktok-scraper --filepath ${filePath} video -d -w ${videoUrl}`,
+        (error, stdout, stderr) => {
+          if (error) {
+            console.log(`error: ${error.message}`);
+            reject("");
+          } else if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            reject("");
+          } else {
+            resolve("success");
+          }
+        }
+      );
+    });
+
+    return res;
+  } catch (err) {
+    console.log("download tiktok by link error");
+    return "error";
+  }
+}
+
 module.exports = {
   handleItemStock,
   handleStocksRevert,
   saveAmazonReviews,
   saveTikTokVideo,
+  execDownloadTikTokPromise,
 };

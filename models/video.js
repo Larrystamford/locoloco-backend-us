@@ -43,6 +43,7 @@ const videoSchema = new Schema(
     proShareCount: Number,
     tiktokCreatedAt: String,
     tiktokKey: String,
+    sharableLink: String,
     proCategories: [String],
 
     // review related metrics to get average

@@ -7,7 +7,7 @@ phases:
       - npm install
 
       # install tiktok scrapper globally
-      - npm i tiktok-scraper
+      - sudo npm i -g tiktok-scraper
 
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli

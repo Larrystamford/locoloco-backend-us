@@ -25,7 +25,7 @@ const { video } = require("tiktok-scraper");
 const { ConsoleTransportOptions } = require("winston/lib/winston/transports");
 
 const defaultOptions = {
-  number: 50,
+  number: 30,
   sessionList: ["sid_tt=bb1a8ea6181501d2a07acb57ba48b2f6"],
 
   // Set proxy {string[] | string default: ''}
@@ -159,7 +159,7 @@ let DownloadTiktoksController = {
           console.log("json read error");
           console.log(e);
           // just get latest 50 if error reading json
-          counter = 50;
+          counter = 30;
         }
 
         if (counter == 0) {
@@ -169,7 +169,7 @@ let DownloadTiktoksController = {
           options.number = counter;
         }
       } else {
-        options.number = 50;
+        options.number = 30;
       }
 
       if (options.number >= 0) {

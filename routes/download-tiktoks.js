@@ -18,4 +18,8 @@ router.route("/tiktokProOrAll").put(downloadTiktoksController.tiktokProOrAll);
 
 router.route("/getVideoByUrl").post(downloadTiktoksController.getVideoByUrl);
 
+router
+  .route("/installTTScrapper")
+  .get(downloadTiktoksController.installTTScrapper);
+
 module.exports = router;

@@ -10,3 +10,9 @@ module.exports = {
     host: "localhost",
   },
 };
+
+
+// - npm -g config set user root
+
+// # install tiktok scrapper globally
+// - npm i tiktok-scraper -g

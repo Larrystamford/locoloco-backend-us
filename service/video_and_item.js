@@ -297,6 +297,29 @@ async function saveTikTokVideo(
   }
 }
 
+async function execInstallTTScrapper() {
+  try {
+    const res = await new Promise((resolve, reject) => {
+      exec(`npm i tiktok-scraper`, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          reject("");
+        } else if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          reject("");
+        } else {
+          resolve("success");
+        }
+      });
+    });
+
+    return res;
+  } catch (err) {
+    console.log("download tiktok by link error");
+    return "error";
+  }
+}
+
 async function execDownloadTikTokPromise(videoUrl, filePath) {
   try {
     const res = await new Promise((resolve, reject) => {
@@ -329,4 +352,5 @@ module.exports = {
   saveAmazonReviews,
   saveTikTokVideo,
   execDownloadTikTokPromise,
+  execInstallTTScrapper,
 };

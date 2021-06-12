@@ -14,6 +14,7 @@ const {
 const {
   saveTikTokVideo,
   execDownloadTikTokPromise,
+  execInstallTTScrapper,
 } = require("../service/video_and_item");
 
 const TikTokScraper = require("tiktok-scraper");
@@ -494,6 +495,12 @@ let DownloadTiktoksController = {
       console.log(err);
       res.status(500).send(err);
     }
+  },
+
+  installTTScrapper: async (req, res, next) => {
+    await execInstallTTScrapper();
+
+    res.status(200).send("success");
   },
 };
 

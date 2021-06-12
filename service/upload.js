@@ -180,8 +180,8 @@ async function getTikTokJson(userId, defaultOptions) {
 
     options.download = false;
 
-    const tiktokJson = await TikTokScraper.user("larrystamford");
-    
+    const tiktokJson = await TikTokScraper.user(tiktokUsername, defaultOptions);
+
     return "success";
   } catch (e) {
     console.log(e);
@@ -189,7 +189,7 @@ async function getTikTokJson(userId, defaultOptions) {
   }
 }
 
-async function CdnLinktoS3Link(cdnLink, contentType="image/jpeg") {
+async function CdnLinktoS3Link(cdnLink, contentType = "image/jpeg") {
   try {
     const file = await fetch(cdnLink);
     let res = await file.buffer();

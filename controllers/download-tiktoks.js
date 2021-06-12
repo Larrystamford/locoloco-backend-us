@@ -498,8 +498,24 @@ let DownloadTiktoksController = {
   },
 
   installTTScrapper: async (req, res, next) => {
-    await execInstallTTScrapper();
+    let hello = await TikTokScraper.user("larrystamford");
+    console.log(hello);
 
+    // hello = await TikTokScraper.getVideoMeta(
+    //   "https://vt.tiktok.com/ZSJxDFDWU/",
+    //   {
+    //     download: true,
+    //     headers: {
+    //       "user-agent":
+    //         "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4159.162 Safari/537.36",
+    //       referer: "https://www.tiktok.com/",
+    //       cookie:
+    //         "tt_webid_v2=6972862576631924225; tt_webid=6972862576631924225; tt_csrf_token=LECs00KMIH9CvpirlEdkhN1J; ttwid=1|16eapHLj42V-VOeeAiINS5JRQrMjE4_zWCGS-YrN39M|1623496096|26e7acc45604d3461afac27d6ed4074c80d5d2c533c1f7fa9d998b9523f13a38",
+    //     },
+    //     filepath: "./tiktok-videos/",
+    //   }
+    // );
+    // console.log(hello);
     res.status(200).send("success");
   },
 };

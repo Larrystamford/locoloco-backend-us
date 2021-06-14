@@ -407,22 +407,23 @@ module.exports = {
         );
       }
 
-      for (const eachProductLink of allProductLinks) {
-        let existingLink = false;
-        let i = 0;
-        for (i; i < user.allProductLinks.length; i++) {
-          if (user.allProductLinks[i].itemId === eachProductLink.itemId) {
-            existingLink = true;
-            break;
-          }
-        }
+      // was here because update allowed for product link previously
+      // for (const eachProductLink of allProductLinks) {
+      //   let existingLink = false;
+      //   let i = 0;
+      //   for (i; i < user.allProductLinks.length; i++) {
+      //     if (user.allProductLinks[i].itemId === eachProductLink.itemId) {
+      //       existingLink = true;
+      //       break;
+      //     }
+      //   }
 
-        if (existingLink) {
-          user.allProductLinks[i] = eachProductLink;
-        } else {
-          user.allProductLinks.unshift(eachProductLink);
-        }
-      }
+      //   if (existingLink) {
+      //     user.allProductLinks[i] = eachProductLink;
+      //   } else {
+      //     user.allProductLinks.unshift(eachProductLink);
+      //   }
+      // }
 
       await user.save();
 

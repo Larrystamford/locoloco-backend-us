@@ -15,5 +15,5 @@ Viewers can filter the videos to watch via the product categories.
 Tech Stack: React, Express, NodeJS, and MongoDB 
 
 # Demo!
-To create a vosh account, you can head over to [vosh.club](https://vosh.club) and click on Get Started! Once you have created an account, you can set your profile picture, choose a theme for the website, and much more!
+To create a vosh account, you can head over to [vosh.club](https://vosh.club) and click on Get Started! Once you have created an account you can set your profile picture, upload a theme for your website, and much more.
 

@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+const Schema = mongoose.Schema
 
 // Create a Schema
 const userSchema = new Schema(
   {
     method: {
       type: String,
-      enum: ["local", "google", "facebook"],
+      enum: ['local', 'google', 'facebook'],
     },
 
     google: {
@@ -62,39 +62,39 @@ const userSchema = new Schema(
     purchases: [
       {
         type: Schema.Types.ObjectId,
-        ref: "BuySellItem",
+        ref: 'BuySellItem',
       },
     ],
     sales: [
       {
         type: Schema.Types.ObjectId,
-        ref: "BuySellItem",
+        ref: 'BuySellItem',
       },
     ],
     // video objects that the user has liked
     likedVideos: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Video",
+        ref: 'Video',
       },
     ],
     likedComments: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: 'Comment',
       },
     ],
     likedSubComments: [
       {
         type: Schema.Types.ObjectId,
-        ref: "SubComment",
+        ref: 'SubComment',
       },
     ],
     // videos posted by user
     videos: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Video",
+        ref: 'Video',
       },
     ],
     tiktokProOrAll: {
@@ -105,14 +105,14 @@ const userSchema = new Schema(
     youtubeVideos: [
       {
         type: Schema.Types.ObjectId,
-        ref: "YoutubeVideo",
+        ref: 'YoutubeVideo',
       },
     ],
     // published youtube videos
     proYoutubeVideos: [
       {
         type: Schema.Types.ObjectId,
-        ref: "YoutubeVideo",
+        ref: 'YoutubeVideo',
       },
     ],
     youtubeProOrAll: {
@@ -122,31 +122,31 @@ const userSchema = new Schema(
     notifications: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Notification",
+        ref: 'Notification',
       },
     ],
     pushNotificationSubscriptions: [
       {
         type: Schema.Types.ObjectId,
-        ref: "PushNotificationSubscription",
+        ref: 'PushNotificationSubscription',
       },
     ],
     comments: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Comment",
+        ref: 'Comment',
       },
     ],
     subComments: [
       {
         type: Schema.Types.ObjectId,
-        ref: "SubComment",
+        ref: 'SubComment',
       },
     ],
     reviews: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Review",
+        ref: 'Review',
       },
     ],
     processingTikToksStartTime: Number,
@@ -156,7 +156,7 @@ const userSchema = new Schema(
     proVideos: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Video",
+        ref: 'Video',
       },
     ],
     socialAccounts: [
@@ -173,6 +173,15 @@ const userSchema = new Schema(
         proLinkName: String,
         proLinkDesc: String,
         proLink: String,
+        proLink2: String,
+        proLink3: String,
+        proLink4: String,
+        proLink5: String,
+        productImageLink: String,
+        tiktokVideoLink: String,
+        tiktokEmbedLink: String,
+        tiktokCoverImage: String,
+        linkClickCount: Number,
       },
     ],
     proCategories: [
@@ -187,21 +196,21 @@ const userSchema = new Schema(
       // background
       background1: {
         type: String,
-        default: "https://dciv99su0d7r5.cloudfront.net/vosh-template-bg12.jpg",
+        default: 'https://dciv99su0d7r5.cloudfront.net/vosh-template-bg12.jpg',
       },
       // box background
       background2: {
         type: String,
-        default: "https://dciv99su0d7r5.cloudfront.net/white_bg.jpg",
+        default: 'https://dciv99su0d7r5.cloudfront.net/white_bg.jpg',
       },
 
       background3: { imageUrl: String, videoUrl: String },
 
-      primaryFontColor: { type: String, default: "black" },
-      socialIconsColor: { type: String, default: "black" },
-      linkBoxColor: { type: String, default: "slategray" },
-      linkWordsColor: { type: String, default: "white" },
-      categoryWordsColor: { type: String, default: "black" },
+      primaryFontColor: { type: String, default: 'black' },
+      socialIconsColor: { type: String, default: 'black' },
+      linkBoxColor: { type: String, default: 'slategray' },
+      linkWordsColor: { type: String, default: 'white' },
+      categoryWordsColor: { type: String, default: 'black' },
     },
 
     // sense this change
@@ -229,21 +238,18 @@ const userSchema = new Schema(
     previousSubHashtags: [String],
     showSocialSelections: [],
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+)
 
 userSchema.methods.isValidPassword = async function (enterPassword) {
   try {
-    const passwordMatch = bcrypt.compareSync(
-      enterPassword,
-      this.local.password
-    );
+    const passwordMatch = bcrypt.compareSync(enterPassword, this.local.password)
 
-    return passwordMatch; // True if matches
+    return passwordMatch // True if matches
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error)
   }
-};
+}
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+const User = mongoose.model('User', userSchema)
+module.exports = User

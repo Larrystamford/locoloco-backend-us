@@ -1,124 +1,124 @@
-const AWS = require("aws-sdk");
-const fs = require("fs");
-const util = require("util");
-const readdir = util.promisify(fs.readdir);
-const readfile = util.promisify(fs.readFile);
-const User = require("../models/user");
-const fetch = require("node-fetch");
-const ogs = require("open-graph-scraper");
-const rp = require("request-promise");
-const cheerio = require("cheerio");
+const AWS = require('aws-sdk')
+const fs = require('fs')
+const util = require('util')
+const readdir = util.promisify(fs.readdir)
+const readfile = util.promisify(fs.readFile)
+const User = require('../models/user')
+const fetch = require('node-fetch')
+const ogs = require('open-graph-scraper')
+const rp = require('request-promise')
+const cheerio = require('cheerio')
 
-const path = require("path");
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+const path = require('path')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
 }
 
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-const ffmpeg = require("fluent-ffmpeg");
-ffmpeg.setFfmpegPath(ffmpegPath);
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path
+const ffmpeg = require('fluent-ffmpeg')
+ffmpeg.setFfmpegPath(ffmpegPath)
 
-const TikTokScraper = require("tiktok-scraper");
-const del = require("del");
+const TikTokScraper = require('tiktok-scraper')
+const del = require('del')
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_ID,
   secretAccessKey: process.env.AWS_SECRET_KEY,
-});
+})
 
 async function uploadFileToAws(file) {
-  const fileName = `${new Date().getTime()}_${file.name}`;
-  const mimetype = file.mimetype;
+  const fileName = `${new Date().getTime()}_${file.name}`
+  const mimetype = file.mimetype
 
   const params = {
     Bucket: process.env.AWS_S3_BUCKET,
     Key: fileName,
     Body: file.data,
     ContentType: mimetype,
-  };
-  if (process.env.NODE_ENV === "dev") {
-    params["ACL"] = "public-read";
+  }
+  if (process.env.NODE_ENV === 'dev') {
+    params['ACL'] = 'public-read'
   }
   const res = await new Promise((resolve, reject) => {
     s3.upload(params, (err, data) =>
-      err == null ? resolve(data) : reject(err)
-    );
-  });
-  return { url: res.Location };
+      err == null ? resolve(data) : reject(err),
+    )
+  })
+  return { url: res.Location }
 }
 
 async function uploadFirstFrame(data, fileName, mimetype) {
-  const fileNameFirstFrame = `${new Date().getTime()}_${fileName}`;
+  const fileNameFirstFrame = `${new Date().getTime()}_${fileName}`
   const paramsFirstFrame = {
     Bucket: process.env.AWS_S3_BUCKET,
     Key: fileNameFirstFrame,
     Body: data,
     ContentType: mimetype,
-  };
-  if (process.env.NODE_ENV === "dev") {
-    paramsFirstFrame["ACL"] = "public-read";
+  }
+  if (process.env.NODE_ENV === 'dev') {
+    paramsFirstFrame['ACL'] = 'public-read'
   }
   const resFirstFrame = await new Promise((resolve, reject) => {
     s3.upload(paramsFirstFrame, (err, data) =>
-      err == null ? resolve(data) : reject(err)
-    );
-  });
+      err == null ? resolve(data) : reject(err),
+    )
+  })
 
-  return { url: resFirstFrame.Location };
+  return { url: resFirstFrame.Location }
 }
 
 async function readJsonInfo(folderPathName) {
-  const filenames = await readdir(folderPathName);
-  let jsonFileData;
-  let curFileExtension;
+  const filenames = await readdir(folderPathName)
+  let jsonFileData
+  let curFileExtension
 
   for (const filename of filenames) {
-    curFileExtension = path.extname(filename);
-    if (curFileExtension == ".json") {
-      jsonFileData = await readfile(folderPathName + filename);
-      break;
+    curFileExtension = path.extname(filename)
+    if (curFileExtension == '.json') {
+      jsonFileData = await readfile(folderPathName + filename)
+      break
     }
   }
 
-  return jsonFileData;
+  return jsonFileData
 }
 
 async function uploadByFolder(folderPathName, fileExtension) {
-  const uploadedFiles = [];
-  const filenames = await readdir(folderPathName);
-  let curFileExtension;
-  let fileData;
-  let res;
-  let params;
-  let jsonFileData;
+  const uploadedFiles = []
+  const filenames = await readdir(folderPathName)
+  let curFileExtension
+  let fileData
+  let res
+  let params
+  let jsonFileData
 
-  console.log("number of downloaded videos");
-  console.log(filenames.length);
+  console.log('number of downloaded videos')
+  console.log(filenames.length)
 
   for (const filename of filenames) {
-    curFileExtension = path.extname(filename);
+    curFileExtension = path.extname(filename)
     if (curFileExtension == fileExtension) {
-      fileData = await readfile(folderPathName + filename);
+      fileData = await readfile(folderPathName + filename)
       params = {
         Bucket: process.env.AWS_S3_BUCKET,
         Key: filename,
         Body: fileData,
-      };
+      }
 
-      if (process.env.NODE_ENV === "dev") {
-        params["ACL"] = "public-read";
+      if (process.env.NODE_ENV === 'dev') {
+        params['ACL'] = 'public-read'
       }
       res = new Promise((resolve, reject) => {
         s3.upload(params, (err, data) =>
-          err == null ? resolve(data) : reject(err)
-        );
-      });
+          err == null ? resolve(data) : reject(err),
+        )
+      })
 
-      uploadedFiles.push(res);
+      uploadedFiles.push(res)
     }
   }
 
-  return await Promise.all(uploadedFiles);
+  return await Promise.all(uploadedFiles)
 }
 
 function ffmpegSync(uploadRes) {
@@ -126,15 +126,15 @@ function ffmpegSync(uploadRes) {
     ffmpeg(uploadRes.url)
       .screenshots({
         // Will take screens at 20%, 40%, 60% and 80% of the video
-        filename: "firstFrame.png",
+        filename: 'firstFrame.png',
         timestamps: [0.001],
-        folder: "./helpers/firstFrame/",
+        folder: './helpers/firstFrame/',
       })
-      .on("end", async () => {
-        console.log("Screenshot taken");
-        resolve();
-      });
-  });
+      .on('end', async () => {
+        console.log('Screenshot taken')
+        resolve()
+      })
+  })
 }
 
 function screenshotTiktok(imageName, downloadToPath, videoFileLocation) {
@@ -146,79 +146,79 @@ function screenshotTiktok(imageName, downloadToPath, videoFileLocation) {
         timestamps: [0.001],
         folder: downloadToPath,
       })
-      .on("end", async () => {
-        console.log("Screenshot taken");
-        resolve();
-      });
-  });
+      .on('end', async () => {
+        console.log('Screenshot taken')
+        resolve()
+      })
+  })
 }
 
 async function getTikTokJson(userId, defaultOptions) {
   try {
-    let tiktokUsername;
-    const user = await User.findById(userId);
+    let tiktokUsername
+    const user = await User.findById(userId)
     for (const eachSocialAccount of user.socialAccounts) {
-      if (eachSocialAccount.socialType == "TikTok") {
-        tiktokUsername = eachSocialAccount.userIdentifier;
+      if (eachSocialAccount.socialType == 'TikTok') {
+        tiktokUsername = eachSocialAccount.userIdentifier
       }
     }
 
     if (fs.existsSync(`./tiktok-videos/${tiktokUsername}/`)) {
-      await del(`./tiktok-videos/${tiktokUsername}/`);
+      await del(`./tiktok-videos/${tiktokUsername}/`)
     }
-    if (fs.existsSync(`./tiktok-videos/${tiktokUsername + "-info"}/`)) {
-      await del(`./tiktok-videos/${tiktokUsername + "-info"}/`);
+    if (fs.existsSync(`./tiktok-videos/${tiktokUsername + '-info'}/`)) {
+      await del(`./tiktok-videos/${tiktokUsername + '-info'}/`)
     }
 
-    const options = defaultOptions;
-    options.filetype = "json";
+    const options = defaultOptions
+    options.filetype = 'json'
 
-    options.filepath = "./tiktok-videos/" + tiktokUsername + "-info/";
+    options.filepath = './tiktok-videos/' + tiktokUsername + '-info/'
     if (!fs.existsSync(options.filepath)) {
-      fs.mkdirSync(options.filepath, { recursive: true });
+      fs.mkdirSync(options.filepath, { recursive: true })
     }
 
-    options.download = false;
+    options.download = false
 
-    const tiktokJson = await TikTokScraper.user(tiktokUsername, defaultOptions);
+    const tiktokJson = await TikTokScraper.user(tiktokUsername, defaultOptions)
 
-    return "success";
+    return 'success'
   } catch (e) {
-    console.log(e);
-    return "failed";
+    console.log(e)
+    return 'failed'
   }
 }
 
-async function CdnLinktoS3Link(cdnLink, contentType = "image/jpeg") {
+async function CdnLinktoS3Link(cdnLink, contentType = 'image/jpeg') {
   try {
-    const file = await fetch(cdnLink);
-    let res = await file.buffer();
+    const file = await fetch(cdnLink)
+    let res = await file.buffer()
 
-    const fileName = `${new Date().getTime()}_${cdnLink}`;
+    const fileName = `${new Date().getTime()}_${cdnLink}`
 
     const params = {
       Bucket: process.env.AWS_S3_BUCKET,
       Key: fileName,
       Body: res,
       ContentType: contentType,
-    };
-    if (process.env.NODE_ENV === "dev") {
-      params["ACL"] = "public-read";
+    }
+    if (process.env.NODE_ENV === 'dev') {
+      params['ACL'] = 'public-read'
     }
 
     res = await new Promise((resolve, reject) => {
       s3.upload(params, (err, data) =>
-        err == null ? resolve(data) : reject(err)
-      );
-    });
+        err == null ? resolve(data) : reject(err),
+      )
+    })
 
     return res.Location.replace(
-      "https://media2locoloco-us.s3.amazonaws.com/",
-      "https://dciv99su0d7r5.cloudfront.net/"
-    );
+      'https://media2locoloco-us.s3.amazonaws.com/',
+      'https://dciv99su0d7r5.cloudfront.net/',
+    )
   } catch (err) {
-    console.log(err);
-    throw err;
+    console.log(err)
+    throw err
   }
 }
 
@@ -228,49 +228,49 @@ async function getOpenGraphImage1(webLink) {
       rp({ url: webLink, followAllRedirects: true }, (err, res, body) => {
         try {
           // hard coded for shopee's universal-link
-          let lastLink = res.request.uri.href;
-          let indexUniversalLink = lastLink.indexOf("/universal-link");
+          let lastLink = res.request.uri.href
+          let indexUniversalLink = lastLink.indexOf('/universal-link')
           if (indexUniversalLink > -1) {
-            lastLink = lastLink.replace("/universal-link", "");
+            lastLink = lastLink.replace('/universal-link', '')
             rp(
               { url: lastLink, followAllRedirects: true },
               (err, res, body) => {
-                let $ = cheerio.load(body);
+                let $ = cheerio.load(body)
                 let post = {
-                  og_img: $('meta[property="og:image"]').attr("content"),
-                };
+                  og_img: $('meta[property="og:image"]').attr('content'),
+                }
 
                 if (!err) {
-                  resolve(post.og_img);
+                  resolve(post.og_img)
                 } else {
-                  reject("error");
+                  reject('error')
                 }
-              }
-            );
+              },
+            )
           } else {
             // every other link
 
-            let $ = cheerio.load(body);
+            let $ = cheerio.load(body)
             let post = {
-              og_img: $('meta[property="og:image"]').attr("content"),
-            };
+              og_img: $('meta[property="og:image"]').attr('content'),
+            }
 
             if (!err) {
-              resolve(post.og_img);
+              resolve(post.og_img)
             } else {
-              reject("error");
+              reject('error')
             }
           }
         } catch {
-          reject("error");
+          reject('error')
         }
-      });
-    });
+      })
+    })
 
-    return res;
+    return res
   } catch (err) {
-    console.log("open graph scrap error");
-    return "error";
+    console.log('open graph scrap error')
+    return 'error'
   }
 }
 
@@ -285,23 +285,25 @@ async function getOpenGraphImage2(webLink) {
         maxRedirects: 7,
       })
         .then((data) => {
-          const { error, result, response } = data;
+          const { error, result, response } = data
+
+          console.log(response)
 
           if (result.ogImage) {
-            resolve(result.ogImage[0].url);
+            resolve(result.ogImage[0].url)
           } else {
-            reject("");
+            reject('')
           }
         })
         .catch((err) => {
-          reject("error");
-        });
-    });
+          reject('error')
+        })
+    })
 
-    return res;
+    return res
   } catch (err) {
-    console.log("open graph scrap error");
-    return "error";
+    console.log('open graph scrap error')
+    return 'error'
   }
 }
 
@@ -316,4 +318,4 @@ module.exports = {
   CdnLinktoS3Link,
   getOpenGraphImage1,
   getOpenGraphImage2,
-};
+}

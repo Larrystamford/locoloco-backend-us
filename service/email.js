@@ -35,7 +35,7 @@ async function sendEmailSignUp(receiverEmail, subject, message) {
     from: "vosh.club@gmail.com",
     to: receiverEmail,
     subject: subject,
-    text: "Dear Creator,\n\nWelcome to vosh.club.\n\nA link-in-bio that showcases your best works.\n\nWith Love, \nVosh.Club",
+    text: "Dear Creator,\n\nWelcome to vosh.club!\n\nWe are a TikTok focused link-in-bio platform that rewards you for sharing the products you love.\n\nWith Love, \nVosh.Club",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

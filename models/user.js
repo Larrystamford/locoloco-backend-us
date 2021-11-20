@@ -181,6 +181,7 @@ const userSchema = new Schema(
         tiktokVideoLink: String,
         tiktokEmbedLink: String,
         tiktokCoverImage: String,
+        tiktokCaption: String,
         linkClickCount: { type: Number, default: 0 },
       },
     ],

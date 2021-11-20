@@ -278,25 +278,27 @@ module.exports = {
 
     try {
       const userVideos = await User.find({ _id: userId }, sensitiveDataUserId)
-        .populate({
-          path: 'proVideos',
-          populate: {
-            path: 'comments',
-            populate: { path: 'replies' },
-          },
-        })
-        .populate('youtubeVideos')
-        .populate('proYoutubeVideos')
-        .populate('videos')
-        .populate({
-          path: 'proVideos',
-          populate: {
-            path: 'comments',
-            populate: { path: 'replies' },
-          },
-        })
+      // .populate('youtubeVideos')
+      // .populate('proYoutubeVideos')
+      // .populate('videos')
+      // .populate({
+      //   path: 'proVideos',
+      //   populate: {
+      //     path: 'comments',
+      //     populate: { path: 'replies' },
+      //   },
+      // })
 
-      res.status(200).send(userVideos)
+      // sort proLinks by click count
+      let sortedProLinks = []
+      if (userVideos.length > 0) {
+        sortedProLinks = [...userVideos[0].proLinks]
+        sortedProLinks.sort((a, b) =>
+          a.linkClickCount < b.linkClickCount ? 1 : -1,
+        )
+      }
+
+      res.status(200).send({ user: userVideos, sortedProLinks: sortedProLinks })
     } catch (err) {
       res.status(500).send(err)
     }
@@ -310,26 +312,34 @@ module.exports = {
       const userVideos = await User.find(
         { userName: userName.toLowerCase() },
         sensitiveDataUserName,
-      )
-        .sort({ _id: 1 })
-        .populate('youtubeVideos')
-        .populate('proYoutubeVideos')
-        .populate({
-          path: 'proVideos',
-          populate: {
-            path: 'comments',
-            populate: { path: 'replies' },
-          },
-        })
-        .populate({
-          path: 'videos',
-          populate: {
-            path: 'comments',
-            populate: { path: 'replies' },
-          },
-        })
+      ).sort({ _id: 1 })
+      // .populate('youtubeVideos')
+      // .populate('proYoutubeVideos')
+      // .populate({
+      //   path: 'proVideos',
+      //   populate: {
+      //     path: 'comments',
+      //     populate: { path: 'replies' },
+      //   },
+      // })
+      // .populate({
+      //   path: 'videos',
+      //   populate: {
+      //     path: 'comments',
+      //     populate: { path: 'replies' },
+      //   },
+      // })
 
-      res.status(200).send(userVideos)
+      // sort proLinks by click count
+      let sortedProLinks = []
+      if (userVideos.length > 0) {
+        sortedProLinks = [...userVideos[0].proLinks]
+        sortedProLinks.sort((a, b) =>
+          a.linkClickCount < b.linkClickCount ? 1 : -1,
+        )
+      }
+
+      res.status(200).send({ user: userVideos, sortedProLinks: sortedProLinks })
     } catch (err) {
       res.status(500).send(err)
     }

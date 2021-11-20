@@ -324,24 +324,33 @@ let UtilsController = {
 
   // temporary use
   migrateToProLinks: async (req, res, next) => {
-    let user = await User.findOne({ userName: 'pattywhoa' })
+    const {
+      query: { item, count },
+    } = req
+    let user = await User.findOne({ userName: 'larry1' })
 
-    let updateObj = {
-      proLinks: [],
-    }
+    // let updateObj = {
+    //   proLinks: [],
+    // }
+    user.proLinks[item]['linkClickCount'] = parseInt(count)
 
-    for (const eachItemLink of user.allProductLinks) {
-      updateObj.proLinks.push({
-        id: eachItemLink._id,
-        proLink: eachItemLink.itemLink,
-        proLinkName: eachItemLink.itemLinkName,
-        productImageLink: eachItemLink.itemImage,
-      })
-    }
+    // for (const eachItemLink of user.proLinks) {
+    //   updateObj.proLinks.push({
+    //     id: eachItemLink.id,
+    //     proLink: eachItemLink.proLink,
+    //     proLinkName: eachItemLink.proLinkName,
+    //     productImageLink: eachItemLink.productImageLink,
+    //     linkClickCount: 4,
+    //   })
+    // }
+    console.log(user.proLinks)
+    await User.findByIdAndUpdate(
+      { _id: '61895f08be3ebf41072c61db' },
+      user.proLinks,
+    )
 
-    await User.findByIdAndUpdate({ _id: '60a0fdf0c98dae0e7914e4d1' }, updateObj)
-
-
+    let user2 = await User.findOne({ userName: 'larry1' })
+    console.log(user2.proLinks)
     res.status(201).send('done')
   },
 }

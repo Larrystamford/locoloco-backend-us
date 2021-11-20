@@ -379,6 +379,32 @@ module.exports = {
 
   // ACTIONS
 
+  incrementProductClickCount: async (req, res, next) => {
+    const {
+      query: { username, productId },
+    } = req
+
+    try {
+      let user = await User.findOne({ userName: username })
+
+      for (let i = 0; i < user.proLinks.length; i++) {
+        console.log(user.proLinks[i])
+        console.log(productId)
+        if (user.proLinks[i]._id == productId) {
+          user.proLinks[i]['linkClickCount'] += 1
+          console.log(user.proLinks[i])
+          break
+        }
+      }
+
+      await user.save()
+      res.status(201).send('success')
+    } catch (err) {
+      console.log(err)
+      res.status(500).send(err)
+    }
+  },
+
   // push previousProductLinks
   pushPreviousProductLinks: async (req, res, next) => {
     const { userId } = req.params

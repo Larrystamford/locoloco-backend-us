@@ -52,6 +52,8 @@ router
   .get(UsersController.getVideosItemsByUserNamePro)
 
 router.route('/update/:userId').put(UsersController.update)
+router.route('/incrementProductClickCount').get(UsersController.incrementProductClickCount)
+
 
 // ACTION ROUTES
 router
